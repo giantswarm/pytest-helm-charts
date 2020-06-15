@@ -1,4 +1,4 @@
-from pytest_kube_provider import Cluster
+from pytest_helm_chart import Cluster
 import logging
 
 logger = logging.getLogger(__name__)
