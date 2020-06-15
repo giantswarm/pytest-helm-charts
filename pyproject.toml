@@ -4,7 +4,10 @@ version = "0.1.0"
 description = "A plugin to provide different types and configs of Kubernetes clusters that can be used for testing."
 authors = ["Łukasz Piątkowski <lukasz@giantswarm.io>"]
 license="Apache-2.0"
-repository="https://github.com/giantswarm/pytest-kube"
+repository="https://github.com/giantswarm/pytest-helm-chart"
+readme="README.md"
+keywords=["kubernetes","helm","chart"]
+include = ["CHANGELOG.md","DCO"]
 classifiers=[
     'Development Status :: 4 - Beta',
     'Framework :: Pytest',

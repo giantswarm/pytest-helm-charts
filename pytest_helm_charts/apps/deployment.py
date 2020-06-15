@@ -3,7 +3,7 @@ from typing import Callable, Dict, List, NamedTuple, Union, Optional
 import yaml
 from pykube import HTTPClient, ConfigMap
 
-from helm_chart.apps.app_catalog import GiantSwarmAppPlatformCRs
+from pytest_helm_charts.apps.app_catalog import GiantSwarmAppPlatformCRs
 from .app_catalog import AppCR, AppCatalogFactoryFunc
 
 YamlDict = Dict[str, Union[int, float, str, bool, 'YamlDict']]
