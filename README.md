@@ -1,3 +1,5 @@
+[![Documentation Status](https://readthedocs.org/projects/pytest-helm-charts/badge/?version=latest)](https://pytest-helm-charts.readthedocs.io/en/latest/?badge=latest)
+
 # pytest-kube-provider
 
 A plugin to provide different types and configs of Kubernetes clusters that can be used for testing.
