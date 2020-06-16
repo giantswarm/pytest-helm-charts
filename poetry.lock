@@ -61,7 +61,7 @@ version = "3.0.4"
 category = "dev"
 description = "Composable command line interface toolkit"
 name = "click"
-optional = false
+optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "7.1.2"
 
@@ -94,7 +94,7 @@ version = "3.0.12"
 category = "dev"
 description = "Clean single-source support for Python 3 and 2"
 name = "future"
-optional = false
+optional = true
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 version = "0.18.2"
 
@@ -162,7 +162,7 @@ category = "dev"
 description = "Lightweight pipelining: using Python functions as pipeline jobs."
 marker = "python_version > \"2.7\""
 name = "joblib"
-optional = false
+optional = true
 python-versions = ">=3.6"
 version = "0.15.1"
 
@@ -170,7 +170,7 @@ version = "0.15.1"
 category = "dev"
 description = "Python LiveReload is an awesome tool for web developers"
 name = "livereload"
-optional = false
+optional = true
 python-versions = "*"
 version = "2.6.2"
 
@@ -185,7 +185,7 @@ version = "*"
 category = "dev"
 description = "A Python implementation of Lunr.js"
 name = "lunr"
-optional = false
+optional = true
 python-versions = "*"
 version = "0.5.8"
 
@@ -242,7 +242,7 @@ markdown = "*"
 category = "dev"
 description = "Project documentation with Markdown."
 name = "mkdocs"
-optional = false
+optional = true
 python-versions = ">=3.5"
 version = "1.1.2"
 
@@ -262,7 +262,7 @@ version = "0.5.8"
 category = "dev"
 description = "A Material Design theme for MkDocs"
 name = "mkdocs-material"
-optional = false
+optional = true
 python-versions = "*"
 version = "5.3.0"
 
@@ -277,7 +277,7 @@ pymdown-extensions = ">=7.0"
 category = "dev"
 description = "Extension pack for Python Markdown."
 name = "mkdocs-material-extensions"
-optional = false
+optional = true
 python-versions = ">=3.5"
 version = "1.0"
 
@@ -297,7 +297,7 @@ category = "dev"
 description = "Natural Language Toolkit"
 marker = "python_version > \"2.7\""
 name = "nltk"
-optional = false
+optional = true
 python-versions = "*"
 version = "3.5"
 
@@ -363,7 +363,7 @@ version = "2.6.0"
 category = "dev"
 description = "Pygments is a syntax highlighting package written in Python."
 name = "pygments"
-optional = false
+optional = true
 python-versions = ">=3.5"
 version = "2.6.1"
 
@@ -386,7 +386,7 @@ gcp = ["google-auth", "jsonpath-ng"]
 category = "dev"
 description = "Extension pack for Python Markdown."
 name = "pymdown-extensions"
-optional = false
+optional = true
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*"
 version = "7.1"
 
@@ -440,7 +440,7 @@ category = "dev"
 description = "Alternative regular expression module, to replace re."
 marker = "python_version > \"2.7\""
 name = "regex"
-optional = false
+optional = true
 python-versions = "*"
 version = "2020.6.8"
 
@@ -482,7 +482,7 @@ version = "0.10.1"
 category = "dev"
 description = "Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed."
 name = "tornado"
-optional = false
+optional = true
 python-versions = ">= 3.5"
 version = "6.0.4"
 
@@ -528,7 +528,7 @@ category = "dev"
 description = "Fast, Extensible Progress Meter"
 marker = "python_version > \"2.7\""
 name = "tqdm"
-optional = false
+optional = true
 python-versions = ">=2.6, !=3.0.*, !=3.1.*"
 version = "4.46.1"
 
@@ -595,8 +595,11 @@ version = "3.1.0"
 docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
+[extras]
+docs = []
+
 [metadata]
-content-hash = "7fca529b62bf7da0466e3a792beb9abce3c73dc00887cb218f94eb31995210ea"
+content-hash = "4bc4a159d223884604f70994ce721f454b3f5152dbc958b1a638ed711ace735e"
 python-versions = "^3.6"
 
 [metadata.files]
