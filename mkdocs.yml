@@ -1,0 +1,21 @@
+site_name: pytest helm charts
+repo_name: "giantswarm/pytest-helm-charts"
+site_url: https://github.com/giantswarm/pytest-helm-charts
+theme:
+  name: "material"
+
+plugins:
+  - search
+  - mkapi:
+      src_dirs: [pytest_helm_charts,examples]
+
+markdown_extensions:
+  - admonition
+
+nav:
+  - Home: index.md
+  - API: mkapi/api/pytest_helm_charts|upper|strict
+  - About:
+    - 'License': 'license.md'
+    - 'Changelog': 'changelog.md'
+

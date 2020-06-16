@@ -1,3 +1,4 @@
+"""This module defines fixtures for testing Helm Charts."""
 import logging
 import os.path
 import sys

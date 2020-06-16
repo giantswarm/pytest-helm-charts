@@ -1,4 +1,4 @@
-from pytest_helm_chart import Cluster
+from pytest_helm_charts.fixtures import Cluster
 import logging
 
 logger = logging.getLogger(__name__)
