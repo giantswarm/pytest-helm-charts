@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pytest-helm-chart"
+name = "pytest-helm-charts"
 version = "0.1.1"
 description = "A plugin to provide different types and configs of Kubernetes clusters that can be used for testing."
 authors = ["Łukasz Piątkowski <lukasz@giantswarm.io>"]

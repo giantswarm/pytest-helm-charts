@@ -6,6 +6,8 @@ from pathlib import Path
 from typing import Callable, List, Iterable
 
 import pytest
+from _pytest.config import Config
+from _pytest.config.argparsing import Parser
 from pykube import HTTPClient
 
 from .apps.app_catalog import AppCR, AppCatalogFactoryFunc
@@ -15,7 +17,7 @@ from .clusters import ExistingCluster, Cluster
 logger = logging.getLogger(__name__)
 
 
-def pytest_addoption(parser):
+def pytest_addoption(parser: Parser) -> None:
     group = parser.getgroup("kube-provider")
     group.addoption(
         "--cluster-type",
@@ -47,32 +49,34 @@ def pytest_addoption(parser):
 
 
 @pytest.fixture(scope="module")
-def chart_path(pytestconfig) -> str:
+def chart_path(pytestconfig: Config) -> str:
     """Return a path to the chart under test (from command line argument)."""
     return pytestconfig.getoption("chart_path")
 
 
 @pytest.fixture(scope="module")
-def chart_version(pytestconfig) -> str:
+def chart_version(pytestconfig: Config) -> str:
     """Return a value that needs to be used as chart version override (from command line argument)."""
     return pytestconfig.getoption("chart_version")
 
 
 @pytest.fixture(scope="module")
-def values_file_path(pytestconfig) -> str:
-    """Return a path to the yaml file that needs to be used to configure chart under test (from command line argument)."""
+def values_file_path(pytestconfig: Config) -> str:
+    """Return a path to the yaml file that needs to be used to configure chart under test
+    (from command line argument).
+    """
     return pytestconfig.getoption("values_file")
 
 
 @pytest.fixture(scope="module")
-def kube_config(pytestconfig) -> str:
+def kube_config(pytestconfig: Config) -> str:
     """Return a path to the kube.config file that points to a running cluster with app
     catalog platform tools already installed. Used only if --cluster-type=existing (from command line argument)."""
     return pytestconfig.getoption("kube_config")
 
 
 @pytest.fixture(scope="module")
-def cluster_type(pytestconfig) -> str:
+def cluster_type(pytestconfig: Config) -> str:
     """Return a type of cluster to provide to the test environment. Currently supported values are:
     "existing", "kind", "giantswarm"."""
     return pytestconfig.getoption("cluster_type")

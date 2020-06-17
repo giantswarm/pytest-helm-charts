@@ -14,6 +14,10 @@ class Cluster:
         """Destroys the cluster created earlier with a call to [create](Cluster.create)."""
         raise NotImplementedError
 
+    def create_http_client_from_kube_config(self, kube_config: KubeConfig) -> HTTPClient:
+        """Method for creating KubeConfig instances. Useful for mocking the HTTPClient"""
+        return HTTPClient(kube_config)
+
 
 class ExistingCluster(Cluster):
     """Implementation of [Cluster](Cluster) that uses kube.config
@@ -25,7 +29,8 @@ class ExistingCluster(Cluster):
         self.kube_config = kube_config
 
     def create(self) -> HTTPClient:
-        self.kube_client = HTTPClient(KubeConfig.from_file(self.kube_config))
+        kube_config = KubeConfig.from_file(self.kube_config)
+        self.kube_client = self.create_http_client_from_kube_config(kube_config)
         return self.kube_client
 
     def destroy(self) -> None:

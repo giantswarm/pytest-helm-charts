@@ -1,64 +1,61 @@
 # -*- coding: utf-8 -*-
+from _pytest.monkeypatch import MonkeyPatch
+from _pytest.pytester import Testdir
+from pykube import KubeConfig
+
+from pytest_helm_charts.clusters import Cluster
 
 
-def test_bar_fixture(testdir):
-    """Make sure that pytest accepts our fixture."""
+class MockSession:
 
-    # create a temporary pytest test module
-    testdir.makepyfile("""
-        def test_sth(bar):
-            assert bar == "europython2015"
-    """)
+    def close(self):
+        pass
+
+
+class MockKubeConfig:
+    path: str
+
+    def __init__(self, path: str) -> None:
+        self.path = path
+
+
+class MockHTTPClient:
+    kube_config: MockKubeConfig
+    session: MockSession
+
+    def __init__(self, kube_config: MockKubeConfig) -> None:
+        self.kube_config = kube_config
+        self.session = MockSession()
+
+
+def test_existing_cluster_example(testdir: Testdir, monkeypatch: MonkeyPatch):
+    """Make sure that existing cluster is created using the correct config file."""
+
+    testdir.copy_example("examples/test_existing_cluster.py")
+
+    def mock_kube_config(path):
+        return MockKubeConfig(path)
+
+    def mock_http_client(_, kube_config):
+        return MockHTTPClient(kube_config)
+
+    monkeypatch.setattr(KubeConfig, "from_file", mock_kube_config)
+    monkeypatch.setattr(Cluster, "create_http_client_from_kube_config", mock_http_client)
 
     # run pytest with the following cmd args
     result = testdir.runpytest(
-        '--foo=europython2015',
+        '--cluster-type',
+        'existing',
+        '--kube-config',
+        '/tmp/kat_test/kube.config',
         '-v'
     )
 
     # fnmatch_lines does an assertion internally
-    result.stdout.fnmatch_lines([
-        '*::test_sth PASSED*',
-    ])
+    #result.stdout.fnmatch_lines([
+    #    '*::test_sth PASSED*',
+    #])
 
     # make sure that that we get a '0' exit code for the testsuite
     assert result.ret == 0
 
-
-def test_help_message(testdir):
-    result = testdir.runpytest(
-        '--help',
-    )
-    # fnmatch_lines does an assertion internally
-    result.stdout.fnmatch_lines([
-        'kube-provider:',
-        '*--foo=DEST_FOO*Set the value for the fixture "bar".',
-    ])
-
-
-def test_hello_ini_setting(testdir):
-    testdir.makeini("""
-        [pytest]
-        HELLO = world
-    """)
-
-    testdir.makepyfile("""
-        import pytest
-
-        @pytest.fixture
-        def hello(request):
-            return request.config.getini('HELLO')
-
-        def test_hello_world(hello):
-            assert hello == 'world'
-    """)
-
-    result = testdir.runpytest('-v')
-
-    # fnmatch_lines does an assertion internally
-    result.stdout.fnmatch_lines([
-        '*::test_hello_world PASSED*',
-    ])
-
-    # make sure that that we get a '0' exit code for the testsuite
-    assert result.ret == 0
