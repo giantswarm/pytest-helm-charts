@@ -1,4 +1,6 @@
 """Different utilities required over the whole testing lib."""
-from typing import Dict, Union
+from typing import Dict, Any
 
-YamlDict = Dict[str, Union[int, float, str, bool, 'YamlDict']]
+
+#YamlValue = Union[int, float, str, bool, List['YamlValue'], 'YamlDict']
+YamlDict = Dict[str, Any]
