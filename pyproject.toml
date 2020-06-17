@@ -35,14 +35,14 @@ classifiers=[
 python = "^3.6"
 pytest = "^5.4.2"
 pykube-ng = "^20.5.0"
-mkdocs = {version = "^1.1.2", optional = true }
-mkdocs-material = {version = "^5.3.0", optional = true }
-mkapi = {version = "^1.0.2", python = "^3.7"}
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.5.2"
 tox = "^3.15.1"
 tox-pyenv = "^1.1.0"
+mkdocs = {version = "^1.1.2", optional = true }
+mkdocs-material = {version = "^5.3.0", optional = true }
+mkapi = {version = "1.0.2", python = "^3.7"}
 
 [tool.poetry.extras]
 docs = ["mkdocs", "mkdocs-material", "mkapi"]

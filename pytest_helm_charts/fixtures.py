@@ -8,9 +8,9 @@ from typing import Callable, List, Iterable
 import pytest
 from pykube import HTTPClient
 
-from pytest_helm_charts.apps.app_catalog import AppCR, AppCatalogFactoryFunc
-from pytest_helm_charts.apps.deployment import AppFactoryFunc, AppState, app_factory_func
-from pytest_helm_charts.clusters import ExistingCluster, Cluster
+from .apps.app_catalog import AppCR, AppCatalogFactoryFunc
+from .apps.deployment import AppFactoryFunc, AppState, app_factory_func
+from .clusters import ExistingCluster, Cluster
 
 logger = logging.getLogger(__name__)
 

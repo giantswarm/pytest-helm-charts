@@ -3,8 +3,9 @@ from typing import Callable, Dict, Iterable, List
 import pytest
 from pykube import HTTPClient, ConfigMap
 
-from pytest_helm_charts.apps.app_catalog import AppCR, AppCatalogFactoryFunc
-from pytest_helm_charts.apps.deployment import AppFactoryFunc, YamlDict
+from .app_catalog import AppCR, AppCatalogFactoryFunc
+from .deployment import AppFactoryFunc
+from ..utils import YamlDict
 
 StormforgerLoadAppFactoryFunc = Callable[[int, str, Dict[str, str]], AppCR]
 

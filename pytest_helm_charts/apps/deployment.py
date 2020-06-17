@@ -1,12 +1,11 @@
-from typing import Callable, Dict, List, NamedTuple, Union, Optional
+from typing import Callable, List, NamedTuple, Optional
 
 import yaml
 from pykube import HTTPClient, ConfigMap
 
-from pytest_helm_charts.apps.app_catalog import GiantSwarmAppPlatformCRs
-from .app_catalog import AppCR, AppCatalogFactoryFunc
+from .app_catalog import AppCR, AppCatalogFactoryFunc, GiantSwarmAppPlatformCRs
+from ..utils import YamlDict
 
-YamlDict = Dict[str, Union[int, float, str, bool, 'YamlDict']]
 AppFactoryFunc = Callable[[str, str, str, str, str, YamlDict], AppCR]
 
 

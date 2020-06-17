@@ -1,1 +1,1 @@
-"""Package level"""
+"""This package includes fixtures and clusters definitions."""
