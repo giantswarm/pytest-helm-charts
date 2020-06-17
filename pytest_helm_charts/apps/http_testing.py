@@ -3,7 +3,7 @@ from typing import Callable, Dict, Iterable, List
 import pytest
 from pykube import HTTPClient, ConfigMap
 
-from .app_catalog import AppCR, AppCatalogFactoryFunc
+from .app_catalog import AppCR
 from .deployment import AppFactoryFunc
 from ..utils import YamlDict
 
@@ -11,9 +11,7 @@ StormforgerLoadAppFactoryFunc = Callable[[int, str, Dict[str, str]], AppCR]
 
 
 @pytest.fixture(scope="module")
-def stormforger_load_app_factory(kube_client: HTTPClient,
-                                 app_catalog_factory: AppCatalogFactoryFunc,
-                                 app_factory: AppFactoryFunc) -> StormforgerLoadAppFactoryFunc:
+def stormforger_load_app_factory(app_factory: AppFactoryFunc) -> StormforgerLoadAppFactoryFunc:
     def _stormforger_load_app_factory(replicas: int, host_url: str,
                                       node_affinity_selector: Dict[str, str] = None) -> AppCR:
         config_values: YamlDict = {
@@ -53,7 +51,6 @@ GatlingAppFactoryFunc = Callable[[str, Dict[str, str]], AppCR]
 
 @pytest.fixture(scope="module")
 def gatling_app_factory(kube_client: HTTPClient,
-                        app_catalog_factory: AppCatalogFactoryFunc,
                         app_factory: AppFactoryFunc) -> Iterable[GatlingAppFactoryFunc]:
     created_configmaps: List[ConfigMap] = []
 

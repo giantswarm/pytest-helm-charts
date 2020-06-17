@@ -232,7 +232,7 @@ marker = "python_version >= \"3.7\" and python_version < \"4.0\""
 name = "mkapi"
 optional = false
 python-versions = ">=3.7"
-version = "1.0.2"
+version = "1.0.4"
 
 [package.dependencies]
 jinja2 = "*"
@@ -599,7 +599,7 @@ testing = ["jaraco.itertools", "func-timeout"]
 docs = []
 
 [metadata]
-content-hash = "4e9b29932ebd02bd4459e19e305a1a3dc9a587a4f31358a6ca41530c3129e90b"
+content-hash = "67c453c04865600f909b722339186bcc28b4fc7fd44e86d8f1c6f322b7e6d5b6"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -711,8 +711,8 @@ markupsafe = [
     {file = "MarkupSafe-1.1.1.tar.gz", hash = "sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"},
 ]
 mkapi = [
-    {file = "mkapi-1.0.2-py3-none-any.whl", hash = "sha256:cc355511c0a5e807cf5e5e90d77c377ff0b729319f9d721434310887a0bddad4"},
-    {file = "mkapi-1.0.2.tar.gz", hash = "sha256:497ed1ea6f15de6f2fccb7610fbb515bf98b7e7769bf0e31fa689c344717ae2c"},
+    {file = "mkapi-1.0.4-py3-none-any.whl", hash = "sha256:bea5768d1439886038c1cb47e8df8c99832cbf39f92cfe7251da96b4303a95ec"},
+    {file = "mkapi-1.0.4.tar.gz", hash = "sha256:fd135cb49a826c0ab5fddc206e01576c0bc894e0d77364a5ca9cab1344bece45"},
 ]
 mkdocs = [
     {file = "mkdocs-1.1.2-py3-none-any.whl", hash = "sha256:096f52ff52c02c7e90332d2e53da862fde5c062086e1b5356a6e392d5d60f5e9"},

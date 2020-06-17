@@ -2,7 +2,7 @@ site_name: pytest helm charts
 repo_name: "giantswarm/pytest-helm-charts"
 site_url: https://github.com/giantswarm/pytest-helm-charts
 theme:
-  name: "material"
+  name: "readthedocs"
 
 plugins:
   - search
