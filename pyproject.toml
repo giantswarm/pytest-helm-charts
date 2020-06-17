@@ -29,7 +29,7 @@ classifiers=[
 [tool.poetry.plugins] # Optional super table
 
 [tool.poetry.plugins."pytest11"]
-"kube-provider" = "pytest_helm_charts.fixtures"
+"helm-charts" = "pytest_helm_charts.fixtures"
 
 [tool.poetry.dependencies]
 python = "^3.6"
