@@ -1,20 +1,25 @@
 """This module introduces classes for handling different clusters."""
+from abc import ABC, abstractmethod
 from typing import Optional
 
 from pykube import HTTPClient, KubeConfig
 
 
-class Cluster:
+class Cluster(ABC):
     """Represents an abstract cluster."""
+
+    @abstractmethod
     def create(self) -> HTTPClient:
         """Creates an instance of a cluster and returns HTTPClient to connect to it."""
         raise NotImplementedError
 
+    @abstractmethod
     def destroy(self) -> None:
         """Destroys the cluster created earlier with a call to [create](Cluster.create)."""
         raise NotImplementedError
 
-    def create_http_client_from_kube_config(self, kube_config: KubeConfig) -> HTTPClient:
+    @staticmethod
+    def create_http_client_from_kube_config(kube_config: KubeConfig) -> HTTPClient:
         """Method for creating KubeConfig instances. Useful for mocking the HTTPClient"""
         return HTTPClient(kube_config)
 
