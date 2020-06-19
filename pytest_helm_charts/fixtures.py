@@ -22,7 +22,7 @@ def pytest_addoption(parser: Parser) -> None:
     group.addoption(
         "--cluster-type",
         action="store",
-        default="kind",
+        default="existing",
         help="Select cluster type. Supported values: 'kind', 'existing'."
     )
     group.addoption(
@@ -140,6 +140,7 @@ def kube_cluster(cluster_type: str,
         try:
             logger.info("Destroying cluster")
             c.destroy()
+            logger.info("Cluster destroyed")
         except:
             exc = sys.exc_info()
             logger.error("Error of type {} when destroying cluster. Value: {}\nStacktrace:\n{}".format(
