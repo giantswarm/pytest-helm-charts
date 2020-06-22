@@ -2,5 +2,5 @@
 from typing import Dict, Any
 
 
-#YamlValue = Union[int, float, str, bool, List['YamlValue'], 'YamlDict']
+# YamlValue = Union[int, float, str, bool, List['YamlValue'], 'YamlDict']
 YamlDict = Dict[str, Any]

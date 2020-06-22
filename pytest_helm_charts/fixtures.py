@@ -10,8 +10,8 @@ from _pytest.config import Config
 from _pytest.config.argparsing import Parser
 from pykube import HTTPClient
 
-from .apps.app_catalog import AppCR, AppCatalogFactoryFunc
-from .apps.deployment import AppFactoryFunc, AppState, app_factory_func
+from .apps.app_catalog import AppCR, AppCatalogFactoryFunc, AppCatalogCR
+from .apps.deployment import AppFactoryFunc, AppState, app_factory_func, app_catalog_factory_func
 from .clusters import ExistingCluster, Cluster
 
 logger = logging.getLogger(__name__)
@@ -148,14 +148,27 @@ def kube_cluster(cluster_type: str,
             ))
 
 
-@pytest.fixture(scope="session")
-def app_factory(kube_client: HTTPClient,
+@pytest.fixture(scope="module")
+def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc]:
+    """Return a factory object, that can be used to configure new AppCatalog CRs
+    for the 'app-operator' running in the cluster"""
+    created_catalogs: List[AppCatalogCR] = []
+
+    yield app_catalog_factory_func(kube_cluster.kube_client, created_catalogs)
+
+    for catalog in created_catalogs:
+        catalog.delete()
+        # TODO: wait until finalizer is gone and object is deleted
+
+
+@pytest.fixture(scope="module")
+def app_factory(kube_cluster: Cluster,
                 app_catalog_factory: AppCatalogFactoryFunc) -> Iterable[AppFactoryFunc]:
     """Returns a factory function which can be used to install an app using App CR"""
 
     created_apps: List[AppState] = []
 
-    yield app_factory_func(kube_client, app_catalog_factory, created_apps)
+    yield app_factory_func(kube_cluster.kube_client, app_catalog_factory, created_apps)
 
     for created in created_apps:
         created.app.delete()
