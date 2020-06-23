@@ -22,6 +22,11 @@ class Cluster(ABC):
 
     @property
     def kube_client(self) -> Optional[HTTPClient]:
+        """Returns the HTTP client you can use to access Kubernetes API of the cluster under test.
+
+        Please refer to [pykube](https://pykube.readthedocs.io/en/latest/api/pykube.html) to get docs
+        for [HTTPClient](https://pykube.readthedocs.io/en/latest/api/pykube.html#pykube.http.HTTPClient).
+        """
         return self._kube_client
 
 

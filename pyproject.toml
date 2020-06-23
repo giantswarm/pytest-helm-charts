@@ -36,7 +36,7 @@ python = "^3.6"
 pytest = "^5.4.2"
 pykube-ng = "^20.5.0"
 mkdocs = {version = "^1.1.2", optional = true }
-mkapi = {version = "^1.0.3", python = "^3.7", optional = true}
+mkapi = {version = "^1.0.8", python = "^3.7", optional = true}
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.5.2"
