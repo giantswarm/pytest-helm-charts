@@ -1,1 +1,1 @@
-"""This package includes fixtures and clusters definitions."""
+"""This package provides tools for working and testing helm charts."""

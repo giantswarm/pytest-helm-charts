@@ -2,14 +2,14 @@ import logging
 
 import pytest
 from pykube.exceptions import HTTPError
-from pytest_helm_charts.apps.deployment import AppFactoryFunc
+from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc
 
-from pytest_helm_charts.apps.app_catalog import AppCatalogFactoryFunc
+from pytest_helm_charts.giantswarm_app_platform.app_catalog import AppCatalogFactoryFunc
 
 logger = logging.getLogger(__name__)
 
 
-def test_app_catalog_add_remove(app_catalog_factory: AppCatalogFactoryFunc):
+def test_app_catalog_factory_fixture(app_catalog_factory: AppCatalogFactoryFunc):
     """This example shows how to use [app_catalog_factory](pytest_helm_charts.fixtures.app_app_catalog_factory)
     fixture to create a new AppCatalog CR in the Kubernetes API. You have to define an app catalog before you
     can install and use applications coming from that catalog.
@@ -31,7 +31,10 @@ def test_app_catalog_bad_name(app_catalog_factory: AppCatalogFactoryFunc):
     assert catalog.metadata["name"] == catalog_name
 
 
-def test_app_add_remove(app_factory: AppFactoryFunc):
+def test_app_factory_fixture(app_factory: AppFactoryFunc):
+    """Instead of using the [app_factory](pytest_helm_charts.fixtures.app_factory) fixture
+    directly to create a new app here, we test the specific case of using it to create
+    [stormforger_load_app_factory](pytest_helm_charts.fixtures."""
     catalog_name = "test-dynamic"
     catalog_url = "https://test-dynamic.com/"
     catalog = app_catalog_factory(catalog_name, catalog_url)
