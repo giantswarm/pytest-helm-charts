@@ -4,32 +4,7 @@ from pykube import HTTPClient
 
 from .custom_resources import GiantSwarmAppPlatformCRs, AppCatalogCR
 
-AppCatalogFactoryFunc = Callable[[str, str], AppCatalogCR]
-
-
-def get_app_catalog_obj(catalog_name: str, catalog_uri: str,
-                        kube_client: HTTPClient) -> AppCatalogCR:
-    app_catalog_cr = {
-        "apiVersion": "application.giantswarm.io/v1alpha1",
-        "kind": "AppCatalog",
-        "metadata": {
-            "labels": {
-                "app-operator.giantswarm.io/version": "1.0.0",
-                "application.giantswarm.io/catalog-type": "",
-            },
-            "name": catalog_name,
-        },
-        "spec": {
-            "description": "Catalog for testing.",
-            "storage": {
-                "URL": catalog_uri,
-                "type": "helm",
-            },
-            "title": catalog_name,
-        }
-    }
-    crs = GiantSwarmAppPlatformCRs(kube_client)
-    return crs.app_catalog_cr_factory(kube_client, app_catalog_cr)
+AppCatalogFactoryFunc = Callable[[str, Optional[str]], AppCatalogCR]
 
 
 def __get_app_catalog_obj(catalog_name: str, catalog_uri: str,

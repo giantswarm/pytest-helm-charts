@@ -1,5 +1,4 @@
-from collections import Iterable
-from typing import List
+from typing import List, Iterable
 
 import pytest
 
