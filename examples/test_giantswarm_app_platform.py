@@ -16,7 +16,7 @@ def test_app_catalog_factory_fixture(app_catalog_factory: AppCatalogFactoryFunc)
     can install and use applications coming from that catalog.
     """
     catalog_name = "test-dynamic"
-    catalog_url = "https://test-dynamic.com/"
+    catalog_url = "https://test-dynamic.com"
     catalog = app_catalog_factory(catalog_name, catalog_url)
     assert catalog.metadata["name"] == catalog_name
     assert catalog.obj["spec"]["title"] == catalog_name
