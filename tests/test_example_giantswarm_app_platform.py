@@ -57,31 +57,11 @@ def test_app_catalog_working(testdir: Testdir, mocker: MockFixture):
 
 
 def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc, mocker: MockFixture):
-    # patch appCatalogFactory
     catalog_name = "test-dynamic"
     catalog_url = "https://test-dynamic.com"
-
-    def __mock_app_catalog_fact(name: str, url: Optional[str] = ""):
-        mock_app_catalog_cr = mocker.Mock(name="MockAppCatalogCR")
-        mock_app_catalog_cr.metadata = {"name": catalog_name}
-        mock_app_catalog_cr.obj = {
-            "spec": {
-                "title": name,
-                "storage": {
-                    "type": "helm",
-                    "URL": url,
-                }
-            }
-        }
-        return mock_app_catalog_cr
-
-    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app_catalog.app_catalog_factory_func")
-    pytest_helm_charts.giantswarm_app_platform.app_catalog.app_catalog_factory_func.return_value = \
-        __mock_app_catalog_fact
-
-    # patch AppCR returned typed
     app_name = "testing-app"
     app_namespace = "my-namespace"
+
     mock_app_cr = get_mock_app_cr(mocker, app_name)
     mock_app_cr_type = mocker.Mock(name="MockAppCRType")
     mock_app_cr_type.return_value = mock_app_cr
@@ -89,7 +69,6 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     mock_app_catalog_cr_type = mocker.Mock(name="MockAppCatalogCRType")
     mock_app_catalog_cr_type.return_value = mock_app_catalog_cr
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.custom_resources.object_factory", autospec=True)
-    # pytest_helm_charts.giantswarm_app_platform.custom_resources.object_factory.return_value = mock_app_cr_type
     pytest_helm_charts.giantswarm_app_platform.custom_resources.object_factory.side_effect = 2 * [mock_app_cr_type,
                                                                                                   mock_app_catalog_cr_type]
 
@@ -99,7 +78,6 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
         }
     }
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.ConfigMap")
-    mocker.patch("pykube.objects.APIObject")
     test_app: AppCR = app_factory(app_name, "1.0.0", catalog_name, catalog_url, app_namespace, config_values)
 
     # assert that configMap was created for the app
@@ -117,6 +95,7 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     # assert that app object was called with create()
     assert test_app == mock_app_cr
     mock_app_cr.create.assert_called_once()
+
 
 # def test_app_loadtest_app_working(testdir: Testdir, mocker: MockFixture):
 #     testdir.copy_example("examples/test_giantswarm_app_platform.py")
