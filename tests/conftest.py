@@ -1,5 +1,3 @@
-from typing import Iterable
-
 import pytest
 from pykube import HTTPClient
 from pytest_mock import MockFixture
@@ -21,7 +19,6 @@ class MockCluster(Cluster):
         self.__mocker = mocker
 
     def create(self) -> HTTPClient:
-        # mock_client = self.__mocker.Mock(name="MockHTTPClient", spec="pykube.HTTPClient")
         mock_client = self.__mocker.MagicMock(name="MockHTTPClient")
         self._kube_client = mock_client
         return self._kube_client
@@ -37,7 +34,7 @@ def kube_cluster(cluster_type: str,
                  session_mocker: MockFixture,
                  _existing_cluster_factory: ConfigFactoryFunction,
                  _kind_cluster_factory: ConfigFactoryFunction,
-                 _giantswarm_cluster_factory: ConfigFactoryFunction) -> Iterable[Cluster]:
+                 _giantswarm_cluster_factory: ConfigFactoryFunction) -> Cluster:
     cluster = MockCluster(session_mocker)
     cluster.create()
     return cluster
