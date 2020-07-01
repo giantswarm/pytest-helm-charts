@@ -1,5 +1,4 @@
 import unittest.mock
-from typing import Optional
 
 import yaml
 from _pytest.pytester import Testdir
@@ -11,6 +10,7 @@ from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCR
 from pytest_helm_charts.utils import YamlDict
+from tests.conftest import MockAppPlatformCRs
 from tests.helper import run_pytest
 
 
@@ -43,6 +43,7 @@ def test_app_catalog_working(testdir: Testdir, mocker: MockFixture):
     testdir.copy_example("examples/test_giantswarm_app_platform.py")
     catalog_name = "test-dynamic"
     catalog_url = "https://test-dynamic.com"
+
     mock_app_catalog_cr = get_mock_app_catalog_cr(mocker, catalog_name, catalog_url)
     mock_app_catalog_cr_type = mocker.Mock(name="MockAppCatalogCRType")
     mock_app_catalog_cr_type.return_value = mock_app_catalog_cr
@@ -56,21 +57,17 @@ def test_app_catalog_working(testdir: Testdir, mocker: MockFixture):
     assert result.ret == 0
 
 
-def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc, mocker: MockFixture):
+def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc, mocker: MockFixture,
+                             gs_app_platform_crs: MockAppPlatformCRs):
     catalog_name = "test-dynamic"
     catalog_url = "https://test-dynamic.com"
     app_name = "testing-app"
     app_namespace = "my-namespace"
 
     mock_app_cr = get_mock_app_cr(mocker, app_name)
-    mock_app_cr_type = mocker.Mock(name="MockAppCRType")
-    mock_app_cr_type.return_value = mock_app_cr
     mock_app_catalog_cr = get_mock_app_catalog_cr(mocker, catalog_name, catalog_url)
-    mock_app_catalog_cr_type = mocker.Mock(name="MockAppCatalogCRType")
-    mock_app_catalog_cr_type.return_value = mock_app_catalog_cr
-    mocker.patch("pytest_helm_charts.giantswarm_app_platform.custom_resources.object_factory", autospec=True)
-    pytest_helm_charts.giantswarm_app_platform.custom_resources.object_factory.side_effect = 2 * [mock_app_cr_type,
-                                                                                                  mock_app_catalog_cr_type]
+    gs_app_platform_crs.app_catalog_cr_factory.return_value = mock_app_catalog_cr
+    gs_app_platform_crs.app_cr_factory.return_value = mock_app_cr
 
     config_values: YamlDict = {
         "key1": {
@@ -95,7 +92,6 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     # assert that app object was called with create()
     assert test_app == mock_app_cr
     mock_app_cr.create.assert_called_once()
-
 
 # def test_app_loadtest_app_working(testdir: Testdir, mocker: MockFixture):
 #     testdir.copy_example("examples/test_giantswarm_app_platform.py")

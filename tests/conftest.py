@@ -1,3 +1,5 @@
+import unittest.mock
+
 import pytest
 from pykube import HTTPClient
 from pytest_mock import MockFixture
@@ -38,3 +40,15 @@ def kube_cluster(cluster_type: str,
     cluster = MockCluster(session_mocker)
     cluster.create()
     return cluster
+
+
+class MockAppPlatformCRs:
+    def __init__(self, mocker: MockFixture):
+        self.app_cr_factory: unittest.mock.Mock = mocker.Mock(name="MockAppCRType")
+        self.app_catalog_cr_factory: unittest.mock.Mock = mocker.Mock(name="MockAppCatalogCRType")
+
+
+@pytest.fixture(scope="module")
+def gs_app_platform_crs(kube_cluster: Cluster, session_mocker: MockFixture) -> MockAppPlatformCRs:
+    result = MockAppPlatformCRs(session_mocker)
+    return result

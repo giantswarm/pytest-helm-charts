@@ -8,6 +8,7 @@ AppCatalogFactoryFunc = Callable[[str, Optional[str]], AppCatalogCR]
 
 
 def __get_app_catalog_obj(catalog_name: str, catalog_uri: str,
+                          gs_app_platform_crs: GiantSwarmAppPlatformCRs,
                           kube_client: HTTPClient) -> AppCatalogCR:
     app_catalog_cr = {
         "apiVersion": "application.giantswarm.io/v1alpha1",
@@ -28,11 +29,11 @@ def __get_app_catalog_obj(catalog_name: str, catalog_uri: str,
             "title": catalog_name,
         }
     }
-    crs = GiantSwarmAppPlatformCRs(kube_client)
-    return crs.app_catalog_cr_factory(kube_client, app_catalog_cr)
+    return gs_app_platform_crs.app_catalog_cr_factory(kube_client, app_catalog_cr)
 
 
 def app_catalog_factory_func(kube_client: HTTPClient,
+                             gs_app_platform_crs: GiantSwarmAppPlatformCRs,
                              created_app_catalogs: List[AppCatalogCR]) -> AppCatalogFactoryFunc:
     """Return a factory object, that can be used to configure new AppCatalog CRs
     for the 'app-operator' running in the cluster"""
@@ -49,7 +50,7 @@ def app_catalog_factory_func(kube_client: HTTPClient,
                     "You requested creation of AppCatalog named {} with URL {} but it was already registered with URL "
                     "{}".format(name, url, existing_url))
 
-        app_catalog = __get_app_catalog_obj(name, str(url), kube_client)
+        app_catalog = __get_app_catalog_obj(name, str(url), gs_app_platform_crs, kube_client)
         created_app_catalogs.append(app_catalog)
         app_catalog.create()
         # TODO: check that app catalog is present

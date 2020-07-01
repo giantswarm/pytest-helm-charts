@@ -17,6 +17,7 @@ class AppState(NamedTuple):
 
 def app_factory_func(kube_client: HTTPClient,
                      app_catalog_factory: AppCatalogFactoryFunc,
+                     gs_app_platform_crs: GiantSwarmAppPlatformCRs,
                      created_apps: List[AppState]) -> AppFactoryFunc:
     def _app_factory(app_name: str, app_version: str, catalog_name: str,
                      catalog_url: str, namespace: str = "default",
@@ -78,7 +79,7 @@ def app_factory_func(kube_client: HTTPClient,
             app_cm_obj = ConfigMap(kube_client, app_cm)
             app_cm_obj.create()
 
-        app_obj = GiantSwarmAppPlatformCRs(kube_client).app_cr_factory(kube_client, app)
+        app_obj = gs_app_platform_crs.app_cr_factory(kube_client, app)
         app_obj.create()
         created_apps.append(AppState(app_obj, app_cm_obj))
         # TODO: wait until deployment is all ready
