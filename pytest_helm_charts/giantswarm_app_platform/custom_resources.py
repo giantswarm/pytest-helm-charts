@@ -3,10 +3,10 @@ from typing import Type
 from pykube import HTTPClient, object_factory
 from pykube.objects import APIObject
 
-AppCatalogCRType = Type[APIObject]
 AppCatalogCR = APIObject
-AppCRType = Type[APIObject]
+AppCatalogCRType = Type[AppCatalogCR]
 AppCR = APIObject
+AppCRType = Type[AppCR]
 
 
 class GiantSwarmAppPlatformCRs:

@@ -10,6 +10,9 @@ class Cluster(ABC):
 
     _kube_client: Optional[HTTPClient]
 
+    def __init__(self):
+        self._kube_client = None
+
     @abstractmethod
     def create(self) -> HTTPClient:
         """Creates an instance of a cluster and returns HTTPClient to connect to it."""
@@ -37,6 +40,7 @@ class ExistingCluster(Cluster):
     kube_config_path: str
 
     def __init__(self, kube_config_path: str) -> None:
+        super().__init__()
         self.kube_config_path = kube_config_path
 
     def create(self) -> HTTPClient:
@@ -45,7 +49,7 @@ class ExistingCluster(Cluster):
         return self._kube_client
 
     def destroy(self) -> None:
-        if self.kube_client is None:
+        if self._kube_client is None:
             return
         self._kube_client.session.close()
         self._kube_client = None
