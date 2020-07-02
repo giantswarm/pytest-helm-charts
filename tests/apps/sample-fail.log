@@ -1,0 +1,65 @@
+---- Nginx basic test ----------------------------------------------------------
+[#########################################################################-] 99%
+          waiting: 0      / active: 5      / done: 4495
+================================================================================
+
+
+================================================================================
+2020-06-03 10:47:51                                         139s elapsed
+---- Requests ------------------------------------------------------------------
+> Global                                                   (OK=18096  KO=431904)
+> request_1                                                (OK=18096  KO=431904)
+---- Errors --------------------------------------------------------------------
+> status.find.in(200,201,202,203,204,205,206,207,208,209,304), f 234298 (54.25%)
+ound 503
+> status.find.in(200,201,202,203,204,205,206,207,208,209,304), f 195542 (45.27%)
+ound 502
+> status.find.in(200,201,202,203,204,205,206,207,208,209,304), f   2061 ( 0.48%)
+ound 504
+> i.g.h.c.i.RequestTimeoutException: Request timeout to nginx-in      3 ( 0.00%)
+gress-controller.kube-system.svc/172.31.81.180:80 after 60000 ...
+
+---- Nginx basic test ----------------------------------------------------------
+[##########################################################################]100%
+          waiting: 0      / active: 0      / done: 4500
+================================================================================
+
+Simulation nginx.NginxSimulation completed in 139 seconds
+Parsing log file(s)...
+Parsing log file(s) done
+Generating reports...
+
+================================================================================
+---- Global Information --------------------------------------------------------
+> request count                                     450000 (OK=18096  KO=431904)
+> min response time                                      0 (OK=0      KO=0     )
+> max response time                                  60330 (OK=49720  KO=60330 )
+> mean response time                                   852 (OK=1069   KO=843   )
+> std deviation                                       1427 (OK=1620   KO=1418  )
+> response time 50th percentile                        398 (OK=582    KO=396   )
+> response time 75th percentile                        587 (OK=1298   KO=578   )
+> response time 95th percentile                       3915 (OK=4268   KO=3865  )
+> response time 99th percentile                       6546 (OK=6823   KO=6541  )
+> mean requests/sec                                3214.286 (OK=129.257 KO=3085.029)
+---- Response Time Distribution ------------------------------------------------
+> t < 800 ms                                         10770 (  2%)
+> 800 ms < t < 1200 ms                                2337 (  1%)
+> t > 1200 ms                                         4989 (  1%)
+> failed                                            431904 ( 96%)
+---- Errors --------------------------------------------------------------------
+> status.find.in(200,201,202,203,204,205,206,207,208,209,304), f 234298 (54.25%)
+ound 503
+> status.find.in(200,201,202,203,204,205,206,207,208,209,304), f 195542 (45.27%)
+ound 502
+> status.find.in(200,201,202,203,204,205,206,207,208,209,304), f   2061 ( 0.48%)
+ound 504
+> i.g.h.c.i.RequestTimeoutException: Request timeout to nginx-in      3 ( 0.00%)
+gress-controller.kube-system.svc/172.31.81.180:80 after 60000 ...
+================================================================================
+
+Reports generated in 4s.
+Please open the following file: /opt/gatling/results/nginxsimulation-20200603104531205/index.html
+- generated xml file: /chart/test-results/junit-nginx-ingress-controller-app-test-values.yaml.xml -
+=========================== short test summary info ============================
+FAILED test_nginx_ic.py::test_deployments - ValueError: invalid literal for i...
+=================== 1 failed, 1 passed in 198.77s (0:03:18) ====================

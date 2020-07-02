@@ -1,0 +1,56 @@
+--2020-05-13 14:12:20--  https://github.com/giantswarm/nginx-ingress-controller-app/raw/better-testing/test/kind/NginxSimulation.scala
+Resolving github.com... 140.82.118.4
+Connecting to github.com|140.82.118.4|:443... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: https://raw.githubusercontent.com/giantswarm/nginx-ingress-controller-app/better-testing/test/kind/NginxSimulation.scala [following]
+--2020-05-13 14:12:21--  https://raw.githubusercontent.com/giantswarm/nginx-ingress-controller-app/better-testing/test/kind/NginxSimulation.scala
+Resolving raw.githubusercontent.com... 151.101.188.133
+Connecting to raw.githubusercontent.com|151.101.188.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 891 [text/plain]
+Saving to: 'user-files/simulations/NginxSimulation.scala'
+
+     0K                                                       100% 83.4M=0s
+
+2020-05-13 14:12:22 (83.4 MB/s) - 'user-files/simulations/NginxSimulation.scala' saved [891/891]
+
+GATLING_HOME is set to /opt/gatling
+Simulation nginx.NginxSimulation started...
+
+================================================================================
+2020-05-13 14:12:40                                           1s elapsed
+---- Requests ------------------------------------------------------------------
+> Global                                                   (OK=400    KO=0     )
+> request_1                                                (OK=400    KO=0     )
+
+---- Nginx basic test ----------------------------------------------------------
+[##########################################################################]100%
+          waiting: 0      / active: 0      / done: 4     
+================================================================================
+
+Simulation nginx.NginxSimulation completed in 1 seconds
+Parsing log file(s)...
+Parsing log file(s) done
+Generating reports...
+
+================================================================================
+---- Global Information --------------------------------------------------------
+> request count                                        400 (OK=400    KO=0     )
+> min response time                                      1 (OK=1      KO=-     )
+> max response time                                     30 (OK=30     KO=-     )
+> mean response time                                     3 (OK=3      KO=-     )
+> std deviation                                          2 (OK=2      KO=-     )
+> response time 50th percentile                          3 (OK=3      KO=-     )
+> response time 75th percentile                          3 (OK=3      KO=-     )
+> response time 95th percentile                          5 (OK=5      KO=-     )
+> response time 99th percentile                         10 (OK=10     KO=-     )
+> mean requests/sec                                  200.0 (OK=200.0  KO=-     )
+---- Response Time Distribution ------------------------------------------------
+> t < 800 ms                                           400 (100%)
+> 800 ms < t < 1200 ms                                   0 (  0%)
+> t > 1200 ms                                            0 (  0%)
+> failed                                                 0 (  0%)
+================================================================================
+
+Reports generated in 0s.
+Please open the following file: /opt/gatling/results/nginx/nginxsimulation-20200513141237816/index.html
