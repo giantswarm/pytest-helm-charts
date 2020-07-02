@@ -25,10 +25,10 @@ def app_factory_func(kube_client: HTTPClient,
         # TODO: include proper regexp validation
         if config_values is None:
             config_values = {}
-        assert app_name is not ""
-        assert app_version is not ""
-        assert catalog_name is not ""
-        assert catalog_url is not ""
+        assert app_name != ""
+        assert app_version != ""
+        assert catalog_name != ""
+        assert catalog_url != ""
 
         api_version = "application.giantswarm.io/v1alpha1"
         app_cm_name = "{}-testing-user-config".format(app_name)
