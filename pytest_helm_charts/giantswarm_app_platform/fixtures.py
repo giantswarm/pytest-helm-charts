@@ -4,25 +4,23 @@ import pytest
 
 from .app import AppState, AppFactoryFunc, app_factory_func
 from .app_catalog import AppCatalogFactoryFunc, AppCatalogCR, app_catalog_factory_func
-from .custom_resources import AppCR, GiantSwarmAppPlatformCRs
+from .custom_resources import AppCR
 from ..clusters import Cluster
 
 
-@pytest.fixture(scope="module")
-def gs_app_platform_crs(kube_cluster: Cluster) -> GiantSwarmAppPlatformCRs:
-    result = GiantSwarmAppPlatformCRs(kube_cluster.kube_client)
-    return result
+# @pytest.fixture(scope="module")
+# def gs_app_platform_crs(kube_cluster: Cluster) -> GiantSwarmAppPlatformCRs:
+#     result = GiantSwarmAppPlatformCRs(kube_cluster.kube_client)
+#     return result
 
 
 @pytest.fixture(scope="module")
-def app_catalog_factory(kube_cluster: Cluster,
-                        gs_app_platform_crs: GiantSwarmAppPlatformCRs
-                        ) -> Iterable[AppCatalogFactoryFunc]:
+def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc]:
     """Return a factory object, that can be used to configure new AppCatalog CRs
     for the 'app-operator' running in the cluster"""
     created_catalogs: List[AppCatalogCR] = []
 
-    yield app_catalog_factory_func(kube_cluster.kube_client, gs_app_platform_crs, created_catalogs)
+    yield app_catalog_factory_func(kube_cluster.kube_client, created_catalogs)
 
     for catalog in created_catalogs:
         catalog.delete()
@@ -31,13 +29,12 @@ def app_catalog_factory(kube_cluster: Cluster,
 
 @pytest.fixture(scope="module")
 def app_factory(kube_cluster: Cluster,
-                gs_app_platform_crs: GiantSwarmAppPlatformCRs,
                 app_catalog_factory: AppCatalogFactoryFunc) -> Iterable[AppFactoryFunc]:
     """Returns a factory function which can be used to install an app using App CR"""
 
     created_apps: List[AppState] = []
 
-    yield app_factory_func(kube_cluster.kube_client, app_catalog_factory, gs_app_platform_crs, created_apps)
+    yield app_factory_func(kube_cluster.kube_client, app_catalog_factory, created_apps)
 
     for created in created_apps:
         created.app.delete()

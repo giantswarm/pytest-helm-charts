@@ -18,15 +18,16 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install poetry
       uses: Gr1N/setup-poetry@v2
-    - uses: actions/cache@v1
+    - name: Restore poetry cache
+      uses: actions/cache@v1
       with:
         path: ~/.cache/pypoetry/virtualenvs
         key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
         restore-keys: |
           ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
-    - name: potry check version
+    - name: Poetry check version
       run: poetry --version
-    - name: potry install
+    - name: Poetry install dependencies
       run: poetry install
     - name: Lint with flake8
       run: |
@@ -34,5 +35,7 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: poetry run pytest
+    - name: Verify types with mypy
+      run: poetry run mypy pytest_helm_charts
+    - name: Run pytest
       run: poetry run python -m pytest --cov pytest_helm_charts/ --log-cli-level info tests/

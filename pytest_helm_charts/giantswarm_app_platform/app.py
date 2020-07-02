@@ -4,7 +4,7 @@ import yaml
 from pykube import HTTPClient, ConfigMap
 
 from .app_catalog import AppCatalogFactoryFunc
-from .custom_resources import GiantSwarmAppPlatformCRs, AppCR
+from .custom_resources import AppCR
 from ..utils import YamlDict
 
 AppFactoryFunc = Callable[[str, str, str, str, str, YamlDict], AppCR]
@@ -17,7 +17,6 @@ class AppState(NamedTuple):
 
 def app_factory_func(kube_client: HTTPClient,
                      app_catalog_factory: AppCatalogFactoryFunc,
-                     gs_app_platform_crs: GiantSwarmAppPlatformCRs,
                      created_apps: List[AppState]) -> AppFactoryFunc:
     def _app_factory(app_name: str, app_version: str, catalog_name: str,
                      catalog_url: str, namespace: str = "default",
@@ -79,7 +78,7 @@ def app_factory_func(kube_client: HTTPClient,
             app_cm_obj = ConfigMap(kube_client, app_cm)
             app_cm_obj.create()
 
-        app_obj = gs_app_platform_crs.app_cr_factory(kube_client, app)
+        app_obj = AppCR(kube_client, app)
         app_obj.create()
         created_apps.append(AppState(app_obj, app_cm_obj))
         # TODO: wait until deployment is all ready
