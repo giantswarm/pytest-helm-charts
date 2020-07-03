@@ -18,6 +18,7 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     catalog_url = "https://test-dynamic.com"
     app_name = "testing-app"
     app_namespace = "my-namespace"
+    app_version = "1.0.0"
 
     config_values: YamlDict = {
         "key1": {
@@ -25,14 +26,13 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
         }
     }
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app_catalog.AppCatalogCR.create")
-    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.AppCR.create")
+    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.AppCR", autospec=True)
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.ConfigMap", autospec=True)
     cm: unittest.mock.Mock = pytest_helm_charts.giantswarm_app_platform.app.ConfigMap
-    test_app: AppCR = app_factory(app_name, "1.0.0", catalog_name, catalog_url, app_namespace, config_values)
+    test_app: AppCR = app_factory(app_name, app_version, catalog_name, catalog_url, app_namespace, config_values)
 
     # assert that configMap was created for the app
-    cm.assert_called_once()
-    assert cm.call_args_list[0] == unittest.mock.call(kube_cluster.kube_client, {
+    cm.assert_called_once_with(kube_cluster.kube_client, {
         "apiVersion": "v1",
         "kind": "ConfigMap",
         "metadata": {
@@ -47,5 +47,32 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     assert cm.method_calls[0] == unittest.mock.call().create()
 
     # assert that app was created
-    # TODO: assert App YAML passed correctly
     test_app.create.assert_called_once_with()
+    app_cr = pytest_helm_charts.giantswarm_app_platform.app.AppCR
+    app_cr.assert_called_once_with(kube_cluster.kube_client, {
+        "apiVersion": "application.giantswarm.io/v1alpha1",
+        "kind": "App",
+        "metadata": {
+            "name": app_name,
+            "namespace": app_namespace,
+            "labels": {
+                "app": 'testing-app',
+                'app-operator.giantswarm.io/version': '1.0.0'
+            }
+        },
+        "spec": {
+            "catalog": catalog_name,
+            "version": app_version,
+            "kubeConfig": {
+                "inCluster": True
+            },
+            "name": app_name,
+            "namespace": app_namespace,
+            "config": {
+                "configMap": {
+                    "name": app_name + "-testing-user-config",
+                    "namespace": app_namespace
+                }
+            }
+        }
+    })
