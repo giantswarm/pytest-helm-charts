@@ -1,3 +1,4 @@
+import logging
 import unittest.mock
 
 import yaml
@@ -8,6 +9,8 @@ from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCR
 from pytest_helm_charts.utils import YamlDict
+
+logger = logging.getLogger(__name__)
 
 
 def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc, mocker: MockFixture):
@@ -29,6 +32,10 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
 
     # assert that configMap was created for the app
     cm.assert_called_once()
+    logger.info(f"len: {len(cm.call_args_list)}")
+    logger.info(f"list[0]: {cm.call_args_list[0]}")
+    logger.info(f"list[0].args[0]: {cm.call_args_list[0].args[0]}")
+    logger.info(f"list[0].args[1]: {cm.call_args_list[0].args[1]}")
     assert cm.call_args_list[0].args[0] == kube_cluster.kube_client
     assert cm.call_args_list[0].args[1]["apiVersion"] == "v1"
     assert cm.call_args_list[0].args[1]["kind"] == "ConfigMap"

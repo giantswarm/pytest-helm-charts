@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.8]
 
     steps:
     - uses: actions/checkout@v2
@@ -38,4 +38,10 @@ jobs:
     - name: Verify types with mypy
       run: poetry run mypy pytest_helm_charts
     - name: Run pytest
-      run: poetry run python -m pytest --cov pytest_helm_charts/ --log-cli-level info tests/
+      run: poetry run python -m pytest --cov=./ --cov-report=xml --log-cli-level=info tests/
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
+        env_vars: OS,PYTHON
