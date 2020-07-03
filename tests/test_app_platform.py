@@ -32,10 +32,6 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
 
     # assert that configMap was created for the app
     cm.assert_called_once()
-    logger.info(f"len: {len(cm.call_args_list)}")
-    logger.info(f"list[0]: {cm.call_args_list[0]}")
-    logger.info(f"list[0].args[0]: {cm.call_args_list[0][0][0]}")
-    logger.info(f"list[0].args[1]: {cm.call_args_list[0][0][1]}")
     assert cm.call_args_list[0] == unittest.mock.call(kube_cluster.kube_client, {
         "apiVersion": "v1",
         "kind": "ConfigMap",
@@ -47,16 +43,9 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
             "values": 'key1:\n  key2: my-val\n'
         }
     })
-    # assert cm.call_args_list[0][0] == kube_cluster.kube_client
-    # assert cm.call_args_list[0][1]["apiVersion"] == "v1"
-    # assert cm.call_args_list[0][1]["kind"] == "ConfigMap"
-    # assert cm.call_args_list[0][1]["metadata"] == {
-    #     "name": app_name + "-testing-user-config",
-    #     "namespace": app_namespace
-    # }
-    # assert yaml.load(cm.call_args_list[0].args[1]["data"]["values"]) == config_values
-    # TODO: assert cm.create() called once
+    assert len(cm.method_calls) == 1
+    assert cm.method_calls[0] == unittest.mock.call().create()
 
-    # assert that app object was called with create()
+    # assert that app was created
     # TODO: assert App YAML passed correctly
     test_app.create.assert_called_once()
