@@ -48,4 +48,4 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
 
     # assert that app was created
     # TODO: assert App YAML passed correctly
-    test_app.create.assert_called_once()
+    test_app.create.assert_called_once_with()
