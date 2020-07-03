@@ -15,12 +15,12 @@ logger = logging.getLogger(__name__)
 
 
 def pytest_addoption(parser: Parser) -> None:
-    group = parser.getgroup("kube-provider")
+    group = parser.getgroup("helm-charts")
     group.addoption(
         "--cluster-type",
         action="store",
         default="existing",
-        help="Select cluster type. Supported values: 'kind', 'existing'."
+        help="Select cluster type. Supported values: 'existing'."
     )
     group.addoption(
         "--kube-config",
@@ -75,7 +75,7 @@ def kube_config(pytestconfig: Config) -> str:
 @pytest.fixture(scope="module")
 def cluster_type(pytestconfig: Config) -> str:
     """Return a type of cluster to provide to the test environment. Currently supported values are:
-    "existing", "kind", "giantswarm"."""
+    "existing"."""
     return pytestconfig.getoption("cluster_type")
 
 

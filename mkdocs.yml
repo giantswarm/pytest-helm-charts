@@ -13,11 +13,13 @@ markdown_extensions:
   - admonition
 
 nav:
-  - Home: index.md
+  - Home:
+    - Main: index.md
+    - Fixtures: fixtures.md
   - API: mkapi/api/pytest_helm_charts|upper|strict
   - Examples:
-      - Basic: 'examples/basic.md'
-      - Giant Swarm App Platform: 'examples/giantswarm.md'
+    - Basic: 'examples/basic.md'
+    - Giant Swarm App Platform: 'examples/giantswarm.md'
   - About:
     - 'License': 'license.md'
     - 'Changelog': 'changelog.md'

@@ -43,8 +43,8 @@ def test_app_factory_fixture(stormforger_load_app_factory: StormforgerLoadAppFac
     which works exactly by using the [app_factory](pytest_helm_charts.giantswarm_app_platform.fixtures.app_factory)
     fixture.
     """
-    app_cr = stormforger_load_app_factory(1, "loadtest.app", None)
-    assert app_cr.name == "loadtest-app"
-    assert app_cr.metadata["name"] == "loadtest-app"
-    assert "app-operator.giantswarm.io/version" in app_cr.metadata["labels"]
-    assert app_cr.obj["kind"] == "App"
+    configured_app = stormforger_load_app_factory(1, "loadtest.app", None)
+    assert configured_app.app.name == "loadtest-app"
+    assert configured_app.app.metadata["name"] == "loadtest-app"
+    assert "app-operator.giantswarm.io/version" in configured_app.app.metadata["labels"]
+    assert configured_app.app.obj["kind"] == "App"

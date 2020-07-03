@@ -44,8 +44,8 @@ def app_factory(kube_cluster: Cluster,
 
 
 @pytest.fixture(scope="module")
-def kube_cluster_with_app_catalog(kube_cluster: Cluster,
-                                  app_catalog_factory: AppCatalogFactoryFunc) -> Iterable[Cluster]:
+def kube_cluster_with_app_platform(kube_cluster: Cluster,
+                                   app_catalog_factory: AppCatalogFactoryFunc) -> Iterable[Cluster]:
     """Get a ready cluster based on '--cluster-type' command line argument. Additionally,
     preconfigure the cluster with Giant Swarm's Application Platform, including:
     - app-operator
