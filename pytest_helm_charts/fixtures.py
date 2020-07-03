@@ -6,21 +6,20 @@ from pathlib import Path
 from typing import Callable, List, Iterable
 
 import pytest
-from pykube import HTTPClient
+from _pytest.config import Config
+from _pytest.config.argparsing import Parser
 
-from .apps.app_catalog import AppCR, AppCatalogFactoryFunc
-from .apps.deployment import AppFactoryFunc, AppState, app_factory_func
 from .clusters import ExistingCluster, Cluster
 
 logger = logging.getLogger(__name__)
 
 
-def pytest_addoption(parser):
+def pytest_addoption(parser: Parser) -> None:
     group = parser.getgroup("kube-provider")
     group.addoption(
         "--cluster-type",
         action="store",
-        default="kind",
+        default="existing",
         help="Select cluster type. Supported values: 'kind', 'existing'."
     )
     group.addoption(
@@ -47,32 +46,34 @@ def pytest_addoption(parser):
 
 
 @pytest.fixture(scope="module")
-def chart_path(pytestconfig) -> str:
+def chart_path(pytestconfig: Config) -> str:
     """Return a path to the chart under test (from command line argument)."""
     return pytestconfig.getoption("chart_path")
 
 
 @pytest.fixture(scope="module")
-def chart_version(pytestconfig) -> str:
+def chart_version(pytestconfig: Config) -> str:
     """Return a value that needs to be used as chart version override (from command line argument)."""
     return pytestconfig.getoption("chart_version")
 
 
 @pytest.fixture(scope="module")
-def values_file_path(pytestconfig) -> str:
-    """Return a path to the yaml file that needs to be used to configure chart under test (from command line argument)."""
+def values_file_path(pytestconfig: Config) -> str:
+    """Return a path to the yaml file that needs to be used to configure chart under test
+    (from command line argument).
+    """
     return pytestconfig.getoption("values_file")
 
 
 @pytest.fixture(scope="module")
-def kube_config(pytestconfig) -> str:
+def kube_config(pytestconfig: Config) -> str:
     """Return a path to the kube.config file that points to a running cluster with app
     catalog platform tools already installed. Used only if --cluster-type=existing (from command line argument)."""
     return pytestconfig.getoption("kube_config")
 
 
 @pytest.fixture(scope="module")
-def cluster_type(pytestconfig) -> str:
+def cluster_type(pytestconfig: Config) -> str:
     """Return a type of cluster to provide to the test environment. Currently supported values are:
     "existing", "kind", "giantswarm"."""
     return pytestconfig.getoption("cluster_type")
@@ -133,72 +134,13 @@ def kube_cluster(cluster_type: str,
     yield cluster
 
     for c in created_clusters:
+        # noinspection PyBroadException
         try:
             logger.info("Destroying cluster")
             c.destroy()
-        except:
+            logger.info("Cluster destroyed")
+        except Exception:
             exc = sys.exc_info()
             logger.error("Error of type {} when destroying cluster. Value: {}\nStacktrace:\n{}".format(
                 exc[0], exc[1], exc[2]
             ))
-
-
-@pytest.fixture(scope="session")
-def app_factory(kube_client: HTTPClient,
-                app_catalog_factory: AppCatalogFactoryFunc) -> Iterable[AppFactoryFunc]:
-    """Returns a factory function which can be used to install an app using App CR"""
-
-    created_apps: List[AppState] = []
-
-    yield app_factory_func(kube_client, app_catalog_factory, created_apps)
-
-    for created in created_apps:
-        created.app.delete()
-        if created.app_cm:
-            created.app_cm.delete()
-        # TODO: wait until finalizer is gone
-
-
-@pytest.fixture(scope="module")
-def kube_cluster_with_app_catalog(kube_cluster: Cluster,
-                                  app_catalog_factory: AppCatalogFactoryFunc) -> Iterable[Cluster]:
-    """Get a ready cluster based on '--cluster-type' command line argument. Additionally,
-    preconfigure the cluster with Giant Swarm's Application Platform, including:
-    - app-operator
-    - chart-operator
-    - chartmuseum (for storing custom build time charts)
-    - AppCatalog Custom Resource configured for the chartmuseum."""
-    # FIXME: implement
-    # TODO:
-    # - deploy app-operator
-    # - deploy chartmuseum
-    # - create new AppCatalog CR with app_catalog_factory to register chartmuseum as catalog
-    raise NotImplementedError
-    # yield kube_cluster
-    # TODO:
-    # - destroy app-operator
-    # - destroy chartmuseum
-
-
-@pytest.fixture(scope="module")
-def my_chart() -> AppCR:
-    """Returns AppCR that can be used to deploy the chart under test using the App Platform
-    tools. The App resource is not yet deployed to the cluster. You need to call create()
-    and delete() to manage its deployment"""
-    # FIXME: implement
-    raise NotImplementedError
-
-
-@pytest.fixture(scope="module")
-def app_factory(kube_client: HTTPClient,
-                app_catalog_factory: AppCatalogFactoryFunc) -> Iterable[AppFactoryFunc]:
-    """Returns a factory function which can be used to install an app using App CR"""
-
-    created_apps: List[AppState] = []
-
-    yield app_factory_func(kube_client, app_catalog_factory, created_apps)
-    for created in created_apps:
-        created.app.delete()
-        if created.app_cm:
-            created.app_cm.delete()
-        # TODO: wait until finalizer is gone
