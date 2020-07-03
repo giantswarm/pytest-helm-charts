@@ -34,10 +34,9 @@ classifiers=[
 [tool.poetry.dependencies]
 python = "^3.6"
 pytest = "^5.4.2"
-pykube-ng = "^20.5.0"
+pykube-ng = "^20.7.0"
 mkdocs = {version = "^1.1.2", optional = true }
-mkapi = {version = "^1.0.8", python = "^3.7", optional = true}
-pytest-cov = "^2.10.0"
+mkapi = {version = "^1.0.10", python = "^3.7", optional = true}
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.5.2"
@@ -46,6 +45,7 @@ tox-pyenv = "^1.1.0"
 pytest-mock = "^3.1.1"
 flake8 = "^3.8.3"
 mypy = "^0.782"
+pytest-cov = "^2.10.0"
 
 [tool.poetry.extras]
 docs = ["mkdocs", "mkapi"]

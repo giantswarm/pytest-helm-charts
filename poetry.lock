@@ -75,7 +75,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "0.4.3"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Code coverage measurement for Python"
 name = "coverage"
 optional = false
@@ -403,7 +403,7 @@ description = "Python client library for Kubernetes"
 name = "pykube-ng"
 optional = false
 python-versions = ">=3.6"
-version = "20.5.0"
+version = "20.7.2"
 
 [package.dependencies]
 pyyaml = "*"
@@ -447,7 +447,7 @@ checkqa-mypy = ["mypy (v0.761)"]
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xmlschema"]
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Pytest plugin for measuring coverage."
 name = "pytest-cov"
 optional = false
@@ -649,7 +649,7 @@ version = "0.2.5"
 [[package]]
 category = "main"
 description = "Backport of pathlib-compatible object wrapper for zip files"
-marker = "python_version >= \"3.7\" and python_version < \"3.8\" or python_version < \"3.8\" or python_version >= \"3.7\" and python_version < \"3.8\" and (python_version >= \"3.7\" and python_version < \"3.8\" or python_version < \"3.8\")"
+marker = "python_version >= \"3.7\" and python_version < \"3.8\" or python_version < \"3.8\""
 name = "zipp"
 optional = false
 python-versions = ">=3.6"
@@ -663,7 +663,7 @@ testing = ["jaraco.itertools", "func-timeout"]
 docs = ["mkdocs", "mkapi"]
 
 [metadata]
-content-hash = "4756c0d5ff103d31c7313a4b6caa100e31e933a1d038e13782c2480db562a293"
+content-hash = "ddc6e8cb03985cbc3a6bd6c5750640c09944bbd990fad1a13bfa943eaf1c6a9e"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -872,8 +872,8 @@ pyflakes = [
     {file = "pyflakes-2.2.0.tar.gz", hash = "sha256:35b2d75ee967ea93b55750aa9edbbf72813e06a66ba54438df2cfac9e3c27fc8"},
 ]
 pykube-ng = [
-    {file = "pykube-ng-20.5.0.tar.gz", hash = "sha256:f0dea2b53eb33d3c5a5504388b3b3d4b63f27082f2b42588d415105e9e9633d9"},
-    {file = "pykube_ng-20.5.0-py3-none-any.whl", hash = "sha256:09f4059440ff12e1a850e00223eb7265192553257c08c79aa75c843c2ddff58d"},
+    {file = "pykube-ng-20.7.2.tar.gz", hash = "sha256:84f3dbec0a4c60993153085f16b6814a2ce237c18dc101c588d567c7ae27fd9f"},
+    {file = "pykube_ng-20.7.2-py3-none-any.whl", hash = "sha256:24cfa6e955d9befd5173d64ee242f94af62c36de3edad1d91b311aa9d0175e46"},
 ]
 pyparsing = [
     {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},
