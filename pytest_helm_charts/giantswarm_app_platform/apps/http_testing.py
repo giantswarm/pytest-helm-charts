@@ -5,11 +5,10 @@ from typing import Callable, Dict, Iterable, List, Optional, Tuple
 import pytest
 from pykube import HTTPClient, ConfigMap
 
-from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc
-from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCR
+from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc, ConfiguredApp
 from pytest_helm_charts.utils import YamlDict
 
-StormforgerLoadAppFactoryFunc = Callable[[int, str, Optional[Dict[str, str]]], AppCR]
+StormforgerLoadAppFactoryFunc = Callable[[int, str, Optional[Dict[str, str]]], ConfiguredApp]
 
 
 @pytest.fixture(scope="module")
@@ -30,7 +29,7 @@ def stormforger_load_app_factory(app_factory: AppFactoryFunc) -> StormforgerLoad
     """
 
     def _stormforger_load_app_factory(replicas: int, host_url: str,
-                                      node_affinity_selector: Optional[Dict[str, str]] = None) -> AppCR:
+                                      node_affinity_selector: Optional[Dict[str, str]] = None) -> ConfiguredApp:
         """Creates and deploys stormforger load app by creating the relevant App CR in the API.
 
         Args:
@@ -74,7 +73,7 @@ def stormforger_load_app_factory(app_factory: AppFactoryFunc) -> StormforgerLoad
     return _stormforger_load_app_factory
 
 
-GatlingAppFactoryFunc = Callable[[str, Optional[Dict[str, str]]], AppCR]
+GatlingAppFactoryFunc = Callable[[str, Optional[Dict[str, str]]], ConfiguredApp]
 
 
 @pytest.fixture(scope="module")
@@ -83,7 +82,7 @@ def gatling_app_factory(kube_client: HTTPClient,
     created_configmaps: List[ConfigMap] = []
 
     def _gatling_app_factory(simulation_file: str,
-                             node_affinity_selector: Optional[Dict[str, str]] = None) -> AppCR:
+                             node_affinity_selector: Optional[Dict[str, str]] = None) -> ConfiguredApp:
         namespace = "default"
         with open(simulation_file) as f:
             simulation_code = f.read()

@@ -7,20 +7,21 @@ from .app_catalog import AppCatalogFactoryFunc
 from .custom_resources import AppCR
 from ..utils import YamlDict
 
-AppFactoryFunc = Callable[[str, str, str, str, str, YamlDict], AppCR]
 
-
-class AppState(NamedTuple):
+class ConfiguredApp(NamedTuple):
     app: AppCR
-    app_cm: ConfigMap
+    app_cm: Optional[ConfigMap]
+
+
+AppFactoryFunc = Callable[[str, str, str, str, str, YamlDict], ConfiguredApp]
 
 
 def app_factory_func(kube_client: HTTPClient,
                      app_catalog_factory: AppCatalogFactoryFunc,
-                     created_apps: List[AppState]) -> AppFactoryFunc:
+                     created_apps: List[ConfiguredApp]) -> AppFactoryFunc:
     def _app_factory(app_name: str, app_version: str, catalog_name: str,
                      catalog_url: str, namespace: str = "default",
-                     config_values: YamlDict = None) -> AppCR:
+                     config_values: YamlDict = None) -> ConfiguredApp:
         # TODO: include proper regexp validation
         if config_values is None:
             config_values = {}
@@ -80,8 +81,9 @@ def app_factory_func(kube_client: HTTPClient,
 
         app_obj = AppCR(kube_client, app)
         app_obj.create()
-        created_apps.append(AppState(app_obj, app_cm_obj))
+        created_apps.append(ConfiguredApp(app_obj, app_cm_obj))
         # TODO: wait until deployment is all ready
-        return app_obj
+        # we return a new object here, so that user doesn't alter the one added to created_apps
+        return ConfiguredApp(app_obj, app_cm_obj)
 
     return _app_factory

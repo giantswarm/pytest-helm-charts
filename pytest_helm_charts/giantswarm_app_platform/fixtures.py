@@ -2,7 +2,7 @@ from typing import List, Iterable
 
 import pytest
 
-from .app import AppState, AppFactoryFunc, app_factory_func
+from .app import ConfiguredApp, AppFactoryFunc, app_factory_func
 from .app_catalog import AppCatalogFactoryFunc, AppCatalogCR, app_catalog_factory_func
 from .custom_resources import AppCR
 from ..clusters import Cluster
@@ -32,7 +32,7 @@ def app_factory(kube_cluster: Cluster,
                 app_catalog_factory: AppCatalogFactoryFunc) -> Iterable[AppFactoryFunc]:
     """Returns a factory function which can be used to install an app using App CR"""
 
-    created_apps: List[AppState] = []
+    created_apps: List[ConfiguredApp] = []
 
     yield app_factory_func(kube_cluster.kube_client, app_catalog_factory, created_apps)
 

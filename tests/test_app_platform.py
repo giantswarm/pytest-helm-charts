@@ -1,13 +1,12 @@
 import logging
 import unittest.mock
+from typing import cast
 
-import yaml
 from pytest_mock import MockFixture
 
 import pytest_helm_charts
 from pytest_helm_charts.clusters import Cluster
-from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc
-from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCR
+from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc, ConfiguredApp
 from pytest_helm_charts.utils import YamlDict
 
 logger = logging.getLogger(__name__)
@@ -28,7 +27,8 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app_catalog.AppCatalogCR.create")
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.AppCR", autospec=True)
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.ConfigMap", autospec=True)
-    test_app: AppCR = app_factory(app_name, app_version, catalog_name, catalog_url, app_namespace, config_values)
+    test_configured_app: ConfiguredApp = app_factory(app_name, app_version, catalog_name, catalog_url, app_namespace,
+                                                     config_values)
 
     # assert that configMap was created for the app
     cm: unittest.mock.Mock = pytest_helm_charts.giantswarm_app_platform.app.ConfigMap
@@ -43,12 +43,10 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
             "values": 'key1:\n  key2: my-val\n'
         }
     })
-    assert len(cm.method_calls) == 1
-    assert cm.method_calls[0] == unittest.mock.call().create()
+    cast(unittest.mock.Mock, test_configured_app.app_cm.create).assert_called_once_with()
 
     # assert that app was created
-    test_app.create.assert_called_once_with()
-    app_cr = pytest_helm_charts.giantswarm_app_platform.app.AppCR
+    app_cr: unittest.mock.Mock = pytest_helm_charts.giantswarm_app_platform.app.AppCR
     app_cr.assert_called_once_with(kube_cluster.kube_client, {
         "apiVersion": "application.giantswarm.io/v1alpha1",
         "kind": "App",
@@ -76,3 +74,4 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
             }
         }
     })
+    cast(unittest.mock.Mock, test_configured_app.app.create).assert_called_once_with()
