@@ -1,9 +1,9 @@
 minimum_pre_commit_version: 1.21.0
 repos:
-  #- repo: meta
-  #  hooks:
-  #  - id: check-hooks-apply
-  #  - id: check-useless-excludes
+- repo: meta
+  hooks:
+  - id: check-hooks-apply
+  - id: check-useless-excludes
 
   ## reorder Python imports
   #- repo: https://github.com/asottile/reorder_python_imports
@@ -25,11 +25,13 @@ repos:
   #  - id: pydocstyle
   #    args: ["--ignore=D10,D21,D202"]
   #
-  ## bandit
-  #-   repo: https://github.com/PyCQA/bandit
-  #    rev: '' # Update me!
-  #    hooks:
-  #    - id: bandit
+
+# bandit
+-   repo: https://github.com/PyCQA/bandit
+    rev: '1.6.2' # Update me!
+    hooks:
+    - id: bandit
+      args: ["-s", "B101"]
 
 # static type checking with mypy
 - repo: https://github.com/pre-commit/mirrors-mypy
