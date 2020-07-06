@@ -14,8 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
-    if: ${{ github.ref_type == 'tag' }}
+      #    if: ${{ github.ref_type == 'tag' }}
     steps:
+      - name: print ref type
+        run: echo "${{ github.ref_type }}"
+      - name: print ref
+        run: echo "${{ github.ref }}"
       - name: Release on pypi
         run: echo "poetry publish --build"
 
