@@ -26,7 +26,8 @@ jobs:
     - name: Install poetry
       uses: Gr1N/setup-poetry@v2
     - name: Release on pypi
-      run: poetry publish --build
+      run: poetry version
+      #run: poetry publish --build
 
   test:
     runs-on: ubuntu-latest
