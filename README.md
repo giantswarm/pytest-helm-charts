@@ -97,4 +97,3 @@ See [CHANGELOG.md](CHANGELOG.md).
 ## Issues
 
 If you encounter any problems, please [file an issue](https://github.com/giantswarm/pytest-helm-charts/issues) along with a detailed description.
-
