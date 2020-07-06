@@ -2,6 +2,7 @@ import logging
 import unittest.mock
 from typing import cast
 
+from pykube import ConfigMap
 from pytest_mock import MockFixture
 
 import pytest_helm_charts
@@ -43,10 +44,12 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
             "values": 'key1:\n  key2: my-val\n'
         }
     })
-    cast(unittest.mock.Mock, test_configured_app.app_cm.create).assert_called_once_with()
+    assert test_configured_app.app_cm is not None
+    app_cm: ConfigMap = test_configured_app.app_cm
+    cast(unittest.mock.Mock, app_cm.create).assert_called_once_with()
 
     # assert that app was created
-    app_cr: unittest.mock.Mock = pytest_helm_charts.giantswarm_app_platform.app.AppCR
+    app_cr = cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.app.AppCR)
     app_cr.assert_called_once_with(kube_cluster.kube_client, {
         "apiVersion": "application.giantswarm.io/v1alpha1",
         "kind": "App",
