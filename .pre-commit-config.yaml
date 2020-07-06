@@ -40,8 +40,8 @@ repos:
   - id: check-docstring-first
   - id: debug-statements
   - id: end-of-file-fixer
-    #  - id: flake8
-    #    additional_dependencies: ["flake8-bugbear"]
+  - id: flake8
+    additional_dependencies: ["flake8-bugbear"]
   - id: trailing-whitespace
   - id: check-ast
   - id: check-builtin-literals
