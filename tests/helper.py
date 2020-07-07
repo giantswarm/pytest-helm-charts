@@ -11,7 +11,7 @@ def run_pytest(testdir: Testdir, mocker: MockFixture, *args) -> RunResult:
         "--log-cli-level",
         "info",
         "--kube-config",
-        "/tmp/kat_test/kube.config",
+        "/tmp/kat_test/kube.config",  # nosec
         "-v",
         *args,
     )
