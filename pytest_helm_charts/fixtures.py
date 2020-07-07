@@ -17,32 +17,17 @@ logger = logging.getLogger(__name__)
 def pytest_addoption(parser: Parser) -> None:
     group = parser.getgroup("helm-charts")
     group.addoption(
-        "--cluster-type",
-        action="store",
-        default="existing",
-        help="Select cluster type. Supported values: 'existing'."
+        "--cluster-type", action="store", default="existing", help="Select cluster type. Supported values: 'existing'."
     )
     group.addoption(
         "--kube-config",
         action="store",
         default=os.path.join(str(Path.home()), ".kube", "config"),
-        help="The path to 'kube.config' file. Used when '--cluster-type existing' is used as well."
+        help="The path to 'kube.config' file. Used when '--cluster-type existing' is used as well.",
     )
-    group.addoption(
-        "--values-file",
-        action="store",
-        help="Path to the values file used for testing the chart."
-    )
-    group.addoption(
-        "--chart-path",
-        action="store",
-        help="The path to a helm chart under test."
-    )
-    group.addoption(
-        "--chart-version",
-        action="store",
-        help="Override chart version for the chart under test."
-    )
+    group.addoption("--values-file", action="store", help="Path to the values file used for testing the chart.")
+    group.addoption("--chart-path", action="store", help="The path to a helm chart under test.")
+    group.addoption("--chart-version", action="store", help="Override chart version for the chart under test.")
 
 
 @pytest.fixture(scope="module")
@@ -109,10 +94,12 @@ def _giantswarm_cluster_factory() -> ConfigFactoryFunction:
 
 
 @pytest.fixture(scope="module")
-def kube_cluster(cluster_type: str,
-                 _existing_cluster_factory: ConfigFactoryFunction,
-                 _kind_cluster_factory: ConfigFactoryFunction,
-                 _giantswarm_cluster_factory: ConfigFactoryFunction) -> Iterable[Cluster]:
+def kube_cluster(
+    cluster_type: str,
+    _existing_cluster_factory: ConfigFactoryFunction,
+    _kind_cluster_factory: ConfigFactoryFunction,
+    _giantswarm_cluster_factory: ConfigFactoryFunction,
+) -> Iterable[Cluster]:
     """Return a ready Cluster object, which can already be used in test to connect
     to the cluster. Specific implementation used to provide the cluster depends
     on the '--cluster-type' command line option."""
@@ -141,6 +128,6 @@ def kube_cluster(cluster_type: str,
             logger.info("Cluster destroyed")
         except Exception:
             exc = sys.exc_info()
-            logger.error("Error of type {} when destroying cluster. Value: {}\nStacktrace:\n{}".format(
-                exc[0], exc[1], exc[2]
-            ))
+            logger.error(
+                "Error of type {} when destroying cluster. Value: {}\nStacktrace:\n{}".format(exc[0], exc[1], exc[2])
+            )

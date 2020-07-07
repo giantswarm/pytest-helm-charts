@@ -7,32 +7,26 @@ from .custom_resources import AppCatalogCR
 AppCatalogFactoryFunc = Callable[[str, Optional[str]], AppCatalogCR]
 
 
-def __get_app_catalog_obj(catalog_name: str, catalog_uri: str,
-                          kube_client: HTTPClient) -> AppCatalogCR:
+def __get_app_catalog_obj(catalog_name: str, catalog_uri: str, kube_client: HTTPClient) -> AppCatalogCR:
     app_catalog_cr = {
         "apiVersion": "application.giantswarm.io/v1alpha1",
         "kind": "AppCatalog",
         "metadata": {
-            "labels": {
-                "app-operator.giantswarm.io/version": "1.0.0",
-                "application.giantswarm.io/catalog-type": "",
-            },
+            "labels": {"app-operator.giantswarm.io/version": "1.0.0", "application.giantswarm.io/catalog-type": ""},
             "name": catalog_name,
         },
         "spec": {
             "description": "Catalog for testing.",
-            "storage": {
-                "URL": catalog_uri,
-                "type": "helm",
-            },
+            "storage": {"URL": catalog_uri, "type": "helm"},
             "title": catalog_name,
-        }
+        },
     }
     return AppCatalogCR(kube_client, app_catalog_cr)
 
 
-def app_catalog_factory_func(kube_client: HTTPClient,
-                             created_app_catalogs: List[AppCatalogCR]) -> AppCatalogFactoryFunc:
+def app_catalog_factory_func(
+    kube_client: HTTPClient, created_app_catalogs: List[AppCatalogCR]
+) -> AppCatalogFactoryFunc:
     """Return a factory object, that can be used to configure new AppCatalog CRs
     for the 'app-operator' running in the cluster"""
 
@@ -46,7 +40,8 @@ def app_catalog_factory_func(kube_client: HTTPClient,
                     return c
                 raise ValueError(
                     "You requested creation of AppCatalog named {} with URL {} but it was already registered with URL "
-                    "{}".format(name, url, existing_url))
+                    "{}".format(name, url, existing_url)
+                )
 
         app_catalog = __get_app_catalog_obj(name, str(url), kube_client)
         created_app_catalogs.append(app_catalog)

@@ -15,8 +15,8 @@ Full documentation (including API) available on <https://pytest-helm-charts.read
 
 ## Features
 
-This plugin provides a set of [pytest](https://docs.pytest.org/) fixtures that allow you to easily 
-write tests for Helm charts and run them on Kubernetes clusters. 
+This plugin provides a set of [pytest](https://docs.pytest.org/) fixtures that allow you to easily
+write tests for Helm charts and run them on Kubernetes clusters.
 
 It can be also used to test Helm charts deployed using the Open Source
 [Giant Swarm App Platform](https://docs.giantswarm.io/basics/app-platform/).
@@ -32,7 +32,7 @@ Most important features:
 
 ## Requirements
 
-- python 3.6+
+- python 3.7+
 - pytest 5.4.2+
 - pykube-ng = 20.7.0+
 
@@ -65,7 +65,7 @@ create KinD based clusters with all the components already installed.
 
 ### Writing tests
 
-The easiest way to get started is by checking our 
+The easiest way to get started is by checking our
 [examples](https://pytest-helm-charts.readthedocs.io/en/latest/examples/basic).
 
 The list of available fixtures can be found by running `pytest --fixtures`, but
@@ -76,11 +76,11 @@ are also available.
 
 ## Contributing
 
-Contributions are very welcome. 
+Contributions are very welcome.
 
-- Project is managed with [`poetry`](https://python-poetry.org/), 
+- Project is managed with [`poetry`](https://python-poetry.org/),
   to start developing run `poetry install`
-- Tests for all supported python versions can be run with [`tox`](https://tox.readthedocs.io/): 
+- Tests for all supported python versions can be run with [`tox`](https://tox.readthedocs.io/):
   `poetry run tox -- --log-cli-level info tests/`
 - Please ensure
   [the coverage](https://codecov.io/gh/giantswarm/pytest-helm-charts/)
@@ -97,4 +97,3 @@ See [CHANGELOG.md](CHANGELOG.md).
 ## Issues
 
 If you encounter any problems, please [file an issue](https://github.com/giantswarm/pytest-helm-charts/issues) along with a detailed description.
-

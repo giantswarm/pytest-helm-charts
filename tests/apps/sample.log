@@ -25,7 +25,7 @@ Simulation nginx.NginxSimulation started...
 
 ---- Nginx basic test ----------------------------------------------------------
 [##########################################################################]100%
-          waiting: 0      / active: 0      / done: 4     
+          waiting: 0      / active: 0      / done: 4
 ================================================================================
 
 Simulation nginx.NginxSimulation completed in 1 seconds

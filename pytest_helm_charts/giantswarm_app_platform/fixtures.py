@@ -28,8 +28,7 @@ def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc
 
 
 @pytest.fixture(scope="module")
-def app_factory(kube_cluster: Cluster,
-                app_catalog_factory: AppCatalogFactoryFunc) -> Iterable[AppFactoryFunc]:
+def app_factory(kube_cluster: Cluster, app_catalog_factory: AppCatalogFactoryFunc) -> Iterable[AppFactoryFunc]:
     """Returns a factory function which can be used to install an app using App CR"""
 
     created_apps: List[ConfiguredApp] = []
@@ -44,8 +43,9 @@ def app_factory(kube_cluster: Cluster,
 
 
 @pytest.fixture(scope="module")
-def kube_cluster_with_app_platform(kube_cluster: Cluster,
-                                   app_catalog_factory: AppCatalogFactoryFunc) -> Iterable[Cluster]:
+def kube_cluster_with_app_platform(
+    kube_cluster: Cluster, app_catalog_factory: AppCatalogFactoryFunc
+) -> Iterable[Cluster]:
     """Get a ready cluster based on '--cluster-type' command line argument. Additionally,
     preconfigure the cluster with Giant Swarm's Application Platform, including:
     - app-operator

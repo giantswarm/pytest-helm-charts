@@ -10,7 +10,7 @@ from tests.helper import run_pytest
 def test_api_working_example(testdir: Testdir, mocker: MockFixture):
     """Make sure that existing cluster is created using the correct config file."""
     testdir.copy_example("examples/test_basic_cluster.py")
-    mocker.patch('pykube.Node.objects', autospec=True)
+    mocker.patch("pykube.Node.objects", autospec=True)
     mock_node = create_autospec("pykube.Node")
     pykube.Node.objects.return_value = [mock_node]
 

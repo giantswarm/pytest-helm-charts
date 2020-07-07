@@ -17,6 +17,7 @@ def test_app_catalog_working_example(testdir: Testdir, mocker: MockFixture):
     # mock_app_catalog_cr.create.assert_called_once()
     assert result.ret == 0
 
+
 # def test_app_loadtest_app_working(testdir: Testdir, mocker: MockFixture):
 #     testdir.copy_example("examples/test_giantswarm_app_platform.py")
 #     catalog_name = "test-dynamic"

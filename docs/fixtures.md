@@ -16,7 +16,7 @@ The most important list is included below.
 ## Applications useful for testing
 
 We provide fixtures delivering some applications that might be useful for testing
-apps, like load generators or simple test apps. They are deployed using 
+apps, like load generators or simple test apps. They are deployed using
 [Giant Swarm App Platform fixtures](#giant-swarm-app-platform).
 
 ### HTTP testing
