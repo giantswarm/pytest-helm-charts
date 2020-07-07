@@ -32,7 +32,7 @@ Most important features:
 
 ## Requirements
 
-- python 3.6+
+- python 3.7+
 - pytest 5.4.2+
 - pykube-ng = 20.7.0+
 
