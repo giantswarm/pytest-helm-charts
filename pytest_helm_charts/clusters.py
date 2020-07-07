@@ -37,6 +37,7 @@ class ExistingCluster(Cluster):
     """Implementation of [Cluster](Cluster) that uses kube.config
     for an existing cluster.
     """
+
     kube_config_path: str
 
     def __init__(self, kube_config_path: str) -> None:

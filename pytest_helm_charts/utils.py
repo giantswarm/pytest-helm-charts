@@ -20,14 +20,19 @@ def wait_for_job(kube_client: HTTPClient, job_name: str, namespace: str, max_wai
         try:
             job = Job.objects(kube_client).filter(namespace=namespace).get(name=job_name)
             status = job.obj["status"]
-            if status and "conditions" in status and len(status["conditions"]) and \
-                    status["conditions"][0]["type"] == "Complete":
+            if (
+                status
+                and "conditions" in status
+                and len(status["conditions"])
+                and status["conditions"][0]["type"] == "Complete"
+            ):
                 break
         except pykube.exceptions.ObjectDoesNotExist:
             pass
         if wait_time_sec >= max_wait_time_sec:
             raise TimeoutError(
-                "Job {} in namespace {} was not completed in {} seconds".format(job_name, namespace, max_wait_time_sec))
+                "Job {} in namespace {} was not completed in {} seconds".format(job_name, namespace, max_wait_time_sec)
+            )
         logger.info("Waiting for gatling job to complete...")
         time.sleep(1)
         wait_time_sec += 1

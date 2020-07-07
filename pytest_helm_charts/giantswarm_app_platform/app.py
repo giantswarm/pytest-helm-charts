@@ -16,12 +16,17 @@ class ConfiguredApp(NamedTuple):
 AppFactoryFunc = Callable[[str, str, str, str, str, YamlDict], ConfiguredApp]
 
 
-def app_factory_func(kube_client: HTTPClient,
-                     app_catalog_factory: AppCatalogFactoryFunc,
-                     created_apps: List[ConfiguredApp]) -> AppFactoryFunc:
-    def _app_factory(app_name: str, app_version: str, catalog_name: str,
-                     catalog_url: str, namespace: str = "default",
-                     config_values: YamlDict = None) -> ConfiguredApp:
+def app_factory_func(
+    kube_client: HTTPClient, app_catalog_factory: AppCatalogFactoryFunc, created_apps: List[ConfiguredApp]
+) -> AppFactoryFunc:
+    def _app_factory(
+        app_name: str,
+        app_version: str,
+        catalog_name: str,
+        catalog_url: str,
+        namespace: str = "default",
+        config_values: YamlDict = None,
+    ) -> ConfiguredApp:
         # TODO: include proper regexp validation
         if config_values is None:
             config_values = {}
@@ -41,40 +46,25 @@ def app_factory_func(kube_client: HTTPClient,
             "metadata": {
                 "name": app_name,
                 "namespace": namespace,
-                "labels": {
-                    "app": app_name,
-                    "app-operator.giantswarm.io/version": "1.0.0"
-                },
+                "labels": {"app": app_name, "app-operator.giantswarm.io/version": "1.0.0"},
             },
             "spec": {
                 "catalog": catalog.metadata["name"],
                 "version": app_version,
-                "kubeConfig": {
-                    "inCluster": True
-                },
+                "kubeConfig": {"inCluster": True},
                 "name": app_name,
                 "namespace": namespace,
-            }
+            },
         }
 
         app_cm_obj: Optional[ConfigMap] = None
         if config_values:
-            app["spec"]["config"] = {
-                "configMap": {
-                    "name": app_cm_name,
-                    "namespace": namespace,
-                }
-            }
+            app["spec"]["config"] = {"configMap": {"name": app_cm_name, "namespace": namespace}}
             app_cm: YamlDict = {
                 "apiVersion": "v1",
                 "kind": "ConfigMap",
-                "metadata": {
-                    "name": app_cm_name,
-                    "namespace": namespace,
-                },
-                "data": {
-                    "values": yaml.dump(config_values)
-                }
+                "metadata": {"name": app_cm_name, "namespace": namespace},
+                "data": {"values": yaml.dump(config_values)},
             }
             app_cm_obj = ConfigMap(kube_client, app_cm)
             app_cm_obj.create()

@@ -28,8 +28,9 @@ def stormforger_load_app_factory(app_factory: AppFactoryFunc) -> StormforgerLoad
         >>> stormforger_load_app_factory(8, "loadtest.local", {"kubernetes.io/hostname": "localhost"})
     """
 
-    def _stormforger_load_app_factory(replicas: int, host_url: str,
-                                      node_affinity_selector: Optional[Dict[str, str]] = None) -> ConfiguredApp:
+    def _stormforger_load_app_factory(
+        replicas: int, host_url: str, node_affinity_selector: Optional[Dict[str, str]] = None
+    ) -> ConfiguredApp:
         """Creates and deploys stormforger load app by creating the relevant App CR in the API.
 
         Args:
@@ -45,29 +46,23 @@ def stormforger_load_app_factory(app_factory: AppFactoryFunc) -> StormforgerLoad
             "replicaCount": replicas,
             "ingress": {
                 "enabled": "true",
-                "annotations": {
-                    "kubernetes.io/ingress.class": "nginx"
-                },
-                "paths": [
-                    "/"
-                ],
-                "hosts": [
-                    host_url
-                ]
+                "annotations": {"kubernetes.io/ingress.class": "nginx"},
+                "paths": ["/"],
+                "hosts": [host_url],
             },
-            "autoscaling": {
-                "enabled": "false"
-            }
+            "autoscaling": {"enabled": "false"},
         }
 
         if node_affinity_selector is not None:
-            config_values["nodeAffinity"] = {
-                "enabled": "true",
-                "selector": node_affinity_selector
-            }
-        stormforger_app = app_factory("loadtest-app", "0.1.2", "default",
-                                      "https://giantswarm.github.io/default-catalog/",
-                                      "default", config_values)
+            config_values["nodeAffinity"] = {"enabled": "true", "selector": node_affinity_selector}
+        stormforger_app = app_factory(
+            "loadtest-app",
+            "0.1.2",
+            "default",
+            "https://giantswarm.github.io/default-catalog/",
+            "default",
+            config_values,
+        )
         return stormforger_app
 
     return _stormforger_load_app_factory
@@ -77,51 +72,40 @@ GatlingAppFactoryFunc = Callable[[str, Optional[Dict[str, str]]], ConfiguredApp]
 
 
 @pytest.fixture(scope="module")
-def gatling_app_factory(kube_client: HTTPClient,
-                        app_factory: AppFactoryFunc) -> Iterable[GatlingAppFactoryFunc]:
+def gatling_app_factory(kube_client: HTTPClient, app_factory: AppFactoryFunc) -> Iterable[GatlingAppFactoryFunc]:
     created_configmaps: List[ConfigMap] = []
 
-    def _gatling_app_factory(simulation_file: str,
-                             node_affinity_selector: Optional[Dict[str, str]] = None) -> ConfiguredApp:
+    def _gatling_app_factory(
+        simulation_file: str, node_affinity_selector: Optional[Dict[str, str]] = None
+    ) -> ConfiguredApp:
         namespace = "default"
         with open(simulation_file) as f:
             simulation_code = f.read()
         simulation_cm: YamlDict = {
             "apiVersion": "v1",
             "kind": "ConfigMap",
-            "metadata": {
-                "name": "gatling-simulation",
-                "namespace": namespace,
-                "labels": {
-                    "app": "gatling"
-                },
-            },
-            "data": {
-                "NginxSimulation.scala": simulation_code,
-            }
+            "metadata": {"name": "gatling-simulation", "namespace": namespace, "labels": {"app": "gatling"}},
+            "data": {"NginxSimulation.scala": simulation_code},
         }
 
         config_values: YamlDict = {
-            "simulation": {
-                "configMap": {
-                    "name": simulation_cm["metadata"]["name"]
-                },
-                "name": "nginx.NginxSimulation",
-            }
+            "simulation": {"configMap": {"name": simulation_cm["metadata"]["name"]}, "name": "nginx.NginxSimulation"}
         }
 
         if node_affinity_selector is not None:
-            config_values["nodeAffinity"] = {
-                "enabled": "true",
-                "selector": node_affinity_selector
-            }
+            config_values["nodeAffinity"] = {"enabled": "true", "selector": node_affinity_selector}
 
         simulation_cm_obj = ConfigMap(kube_client, simulation_cm)
         simulation_cm_obj.create()
         created_configmaps.append(simulation_cm_obj)
-        gatling_app = app_factory("gatling-app", "1.0.2", "giantswarm-playground",
-                                  "https://giantswarm.github.com/giantswarm-playground-catalog/",
-                                  namespace, config_values)
+        gatling_app = app_factory(
+            "gatling-app",
+            "1.0.2",
+            "giantswarm-playground",
+            "https://giantswarm.github.com/giantswarm-playground-catalog/",
+            namespace,
+            config_values,
+        )
         return gatling_app
 
     yield _gatling_app_factory
@@ -133,61 +117,49 @@ def gatling_app_factory(kube_client: HTTPClient,
 class GatlingParser:
     def __init__(self, lines: str) -> None:
         split_lines = lines.splitlines()
-        start_line_query = [i for i in range(
-            len(split_lines)) if split_lines[i] == "Generating reports..."]
+        start_line_query = [i for i in range(len(split_lines)) if split_lines[i] == "Generating reports..."]
         assert len(start_line_query) == 1
         start_line = start_line_query[0]
-        report_lines = split_lines[start_line + 2:start_line + 20]
+        report_lines = split_lines[start_line + 2 : start_line + 20]
         assert report_lines[0] == "================================================================================"
         assert report_lines[1] == "---- Global Information --------------------------------------------------------"
 
-        total, ok, bad = self.__parse_result_line(
-            report_lines[2], "request count")
-        self.request_count_total, self.request_count_ok, self.request_count_bad = int(
-            total), int(ok), int(bad)
-        self.request_success_ratio = float(
-            self.request_count_ok) / float(self.request_count_total)
-        self.request_failure = float(
-            self.request_count_bad) / float(self.request_count_total)
+        total, ok, bad = self.__parse_result_line(report_lines[2], "request count")
+        self.request_count_total, self.request_count_ok, self.request_count_bad = int(total), int(ok), int(bad)
+        self.request_success_ratio = float(self.request_count_ok) / float(self.request_count_total)
+        self.request_failure = float(self.request_count_bad) / float(self.request_count_total)
 
-        min_time, _, _ = self.__parse_result_line(
-            report_lines[3], "min response time")
+        min_time, _, _ = self.__parse_result_line(report_lines[3], "min response time")
         self.min_response_time = int(min_time)
 
-        max_time, _, _ = self.__parse_result_line(
-            report_lines[4], "max response time")
+        max_time, _, _ = self.__parse_result_line(report_lines[4], "max response time")
         self.max_response_time = int(max_time)
 
-        mean_time, _, _ = self.__parse_result_line(
-            report_lines[5], "mean response time")
+        mean_time, _, _ = self.__parse_result_line(report_lines[5], "mean response time")
         self.mean_response_time = int(mean_time)
 
-        std_deviation, _, _ = self.__parse_result_line(
-            report_lines[6], "std deviation")
+        std_deviation, _, _ = self.__parse_result_line(report_lines[6], "std deviation")
         self.std_deviation = int(std_deviation)
 
-        response_time_50th_percentile, _, _ = self.__parse_result_line(
-            report_lines[7], "response time 50th percentile")
+        response_time_50th_percentile, _, _ = self.__parse_result_line(report_lines[7], "response time 50th percentile")
         self.response_time_50th_percentile = int(response_time_50th_percentile)
 
-        response_time_75th_percentile, _, _ = self.__parse_result_line(
-            report_lines[8], "response time 75th percentile")
+        response_time_75th_percentile, _, _ = self.__parse_result_line(report_lines[8], "response time 75th percentile")
         self.response_time_75th_percentile = int(response_time_75th_percentile)
 
-        response_time_95th_percentile, _, _ = self.__parse_result_line(
-            report_lines[9], "response time 95th percentile")
+        response_time_95th_percentile, _, _ = self.__parse_result_line(report_lines[9], "response time 95th percentile")
         self.response_time_95th_percentile = int(response_time_95th_percentile)
 
         response_time_99th_percentile, _, _ = self.__parse_result_line(
-            report_lines[10], "response time 99th percentile")
+            report_lines[10], "response time 99th percentile"
+        )
         self.response_time_99th_percentile = int(response_time_99th_percentile)
 
         mean_rps, _, _ = self.__parse_result_line(report_lines[11], "mean requests/sec")
         self.mean_rps = float(mean_rps)
 
         assert report_lines[12] == "---- Response Time Distribution ------------------------------------------------"
-        self.response_time_distribution: Dict[Tuple[float, float], int] = {
-        }
+        self.response_time_distribution: Dict[Tuple[float, float], int] = {}
 
         line = report_lines[13][2:]
         fields = list(filter(None, line.split(" ")))
@@ -217,7 +189,7 @@ class GatlingParser:
         assert line[0:2] == "> "
         line = line[2:]
         assert line.find(header) >= 0
-        fields = line[len(header):].split(" ")
+        fields = line[len(header) :].split(" ")
         fields = list(filter(None, fields))
         total = fields[0]
         ok = fields[1].split("=")[1]
