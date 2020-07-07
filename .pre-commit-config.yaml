@@ -5,13 +5,13 @@ repos:
   - id: check-hooks-apply
   - id: check-useless-excludes
 
-  ## format Python code with black
-  #- repo: https://github.com/psf/black
-  #  rev: stable
-  #  hooks:
-  #    - id: black
-  #      language_version: python3.7
-  #
+# format Python code with black
+- repo: https://github.com/psf/black
+  rev: stable
+  hooks:
+    - id: black
+      language_version: python3.7
+
   ## check docstrings
   #- repo: https://github.com/PyCQA/pydocstyle
   #  rev: 5.0.2
