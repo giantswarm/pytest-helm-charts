@@ -57,14 +57,8 @@ jobs:
           ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
     - name: Poetry install dependencies
       run: poetry install
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        poetry run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Verify types with mypy
-      run: poetry run mypy pytest_helm_charts
+    - name: Run code quality tools
+      run: poetry run pre-commit run --all-files
     - name: Run pytest
       run: poetry run python -m pytest --cov=./ --cov-report=xml --log-cli-level=info tests/
     - name: Upload coverage to Codecov
