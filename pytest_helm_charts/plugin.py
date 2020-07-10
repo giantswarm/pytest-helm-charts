@@ -9,6 +9,9 @@ from .fixtures import values_file_path  # noqa
 from .fixtures import kube_config  # noqa
 from .fixtures import cluster_type  # noqa
 from .fixtures import kube_cluster  # noqa
+from .fixtures import _existing_cluster_factory  # noqa
+from .fixtures import _kind_cluster_factory  # noqa
+from .fixtures import _giantswarm_cluster_factory  # noqa
 
 from .giantswarm_app_platform.fixtures import app_factory  # noqa
 from .giantswarm_app_platform.fixtures import app_catalog_factory  # noqa
