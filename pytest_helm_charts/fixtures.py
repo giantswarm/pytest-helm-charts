@@ -1,33 +1,14 @@
 """This module defines fixtures for testing Helm Charts."""
 import logging
-import os.path
 import sys
-from pathlib import Path
 from typing import Callable, List, Iterable
 
 import pytest
 from _pytest.config import Config
-from _pytest.config.argparsing import Parser
 
 from .clusters import ExistingCluster, Cluster
 
 logger = logging.getLogger(__name__)
-
-
-def pytest_addoption(parser: Parser) -> None:
-    group = parser.getgroup("helm-charts")
-    group.addoption(
-        "--cluster-type", action="store", default="existing", help="Select cluster type. Supported values: 'existing'."
-    )
-    group.addoption(
-        "--kube-config",
-        action="store",
-        default=os.path.join(str(Path.home()), ".kube", "config"),
-        help="The path to 'kube.config' file. Used when '--cluster-type existing' is used as well.",
-    )
-    group.addoption("--values-file", action="store", help="Path to the values file used for testing the chart.")
-    group.addoption("--chart-path", action="store", help="The path to a helm chart under test.")
-    group.addoption("--chart-version", action="store", help="Override chart version for the chart under test.")
 
 
 @pytest.fixture(scope="module")

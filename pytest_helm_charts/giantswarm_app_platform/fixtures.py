@@ -8,12 +8,6 @@ from .custom_resources import AppCR
 from ..clusters import Cluster
 
 
-# @pytest.fixture(scope="module")
-# def gs_app_platform_crs(kube_cluster: Cluster) -> GiantSwarmAppPlatformCRs:
-#     result = GiantSwarmAppPlatformCRs(kube_cluster.kube_client)
-#     return result
-
-
 @pytest.fixture(scope="module")
 def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc]:
     """Return a factory object, that can be used to configure new AppCatalog CRs
