@@ -48,13 +48,13 @@ jobs:
       uses: Gr1N/setup-poetry@v2
     - name: Poetry check version
       run: poetry --version
-      #    - name: Restore poetry cache
-      #      uses: actions/cache@v1
-      #      with:
-      #        path: ~/.cache/pypoetry/virtualenvs
-      #        key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
-      #        restore-keys: |
-      #          ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
+    - name: Restore poetry cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pypoetry/virtualenvs
+        key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
     - name: Poetry install dependencies
       run: poetry install
     - name: Run code quality tools
