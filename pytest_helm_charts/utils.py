@@ -27,6 +27,9 @@ def wait_for_namespaced_objects_condition(
     timeout_sec: int,
     missing_ok: bool,
 ) -> List[NamespacedAPIObject]:
+    if len(obj_names) == 0:
+        raise ValueError("'obj_names' list can't be empty.")
+
     retries = 0
     all_ready = False
     matching_objs: List[NamespacedAPIObject] = []
@@ -44,7 +47,7 @@ def wait_for_namespaced_objects_condition(
                     pass
                 else:
                     raise
-        all_ready = all(obj_condition_fun(obj) for obj in matching_objs)
+        all_ready = len(matching_objs) == len(obj_names) and all(obj_condition_fun(obj) for obj in matching_objs)
         if all_ready:
             break
         time.sleep(1)
@@ -66,10 +69,10 @@ def _job_complete(job: Job) -> bool:
 
 
 def wait_for_jobs_to_complete(
-    kube_client: HTTPClient, job_names: List[str], jobs_namespace: str, timeout_sec: int
+    kube_client: HTTPClient, job_names: List[str], jobs_namespace: str, timeout_sec: int, missing_ok: bool = True
 ) -> List[Job]:
     result = wait_for_namespaced_objects_condition(
-        kube_client, Job, job_names, jobs_namespace, _job_complete, timeout_sec, missing_ok=True
+        kube_client, Job, job_names, jobs_namespace, _job_complete, timeout_sec, missing_ok
     )
     return result
 
@@ -82,16 +85,14 @@ def _deployment_running(d: Deployment) -> bool:
 
 
 def wait_for_deployments_to_run(
-    kube_client: HTTPClient, deployment_names: List[str], deployments_namespace: str, timeout_sec: int
+    kube_client: HTTPClient,
+    deployment_names: List[str],
+    deployments_namespace: str,
+    timeout_sec: int,
+    missing_ok: bool = True,
 ) -> List[Deployment]:
     result = wait_for_namespaced_objects_condition(
-        kube_client,
-        Deployment,
-        deployment_names,
-        deployments_namespace,
-        _deployment_running,
-        timeout_sec,
-        missing_ok=False,
+        kube_client, Deployment, deployment_names, deployments_namespace, _deployment_running, timeout_sec, missing_ok,
     )
     return result
 

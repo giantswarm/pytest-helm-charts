@@ -5,6 +5,9 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+## [0.1.4]
+- fix: wait_for_namespaced_objects_conditions was exiting prematurely when the objects were not yet present
+
 ## [0.1.3]
 - fix plugin layout - import of fixtures
 - fix the gatling fixture
