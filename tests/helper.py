@@ -3,7 +3,6 @@ from pytest_mock import MockFixture
 
 
 def run_pytest(testdir: Testdir, mocker: MockFixture, *args) -> RunResult:
-    testdir.copy_example("conftest.py")
     mocker.patch("pytest_helm_charts.fixtures.ExistingCluster", autospec=True)
     result = testdir.runpytest(
         "--cluster-type",

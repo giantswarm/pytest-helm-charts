@@ -3,8 +3,9 @@ import math
 from typing import Callable, Dict, Iterable, List, Optional, Tuple
 
 import pytest
-from pykube import HTTPClient, ConfigMap
+from pykube import ConfigMap
 
+from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc, ConfiguredApp
 from pytest_helm_charts.utils import YamlDict
 
@@ -72,7 +73,18 @@ GatlingAppFactoryFunc = Callable[[str, Optional[Dict[str, str]]], ConfiguredApp]
 
 
 @pytest.fixture(scope="module")
-def gatling_app_factory(kube_client: HTTPClient, app_factory: AppFactoryFunc) -> Iterable[GatlingAppFactoryFunc]:
+def gatling_app_factory(kube_cluster: Cluster, app_factory: AppFactoryFunc) -> Iterable[GatlingAppFactoryFunc]:
+    """A factory fixture to return a function that can produce Gatling instances. Gatling is a HTTP
+    performance testing tool.
+
+    Args:
+        app_factory: auto-injected [app_factory](..app.app_factory) fixture.
+        kube_cluster: auto-injected [kube_cluster](...fixtures.kube_cluster) fixture.
+
+    Returns:
+        A function you can use to create Gatling instances.
+    """
+
     created_configmaps: List[ConfigMap] = []
 
     def _gatling_app_factory(
@@ -95,7 +107,7 @@ def gatling_app_factory(kube_client: HTTPClient, app_factory: AppFactoryFunc) ->
         if node_affinity_selector is not None:
             config_values["nodeAffinity"] = {"enabled": "true", "selector": node_affinity_selector}
 
-        simulation_cm_obj = ConfigMap(kube_client, simulation_cm)
+        simulation_cm_obj = ConfigMap(kube_cluster.kube_client, simulation_cm)
         simulation_cm_obj.create()
         created_configmaps.append(simulation_cm_obj)
         gatling_app = app_factory(
