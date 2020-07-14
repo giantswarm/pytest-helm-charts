@@ -14,7 +14,13 @@ def test_api_working_example(testdir: Testdir, mocker: MockFixture):
     mock_node = create_autospec("pykube.Node")
     pykube.Node.objects.return_value = [mock_node]
 
-    result = run_pytest(testdir, mocker)
+    result = run_pytest(testdir, mocker, "test_basic_cluster.py::test_api_working")
 
     pykube.Node.objects.assert_called_once()
     assert result.ret == 0
+
+
+def test_cluster_info_example(testdir: Testdir, mocker: MockFixture):
+    testdir.copy_example("examples/test_basic_cluster.py")
+    result = run_pytest(testdir, mocker, "test_basic_cluster.py::test_cluster_info")
+    result.stdout.fnmatch_lines(["*Running on cluster type existing*", "*external_cluster_type is kind*"])

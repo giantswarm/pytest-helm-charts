@@ -11,7 +11,7 @@ def run_pytest(testdir: Testdir, mocker: MockFixture, *args) -> RunResult:
         "info",
         "--kube-config",
         "/tmp/kat_test/kube.config",  # nosec
-        '--chart-extra-info="key1=val1,external_type=kind"',
+        '--chart-extra-info="key1=val1,external_cluster_type=kind"',
         "-v",
         *args,
     )
