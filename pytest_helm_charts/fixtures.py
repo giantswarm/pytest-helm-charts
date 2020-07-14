@@ -1,7 +1,7 @@
 """This module defines fixtures for testing Helm Charts."""
 import logging
 import sys
-from typing import Callable, List, Iterable
+from typing import Callable, List, Iterable, Dict
 
 import pytest
 from _pytest.config import Config
@@ -21,6 +21,22 @@ def chart_path(pytestconfig: Config) -> str:
 def chart_version(pytestconfig: Config) -> str:
     """Return a value that needs to be used as chart version override (from command line argument)."""
     return pytestconfig.getoption("chart_version")
+
+
+def _parse_extra_info(info: str) -> Dict[str, str]:
+    pairs = list(filter(None, info.split(",")))
+    res_dict: Dict[str, str] = {}
+    for pair in pairs:
+        k, v = list(filter(None, pair.split("=")))
+        res_dict[k] = v
+    return res_dict
+
+
+@pytest.fixture(scope="module")
+def chart_extra_info(pytestconfig: Config) -> Dict[str, str]:
+    """Return an optional dict of keywords and values passed to the test using '--chart-extra-info' config option."""
+    arg = pytestconfig.getoption("chart_extra_info")
+    return _parse_extra_info(arg)
 
 
 @pytest.fixture(scope="module")
