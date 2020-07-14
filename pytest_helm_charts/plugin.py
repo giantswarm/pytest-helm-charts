@@ -34,3 +34,9 @@ def pytest_addoption(parser: Parser) -> None:
     group.addoption("--values-file", action="store", help="Path to the values file used for testing the chart.")
     group.addoption("--chart-path", action="store", help="The path to a helm chart under test.")
     group.addoption("--chart-version", action="store", help="Override chart version for the chart under test.")
+    group.addoption(
+        "--chart-extra-info",
+        action="store",
+        default="",
+        help="Pass any additional info about the chart in the 'key1=val1,key2=val2' format",
+    )
