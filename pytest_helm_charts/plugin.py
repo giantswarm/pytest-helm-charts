@@ -5,6 +5,7 @@ from _pytest.config.argparsing import Parser
 
 from .fixtures import chart_path  # noqa
 from .fixtures import chart_version  # noqa
+from .fixtures import chart_extra_info  # noqa
 from .fixtures import values_file_path  # noqa
 from .fixtures import kube_config  # noqa
 from .fixtures import cluster_type  # noqa
