@@ -4,6 +4,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 
 ## [Unreleased]
+- fix: type definitions for `wait_for_namespaced_object_condition function`
 
 ## [0.1.6]
 - fix: fix the `chart_extra_info` fixture and add an example showing how to use it.
