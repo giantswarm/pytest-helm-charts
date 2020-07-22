@@ -1,13 +1,12 @@
 """Different utilities required over the whole testing lib."""
 import logging
 import time
-from typing import Dict, Any, List, Type, TypeVar, Callable
+from typing import Dict, Any, List, TypeVar, Callable, Type
 
 import pykube.exceptions
 from pykube import HTTPClient, Job, Service, Deployment
 
 # YamlValue = Union[int, float, str, bool, List['YamlValue'], 'YamlDict']
-from pykube.objects import NamespacedAPIObject
 from requests import Response
 
 YamlDict = Dict[str, Any]
@@ -15,24 +14,24 @@ YamlDict = Dict[str, Any]
 logger = logging.getLogger(__name__)
 
 # TODO: doesn't work as T for method below
-T = TypeVar("T", bound="pykube.objects.NamespacedAPIObject")
+T = TypeVar("T", bound=pykube.objects.NamespacedAPIObject)
 
 
 def wait_for_namespaced_objects_condition(
     kube_client: HTTPClient,
-    obj_type: Type[NamespacedAPIObject],
+    obj_type: Type[T],
     obj_names: List[str],
     objs_namespace: str,
-    obj_condition_fun: Callable[[NamespacedAPIObject], bool],
+    obj_condition_fun: Callable[[T], bool],
     timeout_sec: int,
     missing_ok: bool,
-) -> List[NamespacedAPIObject]:
+) -> List[T]:
     if len(obj_names) == 0:
         raise ValueError("'obj_names' list can't be empty.")
 
     retries = 0
     all_ready = False
-    matching_objs: List[NamespacedAPIObject] = []
+    matching_objs: List[T] = []
     while retries < timeout_sec:
         response = obj_type.objects(kube_client).filter(namespace=objs_namespace)
         retries += 1
