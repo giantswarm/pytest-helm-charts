@@ -4,6 +4,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 
 ## [Unreleased]
+
+## [0.1.7]
 - fix: type definitions for `wait_for_namespaced_object_condition function`
 
 ## [0.1.6]
