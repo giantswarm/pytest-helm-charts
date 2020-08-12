@@ -58,7 +58,7 @@ def stormforger_load_app_factory(app_factory: AppFactoryFunc) -> StormforgerLoad
             config_values["nodeAffinity"] = {"enabled": "true", "selector": node_affinity_selector}
         stormforger_app = app_factory(
             "loadtest-app",
-            "0.1.2",
+            "0.2.0",
             "default",
             "https://giantswarm.github.io/default-catalog/",
             "default",
