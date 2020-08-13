@@ -1,6 +1,5 @@
 """Different utilities required over the whole testing lib."""
 import logging
-import time
 from typing import Dict, Any, List, TypeVar, Callable, Type
 
 import pykube.exceptions
@@ -24,35 +23,25 @@ def wait_for_namespaced_objects_condition(
     objs_namespace: str,
     obj_condition_fun: Callable[[T], bool],
     timeout_sec: int,
-    missing_ok: bool,
-) -> List[T]:
+) -> Dict[str, T]:
     if len(obj_names) == 0:
         raise ValueError("'obj_names' list can't be empty.")
 
-    retries = 0
     all_ready = False
-    matching_objs: List[T] = []
-    while retries < timeout_sec:
-        response = obj_type.objects(kube_client).filter(namespace=objs_namespace)
-        retries += 1
-        matching_objs = []
-        for name in obj_names:
-            try:
-                obj = response.get_by_name(name)
-                assert obj is not None
-                matching_objs.append(obj)
-            except pykube.exceptions.ObjectDoesNotExist:
-                if missing_ok:
-                    pass
-                else:
-                    raise
-        all_ready = len(matching_objs) == len(obj_names) and all(obj_condition_fun(obj) for obj in matching_objs)
+    matching_objs: Dict[str, T] = {}
+    watch = obj_type.objects(kube_client).filter(namespace=objs_namespace).watch()
+    for event in watch:
+        if event.object.name not in obj_names:
+            continue
+        matching_objs[event.object.name] = event.object
+        all_ready = len(matching_objs) == len(obj_names) and all(
+            obj_condition_fun(obj) for obj in matching_objs.values()
+        )
         if all_ready:
             break
-        time.sleep(1)
 
-    if not all_ready:
-        raise TimeoutError(f"Error waiting for object of type {obj_type} to match the condition.")
+    # if not all_ready:
+    #     raise TimeoutError(f"Error waiting for object of type {obj_type} to match the condition.")
 
     return matching_objs
 
@@ -60,6 +49,7 @@ def wait_for_namespaced_objects_condition(
 def _job_complete(job: Job) -> bool:
     complete = (
         "status" in job.obj
+        and isinstance(job.obj["status"], dict)
         and "conditions" in job.obj["status"]
         and len(job.obj["status"]["conditions"]) > 0
         and job.obj["status"]["conditions"][0]["type"] == "Complete"
@@ -68,30 +58,30 @@ def _job_complete(job: Job) -> bool:
 
 
 def wait_for_jobs_to_complete(
-    kube_client: HTTPClient, job_names: List[str], jobs_namespace: str, timeout_sec: int, missing_ok: bool = True
-) -> List[Job]:
+    kube_client: HTTPClient, job_names: List[str], jobs_namespace: str, timeout_sec: int
+) -> Dict[str, Job]:
     result = wait_for_namespaced_objects_condition(
-        kube_client, Job, job_names, jobs_namespace, _job_complete, timeout_sec, missing_ok
+        kube_client, Job, job_names, jobs_namespace, _job_complete, timeout_sec
     )
     return result
 
 
 def _deployment_running(d: Deployment) -> bool:
     complete = (
-        d.ready and "availableReplicas" in d.obj["status"] and d.replicas == int(d.obj["status"]["availableReplicas"])
+        "status" in d.obj
+        and isinstance(d.obj["status"], dict)
+        and all(key in d.obj["status"] for key in ("observedGeneration", "updatedReplicas", "availableReplicas"))
+        and d.ready
+        and d.replicas == int(d.obj["status"]["availableReplicas"])
     )
     return complete
 
 
 def wait_for_deployments_to_run(
-    kube_client: HTTPClient,
-    deployment_names: List[str],
-    deployments_namespace: str,
-    timeout_sec: int,
-    missing_ok: bool = True,
-) -> List[Deployment]:
+    kube_client: HTTPClient, deployment_names: List[str], deployments_namespace: str, timeout_sec: int,
+) -> Dict[str, Deployment]:
     result = wait_for_namespaced_objects_condition(
-        kube_client, Deployment, deployment_names, deployments_namespace, _deployment_running, timeout_sec, missing_ok,
+        kube_client, Deployment, deployment_names, deployments_namespace, _deployment_running, timeout_sec,
     )
     return result
 
