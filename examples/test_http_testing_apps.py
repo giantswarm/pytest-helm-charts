@@ -2,7 +2,7 @@ from pykube import Service
 
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import StormforgerLoadAppFactoryFunc
-from pytest_helm_charts.utils import wait_for_deployments_to_run, proxy_http_get
+from pytest_helm_charts.utils import proxy_http_get, wait_for_services_to_have_all_endpoints
 
 
 def test_stormforger_load_app_creation(
@@ -14,13 +14,14 @@ def test_stormforger_load_app_creation(
     """
     loadtest_app = stormforger_load_app_factory(1, "test.local", None)
     assert loadtest_app.app is not None
-    wait_for_deployments_to_run(kube_cluster.kube_client, [loadtest_app.app.name], loadtest_app.app.namespace, 60)
+    wait_for_services_to_have_all_endpoints(
+        kube_cluster.kube_client, [(loadtest_app.app.name, loadtest_app.app.name)], loadtest_app.app.namespace, 60
+    )
     srv: Service = Service.objects(kube_cluster.kube_client, loadtest_app.app.namespace).get_by_name(
         loadtest_app.app.name
     )
     assert srv is not None
     res = proxy_http_get(kube_cluster.kube_client, srv, "/", headers={"Host": "test.local"})
     assert res is not None
-    assert res.ok
     assert res.status_code == 200
     assert res.text.startswith("GET / HTTP/1.1\r\nHost: test.local\r\n")
