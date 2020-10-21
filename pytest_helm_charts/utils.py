@@ -109,6 +109,7 @@ def proxy_http_request(client: HTTPClient, srv: Service, method, path, **kwargs)
     """
     if "port" in kwargs:
         port = kwargs["port"]
+        del kwargs["port"]
     else:
         port = srv.obj["spec"]["ports"][0]["port"]
     kwargs["url"] = f"services/{srv.name}:{port}/proxy/{path}"
