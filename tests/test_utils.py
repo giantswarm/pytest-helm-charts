@@ -1,11 +1,32 @@
-import pykube
-from unittest.mock import create_autospec
+from typing import Dict, Any
 
-from pytest_helm_charts.clusters import Cluster
+import pykube
+import pytest
+from pytest_mock import MockFixture
+
 from pytest_helm_charts.utils import proxy_http_request
 
 
-def test_port_kwargs(kube_cluster: Cluster):
-    mock_service = create_autospec(pykube.Service)
+@pytest.mark.parametrize(
+    "call_kwargs,expected_request_kwargs",
+    [
+        # empty input kwargs - default service port should be used
+        ({}, {"url": "services/test_service:9090/proxy//", "namespace": "test_namespace", "version": "1"}),
+        # override the default port, should be included in url
+        ({"port": 8080}, {"url": "services/test_service:8080/proxy//", "namespace": "test_namespace", "version": "1"},),
+    ],
+)
+def test_port_kwargs(mocker: MockFixture, call_kwargs: Dict[str, Any], expected_request_kwargs: Dict[str, Any]) -> None:
+    mock_client = mocker.MagicMock(spec=pykube.http.HTTPClient)
+    mock_service = mocker.MagicMock(spec=pykube.objects.Service)
+    type(mock_service).name = mocker.PropertyMock(return_value="test_service")
+    type(mock_service).namespace = mocker.PropertyMock(return_value="test_namespace")
+    type(mock_service).version = mocker.PropertyMock(return_value="1")
+    type(mock_service).obj = mocker.PropertyMock(return_value={"spec": {"ports": [{"port": 9090}]}})
 
-    proxy_http_request(kube_cluster.kube_client, mock_service, "GET", "/", port=8000)
+    proxy_http_request(mock_client, mock_service, "GET", "/", **call_kwargs)
+
+    request = mock_client.request
+    assert request.called
+    assert request.call_args.args == ("GET",)
+    assert request.call_args.kwargs == expected_request_kwargs
