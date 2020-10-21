@@ -4,6 +4,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 
 ## [Unreleased]
+- fix: Don't supply `port` from kwargs to requests in `util.proxy_http_request`
 
 ## [0.1.8]
 - change: use loadtest app helm chart 0.2.0
