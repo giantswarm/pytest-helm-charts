@@ -9,8 +9,7 @@ pytest_plugins = ["pytester"]
 
 
 class MockCluster(Cluster):
-    """Implementation of [Cluster](Cluster) that uses mock HTTPClient
-    """
+    """Implementation of [Cluster](Cluster) that uses mock HTTPClient"""
 
     def __init__(self, mocker: MockFixture):
         super().__init__()

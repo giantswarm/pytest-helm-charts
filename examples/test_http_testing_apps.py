@@ -8,7 +8,7 @@ from pytest_helm_charts.utils import wait_for_deployments_to_run, proxy_http_get
 def test_stormforger_load_app_creation(
     kube_cluster: Cluster, stormforger_load_app_factory: StormforgerLoadAppFactoryFunc
 ) -> None:
-    """ This test deploys stormforger_load_app and checks if it response to basic requests.
+    """This test deploys stormforger_load_app and checks if it response to basic requests.
     To make this example run, you need a ready cluster with Giant Swarm App Platform.
     The easiest way to create it is to run: `kube-app-testing.sh -j`.
     """

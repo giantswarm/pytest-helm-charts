@@ -91,7 +91,13 @@ def wait_for_deployments_to_run(
     missing_ok: bool = True,
 ) -> List[Deployment]:
     result = wait_for_namespaced_objects_condition(
-        kube_client, Deployment, deployment_names, deployments_namespace, _deployment_running, timeout_sec, missing_ok,
+        kube_client,
+        Deployment,
+        deployment_names,
+        deployments_namespace,
+        _deployment_running,
+        timeout_sec,
+        missing_ok,
     )
     return result
 
@@ -109,6 +115,7 @@ def proxy_http_request(client: HTTPClient, srv: Service, method, path, **kwargs)
     """
     if "port" in kwargs:
         port = kwargs["port"]
+        del kwargs["port"]
     else:
         port = srv.obj["spec"]["ports"][0]["port"]
     kwargs["url"] = f"services/{srv.name}:{port}/proxy/{path}"
