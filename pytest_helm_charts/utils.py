@@ -91,7 +91,13 @@ def wait_for_deployments_to_run(
     missing_ok: bool = True,
 ) -> List[Deployment]:
     result = wait_for_namespaced_objects_condition(
-        kube_client, Deployment, deployment_names, deployments_namespace, _deployment_running, timeout_sec, missing_ok,
+        kube_client,
+        Deployment,
+        deployment_names,
+        deployments_namespace,
+        _deployment_running,
+        timeout_sec,
+        missing_ok,
     )
     return result
 

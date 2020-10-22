@@ -13,7 +13,10 @@ from pytest_helm_charts.utils import proxy_http_request
         # empty input kwargs - default service port should be used
         ({}, {"url": "services/test_service:9090/proxy//", "namespace": "test_namespace", "version": "1"}),
         # override the default port, should be included in url
-        ({"port": 8080}, {"url": "services/test_service:8080/proxy//", "namespace": "test_namespace", "version": "1"},),
+        (
+            {"port": 8080},
+            {"url": "services/test_service:8080/proxy//", "namespace": "test_namespace", "version": "1"},
+        ),
     ],
 )
 def test_port_kwargs(mocker: MockFixture, call_kwargs: Dict[str, Any], expected_request_kwargs: Dict[str, Any]) -> None:
@@ -28,5 +31,5 @@ def test_port_kwargs(mocker: MockFixture, call_kwargs: Dict[str, Any], expected_
 
     request = mock_client.request
     assert request.called
-    assert request.call_args.args == ("GET",)
-    assert request.call_args.kwargs == expected_request_kwargs
+    assert request.call_args_list[0][0] == ("GET",)
+    assert request.call_args_list[0][1] == expected_request_kwargs
