@@ -4,6 +4,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 
 ## [Unreleased]
+
+## [0.1.10]
 - added: more functions to help with handling namespaces, jobs and stateful sets.
 
 ## [0.1.9]
