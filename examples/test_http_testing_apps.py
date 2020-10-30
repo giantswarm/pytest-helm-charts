@@ -2,7 +2,7 @@ from pykube import Service
 
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import StormforgerLoadAppFactoryFunc
-from pytest_helm_charts.utils import wait_for_deployments_to_run, proxy_http_get
+from pytest_helm_charts.utils import wait_for_deployments_to_run
 
 
 def test_stormforger_load_app_creation(
@@ -19,7 +19,7 @@ def test_stormforger_load_app_creation(
         loadtest_app.app.name
     )
     assert srv is not None
-    res = proxy_http_get(kube_cluster.kube_client, srv, "/", headers={"Host": "test.local"})
+    res = srv.proxy_http_get("/", headers={"Host": "test.local"})
     assert res is not None
     assert res.ok
     assert res.status_code == 200

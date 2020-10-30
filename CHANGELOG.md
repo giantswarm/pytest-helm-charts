@@ -4,6 +4,9 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 
 ## [Unreleased]
+- added: include python 3.9 as a version for test running
+- changed: updated dependencies
+- removed: redundant code that was accepted in pykube-ng lib
 
 ## [0.1.10]
 - added: more functions to help with handling namespaces, jobs and stateful sets.
