@@ -4,6 +4,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 
 ## [Unreleased]
+
+## [0.2.1]
 - added: include python 3.9 as a version for test running
 - changed: updated dependencies
 - removed: redundant code that was accepted in pykube-ng lib
