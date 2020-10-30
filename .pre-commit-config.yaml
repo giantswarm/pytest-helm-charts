@@ -33,15 +33,21 @@ repos:
   hooks:
   - id: mypy
 
+# flake8
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: 3.8.4
+    hooks:
+    - id: flake8
+      additional_dependencies: ["flake8-bugbear"]
+      args: [--max-line-length=120]
+
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v2.4.0
+  rev: v3.3.0
   hooks:
   - id: check-added-large-files
   - id: check-docstring-first
   - id: debug-statements
   - id: end-of-file-fixer
-  - id: flake8
-    additional_dependencies: ["flake8-bugbear"]
   - id: trailing-whitespace
   - id: check-ast
   - id: check-builtin-literals
