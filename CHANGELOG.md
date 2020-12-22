@@ -5,6 +5,9 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+- Remove any reference related to supporting multiple clusters. From now on this project always expects to get
+  a `kube.config` for an already existing cluster.
+
 ## [0.2.1]
 - added: include python 3.9 as a version for test running
 - changed: updated dependencies
