@@ -16,6 +16,6 @@ def run_pytest(testdir: Testdir, mocker: MockFixture, *args) -> RunResult:
         *args,
     )
     # fnmatch_lines does an assertion internally
-    result.stdout.fnmatch_lines(["*Cluster created*", "*Cluster destroyed*"])
+    result.stdout.fnmatch_lines(["*Cluster configured*", "*Cluster released*"])
 
     return result
