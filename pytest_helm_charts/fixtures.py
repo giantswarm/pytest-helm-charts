@@ -1,7 +1,7 @@
 """This module defines fixtures for testing Helm Charts."""
 import logging
 import sys
-from typing import Callable, List, Iterable, Dict
+from typing import Callable, Iterable, Dict
 
 import pytest
 from _pytest.config import Config
@@ -56,8 +56,7 @@ def kube_config(pytestconfig: Config) -> str:
 
 @pytest.fixture(scope="module")
 def cluster_type(pytestconfig: Config) -> str:
-    """Return a type of cluster to provide to the test environment. Currently supported values are:
-    "existing"."""
+    """Return a type of cluster used for testing (from command line argument)."""
     return pytestconfig.getoption("cluster_type")
 
 
@@ -73,58 +72,25 @@ def _existing_cluster_factory(kube_config: str) -> ConfigFactoryFunction:
 
 
 @pytest.fixture(scope="module")
-def _kind_cluster_factory() -> ConfigFactoryFunction:
-    def _fun() -> Cluster:
-        # FIXME: implement
-        raise NotImplementedError
-
-    return _fun
-
-
-@pytest.fixture(scope="module")
-def _giantswarm_cluster_factory() -> ConfigFactoryFunction:
-    def _fun() -> Cluster:
-        # FIXME: implement
-        raise NotImplementedError
-
-    return _fun
-
-
-@pytest.fixture(scope="module")
 def kube_cluster(
-    cluster_type: str,
     _existing_cluster_factory: ConfigFactoryFunction,
-    _kind_cluster_factory: ConfigFactoryFunction,
-    _giantswarm_cluster_factory: ConfigFactoryFunction,
 ) -> Iterable[Cluster]:
     """Return a ready Cluster object, which can already be used in test to connect
     to the cluster. Specific implementation used to provide the cluster depends
     on the '--cluster-type' command line option."""
     cluster: Cluster
-    created_clusters: List[Cluster] = []
-    if cluster_type == "existing":
-        cluster = _existing_cluster_factory()
-    elif cluster_type == "kind":
-        cluster = _kind_cluster_factory()
-    elif cluster_type == "giantswarm":
-        cluster = _giantswarm_cluster_factory()
-    else:
-        raise ValueError("Unsupported cluster type '{}'.".format(cluster_type))
+    cluster = _existing_cluster_factory()
 
-    logger.info("Creating new cluster of type '{}'.".format(cluster_type))
     cluster.create()
-    logger.info("Cluster created")
-    created_clusters.append(cluster)
+    logger.info("Cluster configured")
     yield cluster
 
-    for c in created_clusters:
-        # noinspection PyBroadException
-        try:
-            logger.info("Destroying cluster")
-            c.destroy()
-            logger.info("Cluster destroyed")
-        except Exception:
-            exc = sys.exc_info()
-            logger.error(
-                "Error of type {} when destroying cluster. Value: {}\nStacktrace:\n{}".format(exc[0], exc[1], exc[2])
-            )
+    # noinspection PyBroadException
+    try:
+        cluster.destroy()
+        logger.info("Cluster released")
+    except Exception:
+        exc = sys.exc_info()
+        logger.error(
+            "Error of type {} when releasing cluster. Value: {}\nStacktrace:\n{}".format(exc[0], exc[1], exc[2])
+        )

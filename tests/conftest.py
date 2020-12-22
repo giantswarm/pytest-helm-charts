@@ -31,8 +31,6 @@ def kube_cluster(
     cluster_type: str,
     session_mocker: MockFixture,
     _existing_cluster_factory: ConfigFactoryFunction,
-    _kind_cluster_factory: ConfigFactoryFunction,
-    _giantswarm_cluster_factory: ConfigFactoryFunction,
 ) -> Cluster:
     cluster = MockCluster(session_mocker)
     cluster.create()
