@@ -49,7 +49,7 @@ jobs:
     - name: Poetry check version
       run: poetry --version
     - name: Restore poetry cache
-      uses: actions/cache@v2.1.3
+      uses: actions/cache@v2.1.4
       with:
         path: ~/.cache/pypoetry/virtualenvs
         key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
