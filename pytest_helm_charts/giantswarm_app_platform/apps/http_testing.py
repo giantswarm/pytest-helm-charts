@@ -114,7 +114,7 @@ def gatling_app_factory(kube_cluster: Cluster, app_factory: AppFactoryFunc) -> I
             "gatling-app",
             "1.0.2",
             "giantswarm-playground",
-            "https://giantswarm.github.com/giantswarm-playground-catalog/",
+            "https://giantswarm.github.io/giantswarm-playground-catalog/",
             namespace,
             config_values,
         )
