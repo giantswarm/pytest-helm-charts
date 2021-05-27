@@ -1,5 +1,7 @@
 """This module defines fixtures for testing Helm Charts."""
 import logging
+import random
+import string
 import sys
 from typing import Callable, Iterable, Dict
 
@@ -7,6 +9,7 @@ import pytest
 from _pytest.config import Config
 
 from .clusters import ExistingCluster, Cluster
+from pykube import Namespace
 
 logger = logging.getLogger(__name__)
 
@@ -94,3 +97,26 @@ def kube_cluster(
         logger.error(
             "Error of type {} when releasing cluster. Value: {}\nStacktrace:\n{}".format(exc[0], exc[1], exc[2])
         )
+
+@pytest.fixture(scope="module")
+def random_namespace(request, kube_cluster):
+    name = f"pytest-{''.join(random.choices(string.ascii_lowercase, k=5))}"
+
+    ns = Namespace(
+        kube_cluster.kube_client,
+        {
+            "apiVersion": "v1",
+            "kind": "Namespace",
+            "metadata": {
+                "name": name,
+            }
+        }
+    )
+    ns.create()
+
+    yield name
+
+    if not request.config.getoption("keep_namespace"):
+        ns = Namespace.objects(kube_cluster.kube_client).get_or_none(name=name)
+        if ns is not None:
+            ns.delete()

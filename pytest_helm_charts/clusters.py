@@ -1,6 +1,12 @@
 """This module introduces classes for handling different clusters."""
+import random
+import socket
+import subprocess
+import time
+
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Generator
+from contextlib import contextmanager, closing
 
 from pykube import HTTPClient, KubeConfig
 
@@ -54,3 +60,104 @@ class ExistingCluster(Cluster):
             return
         self._kube_client.session.close()
         self._kube_client = None
+
+
+    # From https://codeberg.org/hjacobs/pytest-kind/src/branch/main/pytest_kind/cluster.py#L134-L142
+    def exec_kubectl(self, *args: str, **kwargs) -> str:
+        """Run a kubectl command against the cluster and return the output as string."""
+        return subprocess.check_output(
+            ["kubectl", *args],
+            env={"KUBECONFIG": str(self.kube_config_path)},
+            encoding="utf-8",
+            **kwargs,
+        )
+
+
+    def kubectl(self, subcmd_string: str, input="", output="json", **kwargs):
+        """Run a kubectl command against the cluster and return the output"""
+        subcmds = subcmd_string.split(" ")
+
+        if input:
+            kwargs["filename"] = "-"
+        if output:
+            kwargs["output"] = output
+        if self.kube_config_path:
+            kwargs["kubeconfig"] = self.kube_config_path
+        if subcmds[0].lower() == "delete":
+            del kwargs["output"]
+
+        options = {f"--{option}={value}" for option, value in kwargs.items()}
+
+        result = subprocess.check_output([
+                "kubectl",
+                *subcmds,
+                *options
+            ],
+            encoding="utf-8",
+            input=input
+        )
+
+        # return result from kubectl command
+        # as parsed json if requested
+        # as list if result is a list
+        # as plain text otherwise
+
+        if output == "json":
+            output_json = json.loads(result)
+            if "items" in output_json:
+                return output_json["items"]
+            return json.loads(result)
+        return result
+
+
+    # From https://codeberg.org/hjacobs/pytest-kind/src/branch/main/pytest_kind/cluster.py#L144-L193
+    @contextmanager
+    def port_forward(
+        self,
+        service_or_pod_name: str,
+        remote_port: int,
+        *args,
+        local_port: int = None,
+        retries: int = 10,
+    ) -> Generator[int, None, None]:
+        """Run "kubectl port-forward" for the given service/pod and use a random local port."""
+        port_to_use: int
+        proc = None
+        for i in range(retries):
+            if proc:
+                proc.kill()
+            # Linux epheremal port range starts at 32k
+            port_to_use = local_port or random.randrange(5000, 30000)
+            proc = subprocess.Popen(
+                [
+                    str(self.kubectl_path),
+                    "port-forward",
+                    service_or_pod_name,
+                    f"{port_to_use}:{remote_port}",
+                    *args,
+                ],
+                env={"KUBECONFIG": str(self.kube_config_path)},
+            )
+            time.sleep(1)
+            returncode = proc.poll()
+            if returncode is not None:
+                if i >= retries - 1:
+                    raise Exception(
+                        f"kubectl port-forward returned exit code {returncode}"
+                    )
+                else:
+                    # try again
+                    continue
+            s = socket.socket()
+            try:
+                s.connect(("127.0.0.1", port_to_use))
+            except:
+                if i >= retries - 1:
+                    raise
+            finally:
+                s.close()
+        try:
+            yield port_to_use
+        finally:
+            if proc:
+                proc.kill()
