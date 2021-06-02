@@ -57,10 +57,17 @@ jobs:
           ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
     - name: Poetry install dependencies
       run: poetry install
+    - name: Restore pre-commit cache
+      uses: actions/cache@v2.1.5
+      with:
+        path: ~/.cache/pre-commit
+        key: pre-commit-${{ matrix.python-version }}-${{ hashFiles('.pre-commit-config.yaml') }}
+        restore-keys: |
+          pre-commit-${{ matrix.python-version }}-${{ hashFiles('.pre-commit-config.yaml') }}
     - name: Run code quality tools
       run: poetry run pre-commit run --all-files
     - name: Run pytest
-      run: poetry run python -m pytest --cov=./ --cov-report=xml --log-cli-level=info tests/
+      run: poetry run python -m pytest --cov=pytest_helm_charts/ --cov-report=xml --log-cli-level=info tests/
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
