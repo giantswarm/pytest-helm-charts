@@ -131,7 +131,7 @@ class ExistingCluster(Cluster):
             port_to_use = local_port or random.randrange(5000, 30000)
             proc = subprocess.Popen(
                 [
-                    str(self.kubectl_path),
+                    "kubectl",
                     "port-forward",
                     service_or_pod_name,
                     f"{port_to_use}:{remote_port}",
