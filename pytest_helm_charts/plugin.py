@@ -9,7 +9,7 @@ from .fixtures import chart_path  # noqa
 from .fixtures import chart_version  # noqa
 from .fixtures import cluster_type  # noqa
 from .fixtures import kube_cluster  # noqa
-from .fixtures import random_namespace # noqa
+from .fixtures import random_namespace  # noqa
 from .fixtures import kube_config  # noqa
 from .fixtures import values_file_path  # noqa
 from .giantswarm_app_platform.apps.http_testing import gatling_app_factory  # noqa
