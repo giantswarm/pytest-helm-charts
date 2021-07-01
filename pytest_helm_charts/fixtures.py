@@ -116,7 +116,7 @@ def random_namespace(request, kube_cluster):
 
     yield name
 
-    if not request.config.getoption("keep_namespace"):
+    if not request.config.getoption("keep_namespace", False):
         ns = Namespace.objects(kube_cluster.kube_client).get_or_none(name=name)
         if ns is not None:
             ns.delete()
