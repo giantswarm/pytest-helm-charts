@@ -117,13 +117,19 @@ class ExistingCluster(Cluster):
         self,
         service_or_pod_name: str,
         remote_port: int,
-        *args,
         local_port: int = None,
         retries: int = 10,
+        **kwargs
     ) -> Generator[int, None, None]:
         """Run "kubectl port-forward" for the given service/pod and use a random local port."""
         port_to_use: int
         proc = None
+
+        if self.kube_config_path:
+            kwargs["kubeconfig"] = self.kube_config_path
+
+        options = {f"--{option}={value}" for option, value in kwargs.items()}
+
         for i in range(retries):
             if proc:
                 proc.kill()
@@ -133,11 +139,10 @@ class ExistingCluster(Cluster):
                 [
                     "kubectl",
                     "port-forward",
+                    *options,
                     service_or_pod_name,
                     f"{port_to_use}:{remote_port}",
-                    *args,
-                ],
-                env={"KUBECONFIG": str(self.kube_config_path)},
+                ]
             )
             time.sleep(1)
             returncode = proc.poll()
