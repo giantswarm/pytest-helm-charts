@@ -91,14 +91,7 @@ class ExistingCluster(Cluster):
 
         # It is expected to run this Python module within a container
         # with kubectl present in $PATH
-        result = subprocess.check_output([  # nosec
-                "kubectl",
-                *subcmds,
-                *options
-            ],
-            encoding="utf-8",
-            input=input
-        )
+        result = subprocess.check_output(["kubectl", *subcmds, *options], encoding="utf-8", input=input)  # nosec
 
         # return result from kubectl command
         # as parsed json if requested
@@ -114,12 +107,7 @@ class ExistingCluster(Cluster):
 
     @contextmanager
     def port_forward(
-        self,
-        service_or_pod_name: str,
-        remote_port: int,
-        local_port: int = None,
-        retries: int = 10,
-        **kwargs
+        self, service_or_pod_name: str, remote_port: int, local_port: int = None, retries: int = 10, **kwargs
     ) -> Generator[int, None, None]:
         """Run "kubectl port-forward" for the given service/pod and use a random local port.
 
@@ -154,9 +142,7 @@ class ExistingCluster(Cluster):
             returncode = proc.poll()
             if returncode is not None:
                 if i >= retries - 1:
-                    raise Exception(
-                        f"kubectl port-forward returned exit code {returncode}"
-                    )
+                    raise Exception(f"kubectl port-forward returned exit code {returncode}")
                 else:
                     # try again
                     continue

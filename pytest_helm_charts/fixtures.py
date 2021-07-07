@@ -110,8 +110,8 @@ def random_namespace(request, kube_cluster):
             "kind": "Namespace",
             "metadata": {
                 "name": name,
-            }
-        }
+            },
+        },
     )
     ns.create()
 
