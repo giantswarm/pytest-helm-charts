@@ -98,6 +98,7 @@ def kube_cluster(
             "Error of type {} when releasing cluster. Value: {}\nStacktrace:\n{}".format(exc[0], exc[1], exc[2])
         )
 
+
 @pytest.fixture(scope="module")
 def random_namespace(request, kube_cluster):
     name = f"pytest-{''.join(random.choices(string.ascii_lowercase, k=5))}"

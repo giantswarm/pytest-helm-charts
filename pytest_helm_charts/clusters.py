@@ -2,12 +2,12 @@
 import json
 import random
 import socket
-import subprocess
+import subprocess  # nosec
 import time
 
 from abc import ABC, abstractmethod
 from typing import Optional, Generator
-from contextlib import contextmanager, closing
+from contextlib import contextmanager
 
 from pykube import HTTPClient, KubeConfig
 
@@ -62,17 +62,17 @@ class ExistingCluster(Cluster):
         self._kube_client.session.close()
         self._kube_client = None
 
-
-    # From https://codeberg.org/hjacobs/pytest-kind/src/branch/main/pytest_kind/cluster.py#L134-L142
     def exec_kubectl(self, *args: str, **kwargs) -> str:
-        """Run a kubectl command against the cluster and return the output as string."""
-        return subprocess.check_output(
+        """Run a kubectl command against the cluster and return the output as string.
+
+        Based on code from https://codeberg.org/hjacobs/pytest-kind/src/branch/main/pytest_kind/cluster.py#L134-L142
+        """
+        return subprocess.check_output(  # nosec
             ["kubectl", *args],
             env={"KUBECONFIG": str(self.kube_config_path)},
             encoding="utf-8",
             **kwargs,
         )
-
 
     def kubectl(self, subcmd_string: str, input="", output="json", **kwargs):
         """Run a kubectl command against the cluster and return the output"""
@@ -89,7 +89,9 @@ class ExistingCluster(Cluster):
 
         options = {f"--{option}={value}" for option, value in kwargs.items()}
 
-        result = subprocess.check_output([
+        # It is expected to run this Python module within a container
+        # with kubectl present in $PATH
+        result = subprocess.check_output([  # nosec
                 "kubectl",
                 *subcmds,
                 *options
@@ -110,8 +112,6 @@ class ExistingCluster(Cluster):
             return json.loads(result)
         return result
 
-
-    # From https://codeberg.org/hjacobs/pytest-kind/src/branch/main/pytest_kind/cluster.py#L144-L193
     @contextmanager
     def port_forward(
         self,
@@ -121,7 +121,10 @@ class ExistingCluster(Cluster):
         retries: int = 10,
         **kwargs
     ) -> Generator[int, None, None]:
-        """Run "kubectl port-forward" for the given service/pod and use a random local port."""
+        """Run "kubectl port-forward" for the given service/pod and use a random local port.
+
+        Based on code from https://codeberg.org/hjacobs/pytest-kind/src/branch/main/pytest_kind/cluster.py#L144-L193
+        """
         port_to_use: int
         proc = None
 
@@ -134,8 +137,11 @@ class ExistingCluster(Cluster):
             if proc:
                 proc.kill()
             # Linux epheremal port range starts at 32k
-            port_to_use = local_port or random.randrange(5000, 30000)
-            proc = subprocess.Popen(
+            port_to_use = local_port or random.randrange(5000, 30000)  # nosec
+
+            # It is expected to run this Python module within a container
+            # with kubectl present in $PATH
+            proc = subprocess.Popen(  # nosec
                 [
                     "kubectl",
                     "port-forward",
@@ -157,7 +163,7 @@ class ExistingCluster(Cluster):
             s = socket.socket()
             try:
                 s.connect(("127.0.0.1", port_to_use))
-            except:
+            except Exception:
                 if i >= retries - 1:
                     raise
             finally:
