@@ -29,7 +29,7 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     )
 
     # assert that configMap was created for the app
-    cm: unittest.mock.Mock = pytest_helm_charts.giantswarm_app_platform.app.ConfigMap
+    cm = cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.app.ConfigMap)
     cm.assert_called_once_with(
         kube_cluster.kube_client,
         {
@@ -53,7 +53,7 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
             "metadata": {
                 "name": app_name,
                 "namespace": app_namespace,
-                "labels": {"app": "testing-app", "app-operator.giantswarm.io/version": "1.0.0"},
+                "labels": {"app": "testing-app", "app-operator.giantswarm.io/version": "0.0.0"},
             },
             "spec": {
                 "catalog": catalog_name,
@@ -61,6 +61,7 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
                 "kubeConfig": {"inCluster": True},
                 "name": app_name,
                 "namespace": app_namespace,
+                "namespaceConfig": {"annotations": {}, "labels": {}},
                 "config": {"configMap": {"name": app_name + "-testing-user-config", "namespace": app_namespace}},
             },
         },
