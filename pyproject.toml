@@ -33,7 +33,7 @@ classifiers=[
 [tool.poetry.dependencies]
 python = "^3.7"
 pytest = "^6.1.2"
-pykube-ng = "^20.10.0"
+pykube-ng = ">=20.10,<22.0"
 mkdocs = {version = "^1.1.2", optional = true }
 mkapi = {version = "^1.0.10", optional = true}
 
