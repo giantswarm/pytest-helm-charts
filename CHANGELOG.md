@@ -5,6 +5,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+## [0.3.2]
+
 - added: support for `namespacedConfig` for App CR (`app_factory_func` fixture)
 
 ## [0.3.1]
