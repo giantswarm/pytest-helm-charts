@@ -478,7 +478,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
 name = "pykube-ng"
-version = "20.10.0"
+version = "21.3.0"
 description = "Python client library for Kubernetes"
 category = "main"
 optional = false
@@ -539,11 +539,11 @@ testing = ["fields", "hunter", "process-tests (==2.0.2)", "six", "pytest-xdist",
 
 [[package]]
 name = "pytest-mock"
-version = "3.4.0"
+version = "3.6.1"
 description = "Thin-wrapper around the mock package for easier use with pytest"
 category = "dev"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.6"
 
 [package.dependencies]
 pytest = ">=5.0"
@@ -740,7 +740,7 @@ docs = ["mkdocs", "mkapi"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "d5eafbb4df7d4980f1740b9ad052701040904fd2f3a1df880f46ea98a862969a"
+content-hash = "f520d583470253cb8ab6580be419172a7cd0def2b510868cafa0d74bfec8c4a5"
 
 [metadata.files]
 appdirs = [
@@ -1005,8 +1005,8 @@ pyflakes = [
     {file = "pyflakes-2.2.0.tar.gz", hash = "sha256:35b2d75ee967ea93b55750aa9edbbf72813e06a66ba54438df2cfac9e3c27fc8"},
 ]
 pykube-ng = [
-    {file = "pykube-ng-20.10.0.tar.gz", hash = "sha256:d6a5f9101719d461db1f7e11cfdde4c1f8bae5c6a89f4c08e5008aae9327b338"},
-    {file = "pykube_ng-20.10.0-py3-none-any.whl", hash = "sha256:72c5fbff0da32ec1682927167742f4ebf7b33a1ad01035511d5fec2de208220f"},
+    {file = "pykube-ng-21.3.0.tar.gz", hash = "sha256:d0824fab6b5c1f25ca5d4b348a9556545603d1ff9251e126fd4008a34e142dc3"},
+    {file = "pykube_ng-21.3.0-py3-none-any.whl", hash = "sha256:06d73e639d4c63979798042247330e6b9e7072e4a2be84a0ea4793e633787970"},
 ]
 pyparsing = [
     {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},
@@ -1021,8 +1021,8 @@ pytest-cov = [
     {file = "pytest_cov-2.10.1-py2.py3-none-any.whl", hash = "sha256:45ec2d5182f89a81fc3eb29e3d1ed3113b9e9a873bcddb2a71faaab066110191"},
 ]
 pytest-mock = [
-    {file = "pytest-mock-3.4.0.tar.gz", hash = "sha256:c3981f5edee6c4d1942250a60d9b39d38d5585398de1bfce057f925bdda720f4"},
-    {file = "pytest_mock-3.4.0-py3-none-any.whl", hash = "sha256:c0fc979afac4aaba545cbd01e9c20736eb3fefb0a066558764b07d3de8f04ed3"},
+    {file = "pytest-mock-3.6.1.tar.gz", hash = "sha256:40217a058c52a63f1042f0784f62009e976ba824c418cced42e88d5f40ab0e62"},
+    {file = "pytest_mock-3.6.1-py3-none-any.whl", hash = "sha256:30c2f2cc9759e76eee674b81ea28c9f0b94f8f0445a1b87762cadf774f0df7e3"},
 ]
 pyyaml = [
     {file = "PyYAML-5.3.1-cp27-cp27m-win32.whl", hash = "sha256:74809a57b329d6cc0fdccee6318f44b9b8649961fa73144a98735b0aaf029f1f"},

@@ -26,10 +26,17 @@ def app_factory_func(
         catalog_url: str,
         namespace: str = "default",
         config_values: YamlDict = None,
+        namespace_config_annotations: YamlDict = None,
+        namespace_config_labels: YamlDict = None,
     ) -> ConfiguredApp:
-        # TODO: include proper regexp validation
         if config_values is None:
             config_values = {}
+        if namespace_config_annotations is None:
+            namespace_config_annotations = {}
+        if namespace_config_labels is None:
+            namespace_config_labels = {}
+
+        # TODO: include proper regexp validation
         assert app_name != ""
         assert app_version != ""
         assert catalog_name != ""
@@ -46,7 +53,7 @@ def app_factory_func(
             "metadata": {
                 "name": app_name,
                 "namespace": namespace,
-                "labels": {"app": app_name, "app-operator.giantswarm.io/version": "1.0.0"},
+                "labels": {"app": app_name, "app-operator.giantswarm.io/version": "0.0.0"},
             },
             "spec": {
                 "catalog": catalog.metadata["name"],
@@ -54,6 +61,10 @@ def app_factory_func(
                 "kubeConfig": {"inCluster": True},
                 "name": app_name,
                 "namespace": namespace,
+                "namespaceConfig": {
+                    "annotations": namespace_config_annotations,
+                    "labels": namespace_config_labels,
+                },
             },
         }
 

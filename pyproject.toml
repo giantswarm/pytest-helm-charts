@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pytest-helm-charts"
-version = "0.3.1"
+version = "0.3.2"
 description = "A plugin to provide different types and configs of Kubernetes clusters that can be used for testing."
 authors = ["Łukasz Piątkowski <lukasz@giantswarm.io>"]
 license="Apache-2.0"
@@ -33,7 +33,7 @@ classifiers=[
 [tool.poetry.dependencies]
 python = "^3.7"
 pytest = "^6.1.2"
-pykube-ng = "^20.10.0"
+pykube-ng = ">=20.10,<22.0"
 mkdocs = {version = "^1.1.2", optional = true }
 mkapi = {version = "^1.0.10", optional = true}
 
@@ -41,7 +41,7 @@ mkapi = {version = "^1.0.10", optional = true}
 autopep8 = "^1.5.2"
 tox = "^3.20.1"
 tox-pyenv = "^1.1.0"
-pytest-mock = "^3.4.0"
+pytest-mock = "^3.6.1"
 flake8 = "^3.8.3"
 mypy = "^0.790"
 pytest-cov = "^2.10.1"
