@@ -49,7 +49,7 @@ jobs:
     - name: Poetry check version
       run: poetry --version
     - name: Restore poetry cache
-      uses: actions/cache@v2.1.5
+      uses: actions/cache@v2.1.6
       with:
         path: ~/.cache/pypoetry/virtualenvs
         key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
@@ -58,7 +58,7 @@ jobs:
     - name: Poetry install dependencies
       run: poetry install
     - name: Restore pre-commit cache
-      uses: actions/cache@v2.1.5
+      uses: actions/cache@v2.1.6
       with:
         path: ~/.cache/pre-commit
         key: pre-commit-${{ matrix.python-version }}-${{ hashFiles('.pre-commit-config.yaml') }}
