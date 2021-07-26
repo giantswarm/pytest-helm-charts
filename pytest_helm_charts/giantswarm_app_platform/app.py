@@ -13,7 +13,10 @@ class ConfiguredApp(NamedTuple):
     app_cm: Optional[ConfigMap]
 
 
-AppFactoryFunc = Callable[[str, str, str, str, str, YamlDict], ConfiguredApp]
+AppFactoryFunc = Callable[
+    [str, str, str, str, str, Optional[YamlDict], Optional[YamlDict], Optional[YamlDict]],
+    ConfiguredApp,
+]
 
 
 def app_factory_func(
