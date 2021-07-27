@@ -15,7 +15,6 @@ YamlDict = Dict[str, Any]
 
 logger = logging.getLogger(__name__)
 
-# TODO: doesn't work as T for method below
 T = TypeVar("T", bound=pykube.objects.NamespacedAPIObject)
 
 
@@ -78,9 +77,11 @@ def wait_for_jobs_to_complete(
     return result
 
 
-def _deployment_running(d: Deployment) -> bool:
+def _deployment_running(deploy: Deployment) -> bool:
     complete = (
-        d.ready and "availableReplicas" in d.obj["status"] and d.replicas == int(d.obj["status"]["availableReplicas"])
+        deploy.ready
+        and "availableReplicas" in deploy.obj["status"]
+        and deploy.replicas == int(deploy.obj["status"]["availableReplicas"])
     )
     return complete
 
@@ -104,8 +105,8 @@ def wait_for_deployments_to_run(
     return result
 
 
-def _statefulset_ready(s: pykube.StatefulSet) -> bool:
-    complete = "readyReplicas" in s.obj["status"] and s.replicas == int(s.obj["status"]["readyReplicas"])
+def _stateful_set_ready(sts: pykube.StatefulSet) -> bool:
+    complete = "readyReplicas" in sts.obj["status"] and sts.replicas == int(sts.obj["status"]["readyReplicas"])
     return complete
 
 
@@ -121,7 +122,35 @@ def wait_for_stateful_sets_to_run(
         pykube.StatefulSet,
         stateful_set_names,
         stateful_sets_namespace,
-        _statefulset_ready,
+        _stateful_set_ready,
+        timeout_sec,
+        missing_ok=missing_ok,
+    )
+    return result
+
+
+def _daemon_set_ready(ds: pykube.DaemonSet) -> bool:
+    complete = (
+        "desiredNumberScheduled" in ds.obj["status"]
+        and "numberReady" in ds.obj["status"]
+        and int(ds.obj["status"]["desiredNumberScheduled"]) == int(ds.obj["status"]["numberReady"])
+    )
+    return complete
+
+
+def wait_for_daemon_sets_to_run(
+    kube_client: HTTPClient,
+    daemon_set_names: List[str],
+    daemon_sets_namespace: str,
+    timeout_sec: int,
+    missing_ok: bool = False,
+) -> List[pykube.DaemonSet]:
+    result = wait_for_namespaced_objects_condition(
+        kube_client,
+        pykube.DaemonSet,
+        daemon_set_names,
+        daemon_sets_namespace,
+        _daemon_set_ready,
         timeout_sec,
         missing_ok=missing_ok,
     )
