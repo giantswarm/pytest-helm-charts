@@ -19,6 +19,7 @@ def __get_app_catalog_obj(catalog_name: str, catalog_uri: str, kube_client: HTTP
             "description": "Catalog for testing.",
             "storage": {"URL": catalog_uri, "type": "helm"},
             "title": catalog_name,
+            "logoURL": "https://my-org.github.com/logo.png",
         },
     }
     return AppCatalogCR(kube_client, app_catalog_cr)

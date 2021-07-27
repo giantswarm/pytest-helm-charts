@@ -5,6 +5,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+- change: `app_factory_func` now checks if the passed App deploys successfully. This is configured using
+  the `timeout_sec` argument, which by default is equal 60. Use value 0 to disable checking if App deploys OK.
+- added:
+  - `wait_for_apps_to_run` helper method
+  - `wait_for_daemon_sets_to_run` helper method
+
 ## [0.3.2]
 
 - added: support for `namespacedConfig` for App CR (`app_factory_func` fixture)

@@ -5,6 +5,7 @@ from pykube import HTTPClient, ConfigMap
 
 from .app_catalog import AppCatalogFactoryFunc
 from .custom_resources import AppCR
+from .utils import wait_for_apps_to_run
 from ..utils import YamlDict
 
 
@@ -13,7 +14,7 @@ class ConfiguredApp(NamedTuple):
     app_cm: Optional[ConfigMap]
 
 
-AppFactoryFunc = Callable[[str, str, str, str, str, YamlDict], ConfiguredApp]
+AppFactoryFunc = Callable[..., ConfiguredApp]
 
 
 def app_factory_func(
@@ -28,6 +29,7 @@ def app_factory_func(
         config_values: YamlDict = None,
         namespace_config_annotations: YamlDict = None,
         namespace_config_labels: YamlDict = None,
+        timeout_sec: int = 60,
     ) -> ConfiguredApp:
         if config_values is None:
             config_values = {}
@@ -83,7 +85,9 @@ def app_factory_func(
         app_obj = AppCR(kube_client, app)
         app_obj.create()
         created_apps.append(ConfiguredApp(app_obj, app_cm_obj))
-        # TODO: wait until deployment is all ready
+        if timeout_sec > 0:
+            wait_for_apps_to_run(kube_client, [app_name], namespace, timeout_sec)
+
         # we return a new object here, so that user doesn't alter the one added to created_apps
         return ConfiguredApp(app_obj, app_cm_obj)
 
