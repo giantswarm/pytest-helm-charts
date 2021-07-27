@@ -24,8 +24,9 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app_catalog.AppCatalogCR.create")
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.AppCR", autospec=True)
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.ConfigMap", autospec=True)
+    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.wait_for_apps_to_run", autospec=True)
     test_configured_app: ConfiguredApp = app_factory(
-        app_name, app_version, catalog_name, catalog_url, app_namespace, config_values
+        app_name, app_version, catalog_name, catalog_url, namespace=app_namespace, config_values=config_values
     )
 
     # assert that configMap was created for the app
@@ -67,3 +68,6 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
         },
     )
     cast(unittest.mock.Mock, test_configured_app.app.create).assert_called_once_with()
+    cast(
+        unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.app.wait_for_apps_to_run
+    ).assert_called_once_with(kube_cluster.kube_client, [app_name], app_namespace, 60)
