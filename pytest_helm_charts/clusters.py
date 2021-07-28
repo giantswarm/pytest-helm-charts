@@ -1,13 +1,9 @@
 """This module introduces classes for handling different clusters."""
 import json
-import random
-import socket
+import shutil
 import subprocess  # nosec
-import time
-
 from abc import ABC, abstractmethod
-from typing import Optional, Generator
-from contextlib import contextmanager
+from typing import Optional
 
 from pykube import HTTPClient, KubeConfig
 
@@ -48,6 +44,8 @@ class ExistingCluster(Cluster):
     kube_config_path: str
 
     def __init__(self, kube_config_path: str) -> None:
+        if not kube_config_path:
+            raise ValueError("'kube_config_path' can't be empty")
         super().__init__()
         self.kube_config_path = kube_config_path
 
@@ -62,100 +60,35 @@ class ExistingCluster(Cluster):
         self._kube_client.session.close()
         self._kube_client = None
 
-    def exec_kubectl(self, *args: str, **kwargs) -> str:
-        """Run a kubectl command against the cluster and return the output as string.
-
-        Based on code from https://codeberg.org/hjacobs/pytest-kind/src/branch/main/pytest_kind/cluster.py#L134-L142
-        """
-        return subprocess.check_output(  # nosec
-            ["kubectl", *args],
-            env={"KUBECONFIG": str(self.kube_config_path)},
-            encoding="utf-8",
-            **kwargs,
-        )
-
-    def kubectl(self, subcmd_string: str, input="", output="json", **kwargs):
+    def kubectl(self, subcmd_string: str, std_input: str = "", output_format: str = "json", **kwargs: str):
         """Run a kubectl command against the cluster and return the output"""
-        subcmds = subcmd_string.split(" ")
+        bin_name = "kubectl"
+        if shutil.which(bin_name) is None:
+            raise ValueError(f"Can't find {bin_name} executable. Please make sure it's available in $PATH.")
 
-        if input:
+        subcmds = subcmd_string.split(" ")
+        if len(subcmds) == 0:
+            raise ValueError("You need to give at least one kubectl subcommand in the subcmd_string argument.")
+
+        kwargs["kubeconfig"] = self.kube_config_path
+        if std_input:
             kwargs["filename"] = "-"
-        if output:
-            kwargs["output"] = output
-        if self.kube_config_path:
-            kwargs["kubeconfig"] = self.kube_config_path
+        if output_format:
+            kwargs["output"] = output_format
         if subcmds[0].lower() == "delete":
             del kwargs["output"]
 
         options = {f"--{option}={value}" for option, value in kwargs.items()}
 
-        # It is expected to run this Python module within a container
-        # with kubectl present in $PATH
-        result = subprocess.check_output(["kubectl", *subcmds, *options], encoding="utf-8", input=input)  # nosec
+        result = subprocess.check_output([bin_name, *subcmds, *options], encoding="utf-8", input=std_input)  # nosec
 
-        # return result from kubectl command
-        # as parsed json if requested
-        # as list if result is a list
-        # as plain text otherwise
+        # return result from kubectl command:
+        # - as parsed json by default, extracting objects list to list
+        # - as plain text otherwise
 
-        if output == "json":
+        if output_format == "json":
             output_json = json.loads(result)
             if "items" in output_json:
                 return output_json["items"]
-            return json.loads(result)
+            return output_json
         return result
-
-    @contextmanager
-    def port_forward(
-        self, service_or_pod_name: str, remote_port: int, local_port: int = None, retries: int = 10, **kwargs
-    ) -> Generator[int, None, None]:
-        """Run "kubectl port-forward" for the given service/pod and use a random local port.
-
-        Based on code from https://codeberg.org/hjacobs/pytest-kind/src/branch/main/pytest_kind/cluster.py#L144-L193
-        """
-        port_to_use: int
-        proc = None
-
-        if self.kube_config_path:
-            kwargs["kubeconfig"] = self.kube_config_path
-
-        options = {f"--{option}={value}" for option, value in kwargs.items()}
-
-        for i in range(retries):
-            if proc:
-                proc.kill()
-            # Linux epheremal port range starts at 32k
-            port_to_use = local_port or random.randrange(5000, 30000)  # nosec
-
-            # It is expected to run this Python module within a container
-            # with kubectl present in $PATH
-            proc = subprocess.Popen(  # nosec
-                [
-                    "kubectl",
-                    "port-forward",
-                    *options,
-                    service_or_pod_name,
-                    f"{port_to_use}:{remote_port}",
-                ]
-            )
-            time.sleep(1)
-            returncode = proc.poll()
-            if returncode is not None:
-                if i >= retries - 1:
-                    raise Exception(f"kubectl port-forward returned exit code {returncode}")
-                else:
-                    # try again
-                    continue
-            s = socket.socket()
-            try:
-                s.connect(("127.0.0.1", port_to_use))
-            except Exception:
-                if i >= retries - 1:
-                    raise
-            finally:
-                s.close()
-        try:
-            yield port_to_use
-        finally:
-            if proc:
-                proc.kill()

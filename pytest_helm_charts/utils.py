@@ -1,9 +1,6 @@
 """Different utilities required over the whole testing lib."""
 import logging
 import time
-import requests
-import json
-
 from typing import Dict, Any, List, TypeVar, Callable, Type
 
 import pykube.exceptions
@@ -224,30 +221,3 @@ def create_job_and_run_to_completion(
     )
 
     return job
-
-
-def forward_requests(kubernetes_cluster, namespace, forward_to, port, rel_url="", retries=3, **kwargs):
-    method = "POST" if "json" in kwargs else "GET"
-
-    while retries:
-        try:
-            with kubernetes_cluster.port_forward(forward_to, port, namespace=namespace, retries=1) as f_port:
-                res = requests.request(method, f"http://localhost:{f_port}{rel_url}", **kwargs)
-                res.raise_for_status()
-                try:
-                    return res.json()
-                except json.decoder.JSONDecodeError:
-                    return res.text
-
-        # reraise if out of retries
-        except OSError as e:
-            logger.warning(f"ConnectionError: {repr(e)}")
-            if e and retries == 0:
-                raise e
-        except Exception as e:
-            logger.warning(repr(e))
-            if e and retries == 0:
-                raise e
-
-        retries -= 1
-        logger.info(f"retries left: {retries}")
