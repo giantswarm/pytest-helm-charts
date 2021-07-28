@@ -3,7 +3,7 @@ import json
 import shutil
 import subprocess  # nosec
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Any
 
 from pykube import HTTPClient, KubeConfig
 
@@ -60,7 +60,7 @@ class ExistingCluster(Cluster):
         self._kube_client.session.close()
         self._kube_client = None
 
-    def kubectl(self, subcmd_string: str, std_input: str = "", output_format: str = "json", **kwargs: str):
+    def kubectl(self, subcmd_string: str, std_input: str = "", output_format: str = "json", **kwargs: str) -> Any:
         """Run a kubectl command against the cluster and return the output"""
         bin_name = "kubectl"
         if shutil.which(bin_name) is None:

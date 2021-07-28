@@ -99,13 +99,12 @@ def kube_cluster(
 
 
 @pytest.fixture(scope="module")
-def random_namespace(pytestconfig: Config, kube_cluster: Cluster) -> pykube.Namespace:
+def random_namespace(kube_cluster: Cluster) -> pykube.Namespace:
     """Create and return a random kubernetes namespace that will be deleted at the end of test run."""
     name = f"pytest-{''.join(random.choices(string.ascii_lowercase, k=5))}"
     ns = ensure_namespace_exists(kube_cluster.kube_client, name)
 
     yield ns
 
-    if not pytestconfig.getoption("keep_namespace", False):
-        ns.delete()
-        logger.info(f"Deleted the namespace '{name}'.")
+    ns.delete()
+    logger.info(f"Deleted the namespace '{name}'.")

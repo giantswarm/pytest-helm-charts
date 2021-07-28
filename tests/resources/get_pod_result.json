@@ -1,0 +1,414 @@
+{
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+        "annotations": {
+            "app.giantswarm.io/config-checksum": "dfef6e792ee23b603cb847ec9adeec4f3cb0294c1ad13b5e163ffe834ce2f996"
+        },
+        "creationTimestamp": "2021-07-27T11:55:14Z",
+        "generateName": "app-operator-unique-647f46968b-",
+        "labels": {
+            "app.kubernetes.io/instance": "app-operator-unique",
+            "app.kubernetes.io/name": "app-operator",
+            "pod-template-hash": "647f46968b"
+        },
+        "managedFields": [
+            {
+                "apiVersion": "v1",
+                "fieldsType": "FieldsV1",
+                "fieldsV1": {
+                    "f:metadata": {
+                        "f:annotations": {
+                            ".": {},
+                            "f:app.giantswarm.io/config-checksum": {}
+                        },
+                        "f:generateName": {},
+                        "f:labels": {
+                            ".": {},
+                            "f:app.kubernetes.io/instance": {},
+                            "f:app.kubernetes.io/name": {},
+                            "f:pod-template-hash": {}
+                        },
+                        "f:ownerReferences": {
+                            ".": {},
+                            "k:{\"uid\":\"2fb3d3b1-fd60-47d4-8f8d-38812748f56b\"}": {
+                                ".": {},
+                                "f:apiVersion": {},
+                                "f:blockOwnerDeletion": {},
+                                "f:controller": {},
+                                "f:kind": {},
+                                "f:name": {},
+                                "f:uid": {}
+                            }
+                        }
+                    },
+                    "f:spec": {
+                        "f:containers": {
+                            "k:{\"name\":\"app-operator\"}": {
+                                ".": {},
+                                "f:args": {},
+                                "f:env": {
+                                    ".": {},
+                                    "k:{\"name\":\"POD_NAMESPACE\"}": {
+                                        ".": {},
+                                        "f:name": {},
+                                        "f:valueFrom": {
+                                            ".": {},
+                                            "f:fieldRef": {
+                                                ".": {},
+                                                "f:apiVersion": {},
+                                                "f:fieldPath": {}
+                                            }
+                                        }
+                                    }
+                                },
+                                "f:image": {},
+                                "f:imagePullPolicy": {},
+                                "f:livenessProbe": {
+                                    ".": {},
+                                    "f:failureThreshold": {},
+                                    "f:httpGet": {
+                                        ".": {},
+                                        "f:path": {},
+                                        "f:port": {},
+                                        "f:scheme": {}
+                                    },
+                                    "f:initialDelaySeconds": {},
+                                    "f:periodSeconds": {},
+                                    "f:successThreshold": {},
+                                    "f:timeoutSeconds": {}
+                                },
+                                "f:name": {},
+                                "f:ports": {
+                                    ".": {},
+                                    "k:{\"containerPort\":8000,\"protocol\":\"TCP\"}": {
+                                        ".": {},
+                                        "f:containerPort": {},
+                                        "f:name": {},
+                                        "f:protocol": {}
+                                    }
+                                },
+                                "f:readinessProbe": {
+                                    ".": {},
+                                    "f:failureThreshold": {},
+                                    "f:httpGet": {
+                                        ".": {},
+                                        "f:path": {},
+                                        "f:port": {},
+                                        "f:scheme": {}
+                                    },
+                                    "f:initialDelaySeconds": {},
+                                    "f:periodSeconds": {},
+                                    "f:successThreshold": {},
+                                    "f:timeoutSeconds": {}
+                                },
+                                "f:resources": {
+                                    ".": {},
+                                    "f:limits": {
+                                        ".": {},
+                                        "f:memory": {}
+                                    },
+                                    "f:requests": {
+                                        ".": {},
+                                        "f:cpu": {},
+                                        "f:memory": {}
+                                    }
+                                },
+                                "f:terminationMessagePath": {},
+                                "f:terminationMessagePolicy": {},
+                                "f:volumeMounts": {
+                                    ".": {},
+                                    "k:{\"mountPath\":\"/var/run/app-operator/configmap/\"}": {
+                                        ".": {},
+                                        "f:mountPath": {},
+                                        "f:name": {}
+                                    }
+                                }
+                            }
+                        },
+                        "f:dnsPolicy": {},
+                        "f:enableServiceLinks": {},
+                        "f:restartPolicy": {},
+                        "f:schedulerName": {},
+                        "f:securityContext": {
+                            ".": {},
+                            "f:runAsGroup": {},
+                            "f:runAsUser": {}
+                        },
+                        "f:serviceAccount": {},
+                        "f:serviceAccountName": {},
+                        "f:terminationGracePeriodSeconds": {},
+                        "f:volumes": {
+                            ".": {},
+                            "k:{\"name\":\"app-operator-configmap\"}": {
+                                ".": {},
+                                "f:configMap": {
+                                    ".": {},
+                                    "f:defaultMode": {},
+                                    "f:items": {},
+                                    "f:name": {}
+                                },
+                                "f:name": {}
+                            }
+                        }
+                    }
+                },
+                "manager": "kube-controller-manager",
+                "operation": "Update",
+                "time": "2021-07-27T11:55:14Z"
+            },
+            {
+                "apiVersion": "v1",
+                "fieldsType": "FieldsV1",
+                "fieldsV1": {
+                    "f:status": {
+                        "f:conditions": {
+                            "k:{\"type\":\"ContainersReady\"}": {
+                                ".": {},
+                                "f:lastProbeTime": {},
+                                "f:lastTransitionTime": {},
+                                "f:status": {},
+                                "f:type": {}
+                            },
+                            "k:{\"type\":\"Initialized\"}": {
+                                ".": {},
+                                "f:lastProbeTime": {},
+                                "f:lastTransitionTime": {},
+                                "f:status": {},
+                                "f:type": {}
+                            },
+                            "k:{\"type\":\"Ready\"}": {
+                                ".": {},
+                                "f:lastProbeTime": {},
+                                "f:lastTransitionTime": {},
+                                "f:status": {},
+                                "f:type": {}
+                            }
+                        },
+                        "f:containerStatuses": {},
+                        "f:hostIP": {},
+                        "f:phase": {},
+                        "f:podIP": {},
+                        "f:podIPs": {
+                            ".": {},
+                            "k:{\"ip\":\"10.244.2.2\"}": {
+                                ".": {},
+                                "f:ip": {}
+                            }
+                        },
+                        "f:startTime": {}
+                    }
+                },
+                "manager": "kubelet",
+                "operation": "Update",
+                "time": "2021-07-28T11:27:44Z"
+            }
+        ],
+        "name": "app-operator-unique-647f46968b-wbn4h",
+        "namespace": "giantswarm",
+        "ownerReferences": [
+            {
+                "apiVersion": "apps/v1",
+                "blockOwnerDeletion": true,
+                "controller": true,
+                "kind": "ReplicaSet",
+                "name": "app-operator-unique-647f46968b",
+                "uid": "2fb3d3b1-fd60-47d4-8f8d-38812748f56b"
+            }
+        ],
+        "resourceVersion": "48595",
+        "selfLink": "/api/v1/namespaces/giantswarm/pods/app-operator-unique-647f46968b-wbn4h",
+        "uid": "c9cabd54-15f4-4c6c-8bb6-221ecff801c3"
+    },
+    "spec": {
+        "containers": [
+            {
+                "args": [
+                    "daemon",
+                    "--config.dirs=/var/run/app-operator/configmap/",
+                    "--config.files=config"
+                ],
+                "env": [
+                    {
+                        "name": "POD_NAMESPACE",
+                        "valueFrom": {
+                            "fieldRef": {
+                                "apiVersion": "v1",
+                                "fieldPath": "metadata.namespace"
+                            }
+                        }
+                    }
+                ],
+                "image": "quay.io/giantswarm/app-operator:4.3.2",
+                "imagePullPolicy": "IfNotPresent",
+                "livenessProbe": {
+                    "failureThreshold": 3,
+                    "httpGet": {
+                        "path": "/healthz",
+                        "port": 8000,
+                        "scheme": "HTTP"
+                    },
+                    "initialDelaySeconds": 15,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 1
+                },
+                "name": "app-operator",
+                "ports": [
+                    {
+                        "containerPort": 8000,
+                        "name": "http",
+                        "protocol": "TCP"
+                    }
+                ],
+                "readinessProbe": {
+                    "failureThreshold": 3,
+                    "httpGet": {
+                        "path": "/healthz",
+                        "port": 8000,
+                        "scheme": "HTTP"
+                    },
+                    "initialDelaySeconds": 15,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 1
+                },
+                "resources": {
+                    "limits": {
+                        "memory": "280Mi"
+                    },
+                    "requests": {
+                        "cpu": "250m",
+                        "memory": "250Mi"
+                    }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                    {
+                        "mountPath": "/var/run/app-operator/configmap/",
+                        "name": "app-operator-configmap"
+                    },
+                    {
+                        "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                        "name": "app-operator-unique-token-9lwvf",
+                        "readOnly": true
+                    }
+                ]
+            }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "nodeName": "linkerd-worker3",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+            "runAsGroup": 1000,
+            "runAsUser": 1000
+        },
+        "serviceAccount": "app-operator-unique",
+        "serviceAccountName": "app-operator-unique",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+            {
+                "effect": "NoExecute",
+                "key": "node.kubernetes.io/not-ready",
+                "operator": "Exists",
+                "tolerationSeconds": 300
+            },
+            {
+                "effect": "NoExecute",
+                "key": "node.kubernetes.io/unreachable",
+                "operator": "Exists",
+                "tolerationSeconds": 300
+            }
+        ],
+        "volumes": [
+            {
+                "configMap": {
+                    "defaultMode": 420,
+                    "items": [
+                        {
+                            "key": "config.yaml",
+                            "path": "config.yaml"
+                        }
+                    ],
+                    "name": "app-operator-unique"
+                },
+                "name": "app-operator-configmap"
+            },
+            {
+                "name": "app-operator-unique-token-9lwvf",
+                "secret": {
+                    "defaultMode": 420,
+                    "secretName": "app-operator-unique-token-9lwvf"
+                }
+            }
+        ]
+    },
+    "status": {
+        "conditions": [
+            {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2021-07-27T11:55:14Z",
+                "status": "True",
+                "type": "Initialized"
+            },
+            {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2021-07-28T11:27:44Z",
+                "status": "True",
+                "type": "Ready"
+            },
+            {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2021-07-28T11:27:44Z",
+                "status": "True",
+                "type": "ContainersReady"
+            },
+            {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2021-07-27T11:55:14Z",
+                "status": "True",
+                "type": "PodScheduled"
+            }
+        ],
+        "containerStatuses": [
+            {
+                "containerID": "containerd://a5568d24d3bf791b88d3829fd08fb2821436938a2fb094aca781d5c2daabce8f",
+                "image": "quay.io/giantswarm/app-operator:4.3.2",
+                "imageID": "quay.io/giantswarm/app-operator@sha256:0b430ba1156ad802878ea0e22927ab935b649693af136436e275f839b4627a36",
+                "lastState": {
+                    "terminated": {
+                        "containerID": "containerd://eea66c995992dc04998c6ca57655730cc9ec71ea2069513e3746dfc102190f7f",
+                        "exitCode": 2,
+                        "finishedAt": "2021-07-28T11:27:18Z",
+                        "reason": "Error",
+                        "startedAt": "2021-07-28T11:26:48Z"
+                    }
+                },
+                "name": "app-operator",
+                "ready": true,
+                "restartCount": 2,
+                "started": true,
+                "state": {
+                    "running": {
+                        "startedAt": "2021-07-28T11:27:29Z"
+                    }
+                }
+            }
+        ],
+        "hostIP": "172.18.0.3",
+        "phase": "Running",
+        "podIP": "10.244.2.2",
+        "podIPs": [
+            {
+                "ip": "10.244.2.2"
+            }
+        ],
+        "qosClass": "Burstable",
+        "startTime": "2021-07-27T11:55:14Z"
+    }
+}
