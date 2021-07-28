@@ -4,6 +4,7 @@ import unittest.mock
 from typing import cast, List
 
 import pytest
+from _pytest.fixtures import FixtureRequest
 from pytest_mock import MockFixture
 
 from pytest_helm_charts.clusters import ExistingCluster
@@ -58,7 +59,7 @@ def load_text_file(file_name: str) -> str:
         ("tests/resources/get_pod_result.json", ["app-operator-unique-647f46968b-wbn4h"]),
     ],
 )
-def test_kubectl_in_existing(file_name: str, expected_pods: List[str], request):
+def test_kubectl_in_existing(file_name: str, expected_pods: List[str], request: FixtureRequest):
     kube_config_path = "/fake/path/kube.config"
     mocker = request.getfixturevalue("mocker")
     patch_for_construction(mocker)
