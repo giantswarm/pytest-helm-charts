@@ -44,10 +44,11 @@ def load_text_file(file_name: str) -> str:
 
 
 @pytest.mark.parametrize(
-    "file_name,expected_pods",
+    "cmd,file_name,expected_pods",
     [
         # test get multiple pods and if they are returned as a list
         (
+            ["get", "pods"],
             "tests/resources/get_pods_result.json",
             [
                 "app-operator-unique-647f46968b-wbn4h",
@@ -56,10 +57,10 @@ def load_text_file(file_name: str) -> str:
             ],
         ),
         # test get a single pod and if it is returned as an object
-        ("tests/resources/get_pod_result.json", ["app-operator-unique-647f46968b-wbn4h"]),
+        (["get", "pod"], "tests/resources/get_pod_result.json", ["app-operator-unique-647f46968b-wbn4h"]),
     ],
 )
-def test_kubectl_in_existing(file_name: str, expected_pods: List[str], request: FixtureRequest):
+def test_kubectl_in_existing(cmd: List[str], file_name: str, expected_pods: List[str], request: FixtureRequest):
     kube_config_path = "/fake/path/kube.config"
     mocker = request.getfixturevalue("mocker")
     patch_for_construction(mocker)
@@ -69,9 +70,11 @@ def test_kubectl_in_existing(file_name: str, expected_pods: List[str], request: 
 
     cluster = ExistingCluster(kube_config_path)
     cluster.create()
-    res = cluster.kubectl("get pods")
+    res = cluster.kubectl(" ".join(cmd))
 
     cast(unittest.mock.Mock, shutil.which).called_once_with("kubectl")
+    expected_args = ["kubectl", *cmd, f"--kubeconfig={kube_config_path}", "--output=json"]
+    cast(unittest.mock.Mock, subprocess.check_output).called_once_with(expected_args)
     if isinstance(res, list):
         assert len(res) == len(expected_pods)
         pod_names = [p["metadata"]["name"] for p in res]
