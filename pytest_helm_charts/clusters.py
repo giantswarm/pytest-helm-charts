@@ -1,11 +1,14 @@
 """This module introduces classes for handling different clusters."""
 import json
+import logging
 import shutil
 import subprocess  # nosec
 from abc import ABC, abstractmethod
 from typing import Optional, Any
 
 from pykube import HTTPClient, KubeConfig
+
+logger = logging.getLogger(__name__)
 
 
 class Cluster(ABC):
@@ -38,7 +41,9 @@ class Cluster(ABC):
         """
         return self._kube_client
 
-    def kubectl(self, subcmd_string: str, std_input: str = "", output_format: str = "json", **kwargs: str) -> Any:
+    def kubectl(  # noqa: C901
+        self, subcmd_string: str, std_input: str = "", output_format: str = "json", **kwargs: str
+    ) -> Any:
         """If your cluster delivers the kube.config file, run a kubectl command against the cluster
         and return the output. Otherwise, exception is raised."""
         if not self.kube_config_path:
@@ -61,7 +66,14 @@ class Cluster(ABC):
 
         options = {f"--{option}={value}" for option, value in kwargs.items()}
 
-        result = subprocess.check_output([bin_name, *subcmds, *options], encoding="utf-8", input=std_input)  # nosec
+        try:
+            result = subprocess.check_output([bin_name, *subcmds, *options], encoding="utf-8", input=std_input)  # nosec
+        except subprocess.CalledProcessError as e:
+            logger.error(
+                f"'kubectl' call returned an error. Exit code: '{e.returncode}', stdout: '{e.stdout}',"
+                f"stderr: '{e.stderr}'"
+            )
+            raise
 
         # return result from kubectl command:
         # - as parsed json by default, extracting objects list to list
