@@ -12,9 +12,12 @@ class Cluster(ABC):
     """Represents an abstract cluster."""
 
     _kube_client: Optional[HTTPClient]
+    kube_config_path: Optional[str]
 
-    def __init__(self):
+    def __init__(self, kube_config_path: Optional[str] = None):
+        super().__init__()
         self._kube_client = None
+        self.kube_config_path = kube_config_path
 
     @abstractmethod
     def create(self) -> HTTPClient:
@@ -35,33 +38,11 @@ class Cluster(ABC):
         """
         return self._kube_client
 
-
-class ExistingCluster(Cluster):
-    """Implementation of [Cluster](Cluster) that uses kube.config
-    for an existing cluster.
-    """
-
-    kube_config_path: str
-
-    def __init__(self, kube_config_path: str) -> None:
-        if not kube_config_path:
-            raise ValueError("'kube_config_path' can't be empty")
-        super().__init__()
-        self.kube_config_path = kube_config_path
-
-    def create(self) -> HTTPClient:
-        kube_config = KubeConfig.from_file(self.kube_config_path)
-        self._kube_client = HTTPClient(kube_config)
-        return self._kube_client
-
-    def destroy(self) -> None:
-        if self._kube_client is None:
-            return
-        self._kube_client.session.close()
-        self._kube_client = None
-
     def kubectl(self, subcmd_string: str, std_input: str = "", output_format: str = "json", **kwargs: str) -> Any:
-        """Run a kubectl command against the cluster and return the output"""
+        """If your cluster delivers the kube.config file, run a kubectl command against the cluster
+        and return the output. Otherwise, exception is raised."""
+        if not self.kube_config_path:
+            raise ValueError("'kube_config_path' can't be empty to use 'kubectl'")
         bin_name = "kubectl"
         if shutil.which(bin_name) is None:
             raise ValueError(f"Can't find {bin_name} executable. Please make sure it's available in $PATH.")
@@ -92,3 +73,23 @@ class ExistingCluster(Cluster):
                 return output_json["items"]
             return output_json
         return result
+
+
+class ExistingCluster(Cluster):
+    """Implementation of [Cluster](Cluster) that uses kube.config
+    for an existing cluster.
+    """
+
+    def __init__(self, kube_config_path: str) -> None:
+        super().__init__(kube_config_path)
+
+    def create(self) -> HTTPClient:
+        kube_config = KubeConfig.from_file(self.kube_config_path)
+        self._kube_client = HTTPClient(kube_config)
+        return self._kube_client
+
+    def destroy(self) -> None:
+        if self._kube_client is None:
+            return
+        self._kube_client.session.close()
+        self._kube_client = None
