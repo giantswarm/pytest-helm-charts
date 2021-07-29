@@ -10,6 +10,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 - added:
   - `wait_for_apps_to_run` helper method
   - `wait_for_daemon_sets_to_run` helper method
+  - `kubectl` method in `kube_cluster`, which allows you to make any calls using the binary `kubectl`
+  - `random_namespace` fixture that creates a temporary namespace with a random name
 
 ## [0.3.2]
 

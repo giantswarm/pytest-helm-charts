@@ -1,12 +1,16 @@
 """This module defines fixtures for testing Helm Charts."""
 import logging
+import random
+import string
 import sys
 from typing import Callable, Iterable, Dict
 
+import pykube
 import pytest
 from _pytest.config import Config
 
 from .clusters import ExistingCluster, Cluster
+from .utils import ensure_namespace_exists
 
 logger = logging.getLogger(__name__)
 
@@ -91,6 +95,16 @@ def kube_cluster(
         logger.info("Cluster released")
     except Exception:
         exc = sys.exc_info()
-        logger.error(
-            "Error of type {} when releasing cluster. Value: {}\nStacktrace:\n{}".format(exc[0], exc[1], exc[2])
-        )
+        logger.error(f"Error of type {exc[0]} when releasing cluster. Value: {exc[1]}\nStacktrace:\n{exc[2]}")
+
+
+@pytest.fixture(scope="module")
+def random_namespace(kube_cluster: Cluster) -> pykube.Namespace:
+    """Create and return a random kubernetes namespace that will be deleted at the end of test run."""
+    name = f"pytest-{''.join(random.choices(string.ascii_lowercase, k=5))}"
+    ns = ensure_namespace_exists(kube_cluster.kube_client, name)
+
+    yield ns
+
+    ns.delete()
+    logger.info(f"Deleted the namespace '{name}'.")
