@@ -61,7 +61,7 @@ class Cluster(ABC):
             kwargs["filename"] = "-"
         if output_format:
             kwargs["output"] = output_format
-        if subcmds[0].lower() == "delete":
+        if subcmds[0].lower() == "delete" and "output" in kwargs:
             del kwargs["output"]
 
         options = {f"--{option}={value}" for option, value in kwargs.items()}
