@@ -6,6 +6,7 @@ from pykube import ConfigMap
 from pytest_mock import MockFixture
 
 import pytest_helm_charts
+import pytest_helm_charts.fixtures
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc, ConfiguredApp
 from pytest_helm_charts.utils import YamlDict
@@ -25,8 +26,15 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.AppCR", autospec=True)
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.ConfigMap", autospec=True)
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.wait_for_apps_to_run", autospec=True)
+    mocker.patch("pytest_helm_charts.fixtures.ensure_namespace_exists", autospec=True)
     test_configured_app: ConfiguredApp = app_factory(
-        app_name, app_version, catalog_name, catalog_url, namespace=app_namespace, config_values=config_values
+        app_name,
+        app_version,
+        catalog_name,
+        catalog_url,
+        namespace=app_namespace,
+        deployment_namespace=app_namespace,
+        config_values=config_values,
     )
 
     # assert that configMap was created for the app
@@ -45,6 +53,9 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     cast(unittest.mock.Mock, app_cm.create).assert_called_once_with()
 
     # assert that app was created
+    cast(unittest.mock.Mock, pytest_helm_charts.fixtures.ensure_namespace_exists).assert_called_once_with(
+        kube_cluster.kube_client, app_namespace
+    )
     app_cr = cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.app.AppCR)
     app_cr.assert_called_once_with(
         kube_cluster.kube_client,

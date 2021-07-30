@@ -77,10 +77,12 @@ def wait_for_jobs_to_complete(
 def _deployment_running(deploy: Deployment) -> bool:
     complete = (
         "status" in deploy.obj
+        and "availableReplicas" in deploy.obj["status"]
         and "observedGeneration" in deploy.obj["status"]
         and "updatedReplicas" in deploy.obj["status"]
         and int(deploy.obj["status"]["observedGeneration"]) >= int(deploy.obj["metadata"]["generation"])
         and deploy.replicas == int(deploy.obj["status"]["updatedReplicas"])
+        and deploy.replicas == int(deploy.obj["status"]["availableReplicas"])
     )
     return complete
 

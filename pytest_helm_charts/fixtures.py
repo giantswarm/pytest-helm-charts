@@ -3,7 +3,7 @@ import logging
 import random
 import string
 import sys
-from typing import Callable, Iterable, Dict
+from typing import Callable, Iterable, Dict, List
 
 import pykube
 import pytest
@@ -98,13 +98,33 @@ def kube_cluster(
         logger.error(f"Error of type {exc[0]} when releasing cluster. Value: {exc[1]}\nStacktrace:\n{exc[2]}")
 
 
+NamespaceFactoryFunc = Callable[[str], pykube.Namespace]
+
+
 @pytest.fixture(scope="module")
-def random_namespace(kube_cluster: Cluster) -> pykube.Namespace:
+def namespace_factory(kube_cluster: Cluster) -> Iterable[NamespaceFactoryFunc]:
+    """Return a new namespace that is deleted once the fixture is disposed."""
+    created_namespaces: List[pykube.Namespace] = []
+
+    def _namespace_factory(name: str) -> pykube.Namespace:
+        for namespace in created_namespaces:
+            if namespace.metadata["name"] == name:
+                return namespace
+
+        ns = ensure_namespace_exists(kube_cluster.kube_client, name)
+        logger.info(f"Ensured the namespace '{name}'.")
+        created_namespaces.append(ns)
+        return ns
+
+    yield _namespace_factory
+
+    for created_ns in created_namespaces:
+        created_ns.delete()
+        logger.info(f"Deleted the namespace '{created_ns.name}'.")
+
+
+@pytest.fixture(scope="module")
+def random_namespace(namespace_factory: NamespaceFactoryFunc) -> pykube.Namespace:
     """Create and return a random kubernetes namespace that will be deleted at the end of test run."""
     name = f"pytest-{''.join(random.choices(string.ascii_lowercase, k=5))}"
-    ns = ensure_namespace_exists(kube_cluster.kube_client, name)
-
-    yield ns
-
-    ns.delete()
-    logger.info(f"Deleted the namespace '{name}'.")
+    return namespace_factory(name)

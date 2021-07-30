@@ -9,6 +9,7 @@ from .fixtures import chart_path  # noqa
 from .fixtures import chart_version  # noqa
 from .fixtures import cluster_type  # noqa
 from .fixtures import kube_cluster  # noqa
+from .fixtures import namespace_factory  # noqa
 from .fixtures import random_namespace  # noqa
 from .fixtures import kube_config  # noqa
 from .fixtures import values_file_path  # noqa
