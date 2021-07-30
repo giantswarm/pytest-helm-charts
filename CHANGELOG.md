@@ -5,6 +5,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+## [0.5.0]
+
 - fix: `wait_for_deployments_to_run` needs to check for `availablePods` as well
 - added: `namespace_factory` fixture you can use to create test time only namespaces
 - change: `app_factory` takes now one more kwarg `deployment_namespace`, which configures
