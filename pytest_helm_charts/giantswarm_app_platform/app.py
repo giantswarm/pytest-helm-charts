@@ -6,6 +6,7 @@ from pykube import HTTPClient, ConfigMap
 from .app_catalog import AppCatalogFactoryFunc
 from .custom_resources import AppCR
 from .utils import wait_for_apps_to_run
+from ..fixtures import NamespaceFactoryFunc
 from ..utils import YamlDict
 
 
@@ -18,7 +19,10 @@ AppFactoryFunc = Callable[..., ConfiguredApp]
 
 
 def app_factory_func(
-    kube_client: HTTPClient, app_catalog_factory: AppCatalogFactoryFunc, created_apps: List[ConfiguredApp]
+    kube_client: HTTPClient,
+    app_catalog_factory: AppCatalogFactoryFunc,
+    namespace_factory: NamespaceFactoryFunc,
+    created_apps: List[ConfiguredApp],
 ) -> AppFactoryFunc:
     def _app_factory(
         app_name: str,
@@ -26,6 +30,7 @@ def app_factory_func(
         catalog_name: str,
         catalog_url: str,
         namespace: str = "default",
+        deployment_namespace: str = "default",
         config_values: YamlDict = None,
         namespace_config_annotations: YamlDict = None,
         namespace_config_labels: YamlDict = None,
@@ -47,6 +52,7 @@ def app_factory_func(
         api_version = "application.giantswarm.io/v1alpha1"
         app_cm_name = "{}-testing-user-config".format(app_name)
         catalog = app_catalog_factory(catalog_name, catalog_url)
+        namespace_factory(namespace)
         kind = "App"
 
         app: YamlDict = {
@@ -62,7 +68,7 @@ def app_factory_func(
                 "version": app_version,
                 "kubeConfig": {"inCluster": True},
                 "name": app_name,
-                "namespace": namespace,
+                "namespace": deployment_namespace,
                 "namespaceConfig": {
                     "annotations": namespace_config_annotations,
                     "labels": namespace_config_labels,

@@ -124,13 +124,7 @@ def namespace_factory(kube_cluster: Cluster) -> Iterable[NamespaceFactoryFunc]:
 
 
 @pytest.fixture(scope="module")
-def random_namespace(kube_cluster: Cluster) -> pykube.Namespace:
+def random_namespace(namespace_factory: NamespaceFactoryFunc) -> pykube.Namespace:
     """Create and return a random kubernetes namespace that will be deleted at the end of test run."""
     name = f"pytest-{''.join(random.choices(string.ascii_lowercase, k=5))}"
-    ns = ensure_namespace_exists(kube_cluster.kube_client, name)
-    logger.info(f"Ensured the namespace '{name}'.")
-
-    yield ns
-
-    ns.delete()
-    logger.info(f"Deleted the namespace '{name}'.")
+    return namespace_factory(name)

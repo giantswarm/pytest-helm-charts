@@ -5,10 +5,17 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+- fix: `wait_for_deployments_to_run` needs to check for `availablePods` as well
+- added: `namespace_factory` fixture you can use to create test time only namespaces
+- change: `app_factory` takes now one more kwarg `deployment_namespace`, which configures
+  the target deployment namespace for the created App CR; in other words, the `namespace` where the App
+  CR is created can be now different than the `deployment_namespace` where app's components are deployed
+- change: if the namespace passed as `namespace` argument to `app_factory` doesn't exist, it is automatically
+  created using the new `namespace_factory` fixture
+
 ## [0.4.1]
 
 - fix: work-around a bug in depended lib that was making `wait_for_deployments_to_run` fail
-- fix: `wait_for_deployments_to_run` needs to check for `availablePods` as well
 
 ## [0.4.0]
 

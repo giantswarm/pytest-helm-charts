@@ -5,6 +5,7 @@ import pytest
 from .app import ConfiguredApp, AppFactoryFunc, app_factory_func
 from .app_catalog import AppCatalogFactoryFunc, AppCatalogCR, app_catalog_factory_func
 from ..clusters import Cluster
+from ..fixtures import NamespaceFactoryFunc
 
 
 @pytest.fixture(scope="module")
@@ -21,12 +22,14 @@ def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc
 
 
 @pytest.fixture(scope="module")
-def app_factory(kube_cluster: Cluster, app_catalog_factory: AppCatalogFactoryFunc) -> Iterable[AppFactoryFunc]:
+def app_factory(
+    kube_cluster: Cluster, app_catalog_factory: AppCatalogFactoryFunc, namespace_factory: NamespaceFactoryFunc
+) -> Iterable[AppFactoryFunc]:
     """Returns a factory function which can be used to install an app using App CR"""
 
     created_apps: List[ConfiguredApp] = []
 
-    yield app_factory_func(kube_cluster.kube_client, app_catalog_factory, created_apps)
+    yield app_factory_func(kube_cluster.kube_client, app_catalog_factory, namespace_factory, created_apps)
 
     for created in created_apps:
         created.app.delete()
