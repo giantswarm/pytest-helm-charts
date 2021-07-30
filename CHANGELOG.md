@@ -8,6 +8,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 ## [0.4.1]
 
 - fix: work-around a bug in depended lib that was making `wait_for_deployments_to_run` fail
+- fix: `wait_for_deployments_to_run` needs to check for `availablePods` as well
 
 ## [0.4.0]
 
