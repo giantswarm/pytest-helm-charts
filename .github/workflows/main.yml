@@ -27,7 +27,7 @@ jobs:
     - name: Python check version
       run: python --version
     - name: Install poetry
-      uses: Gr1N/setup-poetry@v4
+      uses: Gr1N/setup-poetry@v7
     - name: Release on pypi
       run: poetry publish --build
 
@@ -45,7 +45,7 @@ jobs:
     - name: Python check version
       run: python --version
     - name: Install poetry
-      uses: Gr1N/setup-poetry@v4
+      uses: Gr1N/setup-poetry@v7
     - name: Poetry check version
       run: poetry --version
     - name: Restore poetry cache
