@@ -39,7 +39,7 @@ mkapi = {version = "^1.0.10", optional = true}
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.5.2"
-tox = "^3.24.0"
+tox = "^3.24.1"
 tox-pyenv = "^1.1.0"
 pytest-mock = "^3.6.1"
 flake8 = "^3.8.3"
@@ -47,7 +47,7 @@ mypy = "^0.910"
 pytest-cov = "^2.12.1"
 bandit = "^1.7.0"
 black = "^21.7b0"
-pre-commit = "^2.12.1"
+pre-commit = "^2.14.0"
 
 [tool.poetry.extras]
 docs = ["mkdocs", "mkapi"]
