@@ -32,6 +32,15 @@ def app_catalog_factory_func(
     for the 'app-operator' running in the cluster"""
 
     def _app_catalog_factory(name: str, url: Optional[str] = "") -> AppCatalogCR:
+        """
+
+        Args:
+            name:
+            url:
+
+        Returns:
+
+        """
         if url == "":
             url = "https://giantswarm.github.io/{}-catalog/".format(name)
         for c in created_app_catalogs:
