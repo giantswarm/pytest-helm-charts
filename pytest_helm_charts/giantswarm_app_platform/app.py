@@ -3,11 +3,11 @@ from typing import Callable, List
 
 from pykube import HTTPClient
 
-from .app_catalog import AppCatalogFactoryFunc
-from .entities import ConfiguredApp
-from .utils import wait_for_apps_to_run, create_app
-from ..fixtures import NamespaceFactoryFunc
-from ..utils import YamlDict
+from pytest_helm_charts.giantswarm_app_platform.app_catalog import AppCatalogFactoryFunc
+from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
+from pytest_helm_charts.giantswarm_app_platform.utils import wait_for_apps_to_run, create_app
+from pytest_helm_charts.fixtures import NamespaceFactoryFunc
+from pytest_helm_charts.utils import YamlDict
 
 AppFactoryFunc = Callable[..., ConfiguredApp]
 

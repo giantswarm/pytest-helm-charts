@@ -2,7 +2,7 @@ from typing import Callable, List, Optional
 
 from pykube import HTTPClient
 
-from .custom_resources import AppCatalogCR
+from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCatalogCR
 
 AppCatalogFactoryFunc = Callable[[str, Optional[str]], AppCatalogCR]
 

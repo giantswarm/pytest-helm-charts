@@ -4,9 +4,9 @@ import pykube
 import yaml
 from pykube import HTTPClient, ConfigMap
 
-from .custom_resources import AppCR
-from .entities import ConfiguredApp
-from ..utils import wait_for_namespaced_objects_condition, YamlDict
+from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCR
+from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
+from pytest_helm_charts.utils import wait_for_namespaced_objects_condition, YamlDict
 
 
 def _app_has_status(app: AppCR, status: str) -> bool:

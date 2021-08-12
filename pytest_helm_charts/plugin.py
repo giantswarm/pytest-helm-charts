@@ -3,20 +3,20 @@ from pathlib import Path
 
 from _pytest.config.argparsing import Parser
 
-from .fixtures import _existing_cluster_factory  # noqa
-from .fixtures import chart_extra_info  # noqa
-from .fixtures import chart_path  # noqa
-from .fixtures import chart_version  # noqa
-from .fixtures import cluster_type  # noqa
-from .fixtures import kube_cluster  # noqa
-from .fixtures import namespace_factory  # noqa
-from .fixtures import random_namespace  # noqa
-from .fixtures import kube_config  # noqa
-from .fixtures import values_file_path  # noqa
-from .giantswarm_app_platform.apps.http_testing import gatling_app_factory  # noqa
-from .giantswarm_app_platform.apps.http_testing import stormforger_load_app_factory  # noqa
-from .giantswarm_app_platform.fixtures import app_catalog_factory  # noqa
-from .giantswarm_app_platform.fixtures import app_factory  # noqa
+from pytest_helm_charts.fixtures import _existing_cluster_factory  # noqa
+from pytest_helm_charts.fixtures import chart_extra_info  # noqa
+from pytest_helm_charts.fixtures import chart_path  # noqa
+from pytest_helm_charts.fixtures import chart_version  # noqa
+from pytest_helm_charts.fixtures import cluster_type  # noqa
+from pytest_helm_charts.fixtures import kube_cluster  # noqa
+from pytest_helm_charts.fixtures import namespace_factory  # noqa
+from pytest_helm_charts.fixtures import random_namespace  # noqa
+from pytest_helm_charts.fixtures import kube_config  # noqa
+from pytest_helm_charts.fixtures import values_file_path  # noqa
+from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import gatling_app_factory  # noqa
+from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import stormforger_load_app_factory  # noqa
+from pytest_helm_charts.giantswarm_app_platform.fixtures import app_catalog_factory  # noqa
+from pytest_helm_charts.giantswarm_app_platform.fixtures import app_factory  # noqa
 
 
 def pytest_addoption(parser: Parser) -> None:
