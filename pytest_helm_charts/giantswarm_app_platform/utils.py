@@ -57,7 +57,7 @@ def wait_for_app_to_be_deleted(
     return len(apps) == 1
 
 
-def delete_app(configured_app: ConfiguredApp):
+def delete_app(configured_app: ConfiguredApp) -> None:
     configured_app.app.delete()
     if configured_app.app_cm:
         configured_app.app_cm.delete()
