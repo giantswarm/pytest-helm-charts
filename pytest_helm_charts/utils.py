@@ -37,7 +37,6 @@ def wait_for_namespaced_objects_condition(
         for name in obj_names:
             try:
                 obj = response.get_by_name(name)
-                assert obj is not None
                 matching_objs.append(obj)
             except pykube.exceptions.ObjectDoesNotExist:
                 if missing_ok:

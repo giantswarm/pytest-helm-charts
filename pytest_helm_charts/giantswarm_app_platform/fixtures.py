@@ -2,8 +2,10 @@ from typing import List, Iterable
 
 import pytest
 
-from .app import ConfiguredApp, AppFactoryFunc, app_factory_func
+from .app import AppFactoryFunc, app_factory_func
 from .app_catalog import AppCatalogFactoryFunc, AppCatalogCR, app_catalog_factory_func
+from .entities import ConfiguredApp
+from .utils import delete_app
 from ..clusters import Cluster
 from ..fixtures import NamespaceFactoryFunc
 
@@ -32,10 +34,7 @@ def app_factory(
     yield app_factory_func(kube_cluster.kube_client, app_catalog_factory, namespace_factory, created_apps)
 
     for created in created_apps:
-        created.app.delete()
-        if created.app_cm:
-            created.app_cm.delete()
-        # TODO: wait until finalizer is gone
+        delete_app(created)
 
 
 # @pytest.fixture(scope="module")
