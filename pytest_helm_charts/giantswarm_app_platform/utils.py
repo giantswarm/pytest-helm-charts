@@ -120,7 +120,7 @@ def create_app(
     namespace_config_annotations: YamlDict = None,
     namespace_config_labels: YamlDict = None,
 ) -> ConfiguredApp:
-    """Creates and deploys a new app using App CR. Optionally creates configuration ConfigMap. Calls are blocking.
+    """Creates and deploys a new app using App CR. Optionally creates a values ConfigMap. Calls are blocking.
 
     Args:
         kube_client: client to use to connect to the k8s cluster
