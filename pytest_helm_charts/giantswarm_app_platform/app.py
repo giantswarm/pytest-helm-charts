@@ -37,7 +37,7 @@ def app_factory_func(
              app_version: version of the app to use from the app catalog
              catalog_name: a name of the catalog used for the
              [AppCatalogCR](pytest_helm_charts.giantswarm_app_platform.custom_resources.AppCatalogCR);
-             new catalog is created only with one with the same name doesn't already exist
+             new catalog is created only when one with the same name doesn't already exist
              catalog_url: URL of the catalog to install the application from; this is used only if a catalog
              with the same name doesn't already exists (then a new catalog with the given name and URL is created
              in the k8s API)
