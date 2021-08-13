@@ -75,7 +75,7 @@ def wait_for_app_to_be_deleted(
     Args:
         kube_client: client to use to connect to the k8s cluster
         app_name: an application name to check
-        app_namespace: namespace where the App CRs of all the apps are stored
+        app_namespace: namespace where all the App CRs are stored
         timeout_sec: timeout for the call
 
     Returns:
