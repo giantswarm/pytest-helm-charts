@@ -20,7 +20,7 @@ def wait_for_namespaced_objects_condition(
     obj_type: Type[T],
     obj_names: List[str],
     objs_namespace: str,
-    obj_condition_fun: Callable[[T], bool],
+    obj_condition_func: Callable[[T], bool],
     timeout_sec: int,
     missing_ok: bool,
 ) -> List[T]:
@@ -35,7 +35,7 @@ def wait_for_namespaced_objects_condition(
         for this function to succeed
         objs_namespace: namespace where all the resources are created (single namespace for all resources)
         timeout_sec: timeout for the call
-        obj_condition_fun: a function that gets one instance of the resource object of type `obj_type`
+        obj_condition_func: a function that gets one instance of the resource object of type `obj_type`
         and returns boolean showing whether the object meets the condition or not. The call succeeds
         only if this `obj_condition_fun` returns `True` for every object passed in `obj_names`.
         missing_ok: when `True`, the function ignores that some of the objects listed in the `obj_names`
@@ -70,7 +70,7 @@ def wait_for_namespaced_objects_condition(
                     pass
                 else:
                     raise
-        all_ready = len(matching_objs) == len(obj_names) and all(obj_condition_fun(obj) for obj in matching_objs)
+        all_ready = len(matching_objs) == len(obj_names) and all(obj_condition_func(obj) for obj in matching_objs)
         if all_ready:
             break
         time.sleep(1)
