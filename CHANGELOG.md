@@ -5,6 +5,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+## [0.5.1]
+
 - added: a couple of extracted helper methods to use outside of `pytest`'s fixture mechanism:
   - `create_app`
   - `delete_app`
