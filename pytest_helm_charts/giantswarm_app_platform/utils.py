@@ -46,11 +46,10 @@ def wait_for_app_to_be_deleted(
     app_name: str,
     app_namespace: str,
     timeout_sec: int,
-    missing_ok: bool = False,
 ) -> bool:
     try:
         apps = wait_for_namespaced_objects_condition(
-            kube_client, AppCR, [app_name], app_namespace, _app_deleted, timeout_sec, missing_ok
+            kube_client, AppCR, [app_name], app_namespace, _app_deleted, timeout_sec, missing_ok=False
         )
     except pykube.exceptions.ObjectDoesNotExist:
         return True

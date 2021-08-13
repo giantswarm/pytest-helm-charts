@@ -1,9 +1,10 @@
 import unittest.mock
 from typing import cast, Any
 
+import pytest
 from pykube import HTTPClient
 from pykube.objects import NamespacedAPIObject
-from pytest_mock import MockerFixture
+from pytest_mock import MockerFixture, MockFixture
 
 from pytest_helm_charts.utils import wait_for_namespaced_objects_condition
 
@@ -25,14 +26,20 @@ def get_ready_objects_filter_mock(
     return objects_mock
 
 
-def test_wait_for_namespaced_objects_condition(mocker: MockerFixture) -> None:
-    obj_mock_obj_property = {
-        "status": {
-            "release": {"status": "deployed"},
-            "appVersion": "v1",
-        }
-    }
-    objects_mock = get_ready_objects_filter_mock(obj_mock_obj_property, mocker)
+@pytest.mark.parametrize(
+    "filter_result,side_effect,missing_ok,expected_result",
+    [
+        # One matching app found as expected
+        ({"status": "expected"}, None, False, True),
+        # One not matching app found and missing is OK
+        ({"status": "unexpected"}, None, True, False),
+    ],
+    ids=["One matching app found as expected", "One not matching app found and missing is OK"],
+)
+def test_wait_for_namespaced_objects_condition(
+    mocker: MockFixture, filter_result: Any, side_effect: Any, missing_ok: bool, expected_result: bool
+) -> None:
+    objects_mock = get_ready_objects_filter_mock(filter_result, mocker)
     mocker.patch("tests.test_utils.MockCR")
     cast(unittest.mock.Mock, MockCR).objects.return_value = objects_mock
 
@@ -42,11 +49,14 @@ def test_wait_for_namespaced_objects_condition(mocker: MockerFixture) -> None:
         assert obj is not None
         nonlocal check_fun_called
         check_fun_called = True
-        return True
+        return obj.obj["status"] == "expected"
 
-    result = wait_for_namespaced_objects_condition(
-        cast(HTTPClient, None), MockCR, ["mock_cr_1"], "test_ns", check_fun, 10, False
-    )
-
-    assert obj_mock_obj_property == result[0].obj
-    assert check_fun_called
+    try:
+        result = wait_for_namespaced_objects_condition(
+            cast(HTTPClient, None), MockCR, ["mock_cr_1"], "test_ns", check_fun, 1, missing_ok
+        )
+    except TimeoutError:
+        pass
+    else:
+        assert filter_result == result[0].obj
+        assert check_fun_called
