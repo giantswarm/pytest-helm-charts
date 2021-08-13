@@ -9,8 +9,8 @@ import pykube
 import pytest
 from _pytest.config import Config
 
-from .clusters import ExistingCluster, Cluster
-from .utils import ensure_namespace_exists
+from pytest_helm_charts.clusters import ExistingCluster, Cluster
+from pytest_helm_charts.utils import ensure_namespace_exists
 
 logger = logging.getLogger(__name__)
 

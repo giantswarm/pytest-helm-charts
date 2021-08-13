@@ -1,19 +1,13 @@
-from typing import Callable, List, NamedTuple, Optional
+from copy import deepcopy
+from typing import Callable, List
 
-import yaml
-from pykube import HTTPClient, ConfigMap
+from pykube import HTTPClient
 
-from .app_catalog import AppCatalogFactoryFunc
-from .custom_resources import AppCR
-from .utils import wait_for_apps_to_run
-from ..fixtures import NamespaceFactoryFunc
-from ..utils import YamlDict
-
-
-class ConfiguredApp(NamedTuple):
-    app: AppCR
-    app_cm: Optional[ConfigMap]
-
+from pytest_helm_charts.fixtures import NamespaceFactoryFunc
+from pytest_helm_charts.giantswarm_app_platform.app_catalog import AppCatalogFactoryFunc
+from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
+from pytest_helm_charts.giantswarm_app_platform.utils import wait_for_apps_to_run, create_app
+from pytest_helm_charts.utils import YamlDict
 
 AppFactoryFunc = Callable[..., ConfiguredApp]
 
@@ -36,65 +30,55 @@ def app_factory_func(
         namespace_config_labels: YamlDict = None,
         timeout_sec: int = 60,
     ) -> ConfiguredApp:
-        if config_values is None:
-            config_values = {}
-        if namespace_config_annotations is None:
-            namespace_config_annotations = {}
-        if namespace_config_labels is None:
-            namespace_config_labels = {}
+        """Factory function used to create and deploy new apps using App CR. Calls are blocking.
 
-        # TODO: include proper regexp validation
-        assert app_name != ""
-        assert app_version != ""
-        assert catalog_name != ""
+        Args:
+             app_name: name of the app in the app catalog
+             app_version: version of the app to use from the app catalog
+             catalog_name: a name of the catalog used for the
+             [AppCatalogCR](pytest_helm_charts.giantswarm_app_platform.custom_resources.AppCatalogCR);
+             new catalog is created only when one with the same name doesn't already exist
+             catalog_url: URL of the catalog to install the application from; this is used only if a catalog
+             with the same name doesn't already exists (then a new catalog with the given name and URL is created
+             in the k8s API)
+             namespace: namespace where the App CR will be created
+             deployment_namespace: namespace where the app will be deployed (can be different than `namespace`)
+             config_values: any values that should be used to configure the app (same as `values.yaml` used for
+             a Helm Chart directly).
+             namespace_config_annotations: a dictionary of annotations that need to be added to the
+             `deployment_namespace` created for the app
+             namespace_config_labels: a dictionary of labels that need to be added to the `deployment_namespace`
+             created for the app
+             timeout_sec: timeout in seconds for the create operation
+
+        Returns:
+            The [ConfiguredApp](.entities.ConfiguredApp) object that includes both AppCR and ConfigMap created to
+            deploy the app.
+
+        Raises:
+            pykube.exceptions.ObjectDoesNotExist: if for any reason the created App CR object doesn't exist after
+            creation and it's impossible to check its readiness.
+            TimeoutError: when the timeout has been reached.
+        """
         assert catalog_url != ""
-
-        api_version = "application.giantswarm.io/v1alpha1"
-        app_cm_name = "{}-testing-user-config".format(app_name)
         catalog = app_catalog_factory(catalog_name, catalog_url)
         namespace_factory(namespace)
-        kind = "App"
-
-        app: YamlDict = {
-            "apiVersion": api_version,
-            "kind": kind,
-            "metadata": {
-                "name": app_name,
-                "namespace": namespace,
-                "labels": {"app": app_name, "app-operator.giantswarm.io/version": "0.0.0"},
-            },
-            "spec": {
-                "catalog": catalog.metadata["name"],
-                "version": app_version,
-                "kubeConfig": {"inCluster": True},
-                "name": app_name,
-                "namespace": deployment_namespace,
-                "namespaceConfig": {
-                    "annotations": namespace_config_annotations,
-                    "labels": namespace_config_labels,
-                },
-            },
-        }
-
-        app_cm_obj: Optional[ConfigMap] = None
-        if config_values:
-            app["spec"]["config"] = {"configMap": {"name": app_cm_name, "namespace": namespace}}
-            app_cm: YamlDict = {
-                "apiVersion": "v1",
-                "kind": "ConfigMap",
-                "metadata": {"name": app_cm_name, "namespace": namespace},
-                "data": {"values": yaml.dump(config_values)},
-            }
-            app_cm_obj = ConfigMap(kube_client, app_cm)
-            app_cm_obj.create()
-
-        app_obj = AppCR(kube_client, app)
-        app_obj.create()
-        created_apps.append(ConfiguredApp(app_obj, app_cm_obj))
+        configured_app = create_app(
+            kube_client,
+            app_name,
+            app_version,
+            catalog.metadata["name"],
+            namespace,
+            deployment_namespace,
+            config_values,
+            namespace_config_annotations,
+            namespace_config_labels,
+        )
+        created_apps.append(configured_app)
         if timeout_sec > 0:
             wait_for_apps_to_run(kube_client, [app_name], namespace, timeout_sec)
 
         # we return a new object here, so that user doesn't alter the one added to created_apps
-        return ConfiguredApp(app_obj, app_cm_obj)
+        return deepcopy(configured_app)
 
     return _app_factory

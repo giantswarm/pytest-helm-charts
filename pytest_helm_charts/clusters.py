@@ -88,8 +88,8 @@ class Cluster(ABC):
 
 
 class ExistingCluster(Cluster):
-    """Implementation of [Cluster](Cluster) that uses kube.config
-    for an existing cluster.
+    """Implementation of [Cluster](Cluster) that uses kube.config file to connect to external
+    existing cluster.
     """
 
     def __init__(self, kube_config_path: str) -> None:

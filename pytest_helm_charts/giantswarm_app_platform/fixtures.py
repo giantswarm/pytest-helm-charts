@@ -2,10 +2,16 @@ from typing import List, Iterable
 
 import pytest
 
-from .app import ConfiguredApp, AppFactoryFunc, app_factory_func
-from .app_catalog import AppCatalogFactoryFunc, AppCatalogCR, app_catalog_factory_func
-from ..clusters import Cluster
-from ..fixtures import NamespaceFactoryFunc
+from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc, app_factory_func
+from pytest_helm_charts.giantswarm_app_platform.app_catalog import (
+    AppCatalogFactoryFunc,
+    AppCatalogCR,
+    app_catalog_factory_func,
+)
+from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
+from pytest_helm_charts.giantswarm_app_platform.utils import delete_app
+from pytest_helm_charts.clusters import Cluster
+from pytest_helm_charts.fixtures import NamespaceFactoryFunc
 
 
 @pytest.fixture(scope="module")
@@ -32,10 +38,7 @@ def app_factory(
     yield app_factory_func(kube_cluster.kube_client, app_catalog_factory, namespace_factory, created_apps)
 
     for created in created_apps:
-        created.app.delete()
-        if created.app_cm:
-            created.app_cm.delete()
-        # TODO: wait until finalizer is gone
+        delete_app(created)
 
 
 # @pytest.fixture(scope="module")

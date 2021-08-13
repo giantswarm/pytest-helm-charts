@@ -5,6 +5,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+- added: a couple of extracted helper methods to use outside of `pytest`'s fixture mechanism:
+  - `create_app`
+  - `delete_app`
+  - `wait_for_app_to_be_deleted`
+- unified imports to absolute paths
+
 ## [0.5.0]
 
 - fix: `wait_for_deployments_to_run` needs to check for `availablePods` as well

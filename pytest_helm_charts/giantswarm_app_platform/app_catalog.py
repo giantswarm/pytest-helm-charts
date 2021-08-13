@@ -2,7 +2,7 @@ from typing import Callable, List, Optional
 
 from pykube import HTTPClient
 
-from .custom_resources import AppCatalogCR
+from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCatalogCR
 
 AppCatalogFactoryFunc = Callable[[str, Optional[str]], AppCatalogCR]
 
@@ -32,6 +32,20 @@ def app_catalog_factory_func(
     for the 'app-operator' running in the cluster"""
 
     def _app_catalog_factory(name: str, url: Optional[str] = "") -> AppCatalogCR:
+        """A factory function used to create catalogs in the k8s API using AppCatalog CR.
+
+        Args:
+            name: name of the created AppCatalog CR. If the name already exists and the URL is
+            different, it's an error. If the URL and name are the same, nothing is done.
+            url: URL of the catalog.
+
+        Returns:
+            AppCatalogCR created or found in the k8s API.
+
+        Raises:
+            `ValueError` if catalog with the same name, but different URL already exists.
+
+        """
         if url == "":
             url = "https://giantswarm.github.io/{}-catalog/".format(name)
         for c in created_app_catalogs:
