@@ -27,13 +27,22 @@ def get_ready_objects_filter_mock(mocker: MockerFixture, k8s_api_call_results: L
         ([{"status": "expected"}], False, 1),
         # One not matching app found and missing is OK
         ([{"status": "unexpected"}], True, TimeoutError),
+        # One matching and one not and missing is OK
+        ([{"status": "expected"}, {"status": "unexpected"}], True, TimeoutError),
         # One not matching app found and missing is not OK
         ([pykube.exceptions.ObjectDoesNotExist], False, pykube.exceptions.ObjectDoesNotExist),
+        # One matching and one not found; missing is OK
+        ([{"status": "expected"}, pykube.exceptions.ObjectDoesNotExist], True, TimeoutError),
+        # One matching and one not found; missing is not OK
+        ([{"status": "expected"}, pykube.exceptions.ObjectDoesNotExist], False, pykube.exceptions.ObjectDoesNotExist),
     ],
     ids=[
         "One matching app found as expected",
         "One not matching app found and missing is OK",
+        "One matching and one not and missing is OK",
         "One not matching app found and missing is not OK",
+        "One matching and one not found; missing is OK",
+        "One matching and one not found; missing is not OK",
     ],
 )
 def test_wait_for_namespaced_objects_condition(
@@ -54,7 +63,7 @@ def test_wait_for_namespaced_objects_condition(
 
     try:
         result = wait_for_namespaced_objects_condition(
-            cast(HTTPClient, None), MockCR, ["mock_cr_1"], "test_ns", check_fun, 1, missing_ok
+            cast(HTTPClient, None), MockCR, ["mock_cr"] * len(k8s_api_call_results), "test_ns", check_fun, 1, missing_ok
         )
     except Exception as e:
         if (expected_result is TimeoutError and type(e) is TimeoutError) or (
