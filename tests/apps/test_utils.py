@@ -1,5 +1,5 @@
 import unittest.mock
-from typing import cast, Any
+from typing import cast, Any, List
 
 import pykube
 import pytest
@@ -28,55 +28,42 @@ def test_delete_app(mocker: MockFixture) -> None:
     cm.delete.assert_called_once_with()
 
 
-def test_wait_for_apps_to_run(mocker: MockFixture) -> None:
-    app_mock_obj_property = {
-        "status": {
-            "release": {"status": "deployed"},
-            "appVersion": "v1",
+class MockAppCR:
+    def __init__(self, status: str):
+        self.obj = {
+            "status": {
+                "release": {"status": status},
+                "appVersion": "v1",
+            },
         }
-    }
-    objects_mock = get_ready_objects_filter_mock(app_mock_obj_property, mocker)
+
+
+def test_wait_for_apps_to_run(mocker: MockFixture) -> None:
+    app_mock = MockAppCR("deployed")
+    objects_mock = get_ready_objects_filter_mock(mocker, [app_mock])
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.utils.AppCR")
     cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.utils.AppCR).objects.return_value = objects_mock
 
     result = wait_for_apps_to_run(cast(HTTPClient, None), ["test_app"], "test_ns", 10)
-    assert app_mock_obj_property == result[0].obj
+    assert app_mock == result[0]
 
 
 @pytest.mark.parametrize(
-    "filter_result,side_effect,expected_del_result",
+    "k8s_api_call_results,expected_del_result",
     [
         # App marked as deleted
-        (
-            {
-                "status": {
-                    "release": {"status": "deleted"},
-                    "appVersion": "v1",
-                }
-            },
-            None,
-            True,
-        ),
+        ([MockAppCR("deleted")], True),
         # App already doesn't exist
-        (None, pykube.exceptions.ObjectDoesNotExist, True),
+        ([pykube.exceptions.ObjectDoesNotExist], True),
         # Timeout, app exists with unexpected state
-        (
-            {
-                "status": {
-                    "release": {"status": "deployed"},
-                    "appVersion": "v1",
-                }
-            },
-            None,
-            False,
-        ),
+        ([MockAppCR("deployed")], False),
     ],
     ids=["App marked as deleted", "App already doesn't exist", "Timeout, app exists with unexpected state"],
 )
 def test_wait_for_app_to_be_deleted(
-    mocker: MockFixture, filter_result: Any, side_effect: Any, expected_del_result: bool
+    mocker: MockFixture, k8s_api_call_results: List[Any], expected_del_result: bool
 ) -> None:
-    objects_mock = get_ready_objects_filter_mock(filter_result, mocker, side_effect)
+    objects_mock = get_ready_objects_filter_mock(mocker, k8s_api_call_results)
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.utils.AppCR")
     cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.utils.AppCR).objects.return_value = objects_mock
 
