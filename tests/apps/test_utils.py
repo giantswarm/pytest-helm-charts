@@ -8,6 +8,7 @@ import pytest_helm_charts
 from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCR
 from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
 from pytest_helm_charts.giantswarm_app_platform.utils import delete_app, wait_for_apps_to_run
+from tests.test_utils import get_ready_objects_filter_mock
 
 
 def test_delete_app(mocker: MockFixture) -> None:
@@ -22,19 +23,15 @@ def test_delete_app(mocker: MockFixture) -> None:
 
 
 def test_wait_for_apps_to_run(mocker: MockFixture) -> None:
-    filter_mock = mocker.Mock(name="AppCR filter result")
-    objects_mock = mocker.Mock(name="AppCR objects result")
-    objects_mock.filter.return_value = filter_mock
-    app_mock = mocker.MagicMock(name="test mock app")
-    app_mock.obj = {
+    app_mock_obj_property = {
         "status": {
             "release": {"status": "deployed"},
             "appVersion": "v1",
         }
     }
-    filter_mock.get_by_name.return_value = app_mock
+    objects_mock = get_ready_objects_filter_mock(app_mock_obj_property, mocker)
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.utils.AppCR")
     cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.utils.AppCR).objects.return_value = objects_mock
 
     result = wait_for_apps_to_run(cast(HTTPClient, None), ["test_app"], "test_ns", 10)
-    assert app_mock == result[0]
+    assert app_mock_obj_property == result[0].obj
