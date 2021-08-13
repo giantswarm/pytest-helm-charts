@@ -35,6 +35,28 @@ def wait_for_apps_to_run(
     timeout_sec: int,
     missing_ok: bool = False,
 ) -> List[AppCR]:
+    """
+    Block until all the apps are running or timeout is reached.
+
+    Args:
+        kube_client: client to use to connect to the k8s cluster
+        app_names: a list of application names to check; all of the applications must be running for this
+        function to succeed
+        app_namespace: namespace where the App CRs of all the apps are stored
+        timeout_sec: timeout for the call
+        missing_ok: when `True`, the function ignores that some of the apps listed in the `app_names`
+        don't exist in k8s API and waits for them to show up; when `False`, an
+        [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
+
+    Returns:
+        The list of App CRs with all the apps listed in `app_names` included.
+
+    Raises:
+        TimeoutError: when timeout is reached.
+        pykube.exceptions.ObjectDoesNotExist: when `missing_ok == False` and one of the apps
+        listed in `app_names` can't be found in k8s API
+
+    """
     apps = wait_for_namespaced_objects_condition(
         kube_client, AppCR, app_names, app_namespace, _app_deployed, timeout_sec, missing_ok
     )
@@ -47,6 +69,22 @@ def wait_for_app_to_be_deleted(
     app_namespace: str,
     timeout_sec: int,
 ) -> bool:
+    """
+    Block until an App CR has status `deleted` or doesn't exist in k8s API.
+
+    Args:
+        kube_client: client to use to connect to the k8s cluster
+        app_name: an application name to check
+        app_namespace: namespace where the App CRs of all the apps are stored
+        timeout_sec: timeout for the call
+
+    Returns:
+        `True` when the App CR was found with status `deleted` or was not found at all. `False` otherwise.
+
+    Raises:
+        TimeoutError: when timeout is reached.
+
+    """
     try:
         apps = wait_for_namespaced_objects_condition(
             kube_client, AppCR, [app_name], app_namespace, _app_deleted, timeout_sec, missing_ok=False
@@ -57,6 +95,14 @@ def wait_for_app_to_be_deleted(
 
 
 def delete_app(configured_app: ConfiguredApp) -> None:
+    """
+    Deletes the app created by [create_app](create_app).
+    Args:
+        configured_app: ConfiguredApp (with optional ConfigMap configuration) to be deleted.
+
+    Returns:
+        None
+    """
     configured_app.app.delete()
     if configured_app.app_cm:
         configured_app.app_cm.delete()
@@ -74,6 +120,28 @@ def create_app(
     namespace_config_annotations: YamlDict = None,
     namespace_config_labels: YamlDict = None,
 ) -> ConfiguredApp:
+    """Creates and deploys a new app using App CR. Optionally creates configuration ConfigMap. Calls are blocking.
+
+    Args:
+        kube_client: client to use to connect to the k8s cluster
+        app_name: name of the app in the app catalog
+        app_version: version of the app to use from the app catalog
+        catalog_name: a name of the catalog used for the
+        [AppCatalogCR](pytest_helm_charts.giantswarm_app_platform.custom_resources.AppCatalogCR);
+        must already exist
+        namespace: namespace where the App CR will be created
+        deployment_namespace: namespace where the app will be deployed (can be different than `namespace`)
+        config_values: any values that should be used to configure the app (same as `values.yaml` used for
+        a Helm Chart directly).
+        namespace_config_annotations: a dictionary of annotations that need to be added to the
+        `deployment_namespace` created for the app
+        namespace_config_labels: a dictionary of labels that need to be added to the `deployment_namespace`
+        created for the app
+
+    Returns:
+        The [ConfiguredApp](.entities.ConfiguredApp) object that includes both AppCR and ConfigMap created to
+        deploy the app.
+    """
     if config_values is None:
         config_values = {}
     if namespace_config_annotations is None:
