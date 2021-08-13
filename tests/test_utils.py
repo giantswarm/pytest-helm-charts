@@ -10,13 +10,18 @@ from pytest_helm_charts.utils import wait_for_namespaced_objects_condition
 MockCR = NamespacedAPIObject
 
 
-def get_ready_objects_filter_mock(filter_result: Any, mocker: MockerFixture) -> unittest.mock.Mock:
+def get_ready_objects_filter_mock(
+    filter_result: Any, mocker: MockerFixture, side_effect: Any = None
+) -> unittest.mock.Mock:
     objects_mock = mocker.Mock(name="AppCR objects")
     filter_mock = mocker.Mock(name="AppCR objects->filter")
     obj_mock = mocker.MagicMock(name="test mock app")
     obj_mock.obj = filter_result
     objects_mock.filter.return_value = filter_mock
-    filter_mock.get_by_name.return_value = obj_mock
+    if side_effect is not None:
+        filter_mock.get_by_name.side_effect = side_effect
+    else:
+        filter_mock.get_by_name.return_value = obj_mock
     return objects_mock
 
 
