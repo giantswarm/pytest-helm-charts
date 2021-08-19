@@ -7,7 +7,7 @@ from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCatal
 AppCatalogFactoryFunc = Callable[[str, Optional[str]], AppCatalogCR]
 
 
-def __get_app_catalog_obj(catalog_name: str, catalog_uri: str, kube_client: HTTPClient) -> AppCatalogCR:
+def get_app_catalog_obj(catalog_name: str, catalog_uri: str, kube_client: HTTPClient) -> AppCatalogCR:
     app_catalog_cr = {
         "apiVersion": "application.giantswarm.io/v1alpha1",
         "kind": "AppCatalog",
@@ -36,14 +36,14 @@ def app_catalog_factory_func(
 
         Args:
             name: name of the created AppCatalog CR. If the name already exists and the URL is
-            different, it's an error. If the URL and name are the same, nothing is done.
+                different, it's an error. If the URL and name are the same, nothing is done.
             url: URL of the catalog.
 
         Returns:
             AppCatalogCR created or found in the k8s API.
 
         Raises:
-            `ValueError` if catalog with the same name, but different URL already exists.
+            ValueError: if catalog with the same name, but different URL already exists.
 
         """
         if url == "":
@@ -58,7 +58,7 @@ def app_catalog_factory_func(
                     "{}".format(name, url, existing_url)
                 )
 
-        app_catalog = __get_app_catalog_obj(name, str(url), kube_client)
+        app_catalog = get_app_catalog_obj(name, str(url), kube_client)
         created_app_catalogs.append(app_catalog)
         app_catalog.create()
         # TODO: check that app catalog is present

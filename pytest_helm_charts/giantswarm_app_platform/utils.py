@@ -41,12 +41,12 @@ def wait_for_apps_to_run(
     Args:
         kube_client: client to use to connect to the k8s cluster
         app_names: a list of application names to check; all of the applications must be running for this
-        function to succeed
+            function to succeed
         app_namespace: namespace where the App CRs of all the apps are stored
         timeout_sec: timeout for the call
         missing_ok: when `True`, the function ignores that some of the apps listed in the `app_names`
-        don't exist in k8s API and waits for them to show up; when `False`, an
-        [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
+            don't exist in k8s API and waits for them to show up; when `False`, an
+            [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
 
     Returns:
         The list of App CRs with all the apps listed in `app_names` included.
@@ -54,7 +54,7 @@ def wait_for_apps_to_run(
     Raises:
         TimeoutError: when timeout is reached.
         pykube.exceptions.ObjectDoesNotExist: when `missing_ok == False` and one of the apps
-        listed in `app_names` can't be found in k8s API
+            listed in `app_names` can't be found in k8s API
 
     """
     apps = wait_for_namespaced_objects_condition(
@@ -127,16 +127,16 @@ def create_app(
         app_name: name of the app in the app catalog
         app_version: version of the app to use from the app catalog
         catalog_name: a name of the catalog used for the
-        [AppCatalogCR](pytest_helm_charts.giantswarm_app_platform.custom_resources.AppCatalogCR);
-        must already exist
+            [AppCatalogCR](pytest_helm_charts.giantswarm_app_platform.custom_resources.AppCatalogCR);
+            must already exist
         namespace: namespace where the App CR will be created
         deployment_namespace: namespace where the app will be deployed (can be different than `namespace`)
         config_values: any values that should be used to configure the app (same as `values.yaml` used for
-        a Helm Chart directly).
+            a Helm Chart directly).
         namespace_config_annotations: a dictionary of annotations that need to be added to the
-        `deployment_namespace` created for the app
+            `deployment_namespace` created for the app
         namespace_config_labels: a dictionary of labels that need to be added to the `deployment_namespace`
-        created for the app
+            created for the app
 
     Returns:
         The [ConfiguredApp](.entities.ConfiguredApp) object that includes both AppCR and ConfigMap created to
