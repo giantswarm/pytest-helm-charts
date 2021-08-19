@@ -30,17 +30,17 @@ def wait_for_namespaced_objects_condition(
     Args:
         kube_client: client to use to connect to the k8s cluster
         obj_type: type of the objects to check; they most be derived from
-        [NamespacedAPIObject](pykube.objects.NamespacedAPIObject)
+            [NamespacedAPIObject](pykube.objects.NamespacedAPIObject)
         obj_names: a list of object resource names to check; all of the objects must be pass `obj_condition_fun`
-        for this function to succeed
+            for this function to succeed
         objs_namespace: namespace where all the resources are created (single namespace for all resources)
         timeout_sec: timeout for the call
         obj_condition_func: a function that gets one instance of the resource object of type `obj_type`
-        and returns boolean showing whether the object meets the condition or not. The call succeeds
-        only if this `obj_condition_fun` returns `True` for every object passed in `obj_names`.
+            and returns boolean showing whether the object meets the condition or not. The call succeeds
+            only if this `obj_condition_fun` returns `True` for every object passed in `obj_names`.
         missing_ok: when `True`, the function ignores that some of the objects listed in the `obj_names`
-        don't exist in k8s API and waits for them to show up; when `False`, an
-        [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
+            don't exist in k8s API and waits for them to show up; when `False`, an
+            [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
 
     Returns:
         The list of namespaced object resources with all the objects listed in `obj_names` included.
@@ -48,7 +48,7 @@ def wait_for_namespaced_objects_condition(
     Raises:
         TimeoutError: when timeout is reached.
         pykube.exceptions.ObjectDoesNotExist: when `missing_ok == False` and one of the objects
-        listed in `obj_names` can't be found in k8s API
+            listed in `obj_names` can't be found in k8s API
 
     """
     if len(obj_names) == 0:
@@ -103,8 +103,8 @@ def wait_for_jobs_to_complete(
         jobs_namespace: namespace where all the Jobs are created (single namespace for all resources)
         timeout_sec: timeout for the call
         missing_ok: when `True`, the function ignores that some of the objects listed in the `job_names`
-        don't exist in k8s API and waits for them to show up; when `False`, an
-        [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
+            don't exist in k8s API and waits for them to show up; when `False`, an
+            [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
 
     Returns:
         The list of Job resources with all the objects listed in `job_names` included.
@@ -112,7 +112,7 @@ def wait_for_jobs_to_complete(
     Raises:
         TimeoutError: when timeout is reached.
         pykube.exceptions.ObjectDoesNotExist: when `missing_ok == False` and one of the objects
-        listed in `job_names` can't be found in k8s API
+            listed in `job_names` can't be found in k8s API
 
     """
     result = wait_for_namespaced_objects_condition(
@@ -150,8 +150,8 @@ def wait_for_deployments_to_run(
         deployments_namespace: namespace where all the Deployments are created (single namespace for all resources)
         timeout_sec: timeout for the call
         missing_ok: when `True`, the function ignores that some of the objects listed in the `deployment_names`
-        don't exist in k8s API and waits for them to show up; when `False`, an
-        [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
+            don't exist in k8s API and waits for them to show up; when `False`, an
+            [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
 
     Returns:
         The list of Deployment resources with all the objects listed in `deployment_names` included.
@@ -159,7 +159,7 @@ def wait_for_deployments_to_run(
     Raises:
         TimeoutError: when timeout is reached.
         pykube.exceptions.ObjectDoesNotExist: when `missing_ok == False` and one of the objects
-        listed in `deployment_names` can't be found in k8s API
+            listed in `deployment_names` can't be found in k8s API
 
     """
     result = wait_for_namespaced_objects_condition(
@@ -195,8 +195,8 @@ def wait_for_stateful_sets_to_run(
         stateful_sets_namespace: namespace where all the StatefulSets are created (single namespace for all resources)
         timeout_sec: timeout for the call
         missing_ok: when `True`, the function ignores that some of the objects listed in the `stateful_set_names`
-        don't exist in k8s API and waits for them to show up; when `False`, an
-        [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
+            don't exist in k8s API and waits for them to show up; when `False`, an
+            [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
 
     Returns:
         The list of StatefulSet resources with all the objects listed in `stateful_set_names` included.
@@ -204,7 +204,7 @@ def wait_for_stateful_sets_to_run(
     Raises:
         TimeoutError: when timeout is reached.
         pykube.exceptions.ObjectDoesNotExist: when `missing_ok == False` and one of the objects
-        listed in `stateful_set_names` can't be found in k8s API
+            listed in `stateful_set_names` can't be found in k8s API
 
     """
     result = wait_for_namespaced_objects_condition(
@@ -244,8 +244,8 @@ def wait_for_daemon_sets_to_run(
         daemon_sets_namespace: namespace where all the DaemonSets are created (single namespace for all resources)
         timeout_sec: timeout for the call
         missing_ok: when `True`, the function ignores that some of the objects listed in the `daemon_set_names`
-        don't exist in k8s API and waits for them to show up; when `False`, an
-        [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
+            don't exist in k8s API and waits for them to show up; when `False`, an
+            [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
 
     Returns:
         The list of DaemonSet resources with all the objects listed in `daemon_set_names` included.
@@ -253,7 +253,7 @@ def wait_for_daemon_sets_to_run(
     Raises:
         TimeoutError: when timeout is reached.
         pykube.exceptions.ObjectDoesNotExist: when `missing_ok == False` and one of the objects
-        listed in `daemon_set_names` can't be found in k8s API
+            listed in `daemon_set_names` can't be found in k8s API
 
     """
     result = wait_for_namespaced_objects_condition(
@@ -358,8 +358,8 @@ def create_job_and_run_to_completion(
         job: Job object to run and check.
         timeout_sec: timeout for the call
         missing_ok: when `True`, the function ignores that the Job doesn't yet exist in k8s API
-        and waits for it to show up;
-        when `False`, an [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
+            and waits for it to show up;
+            when `False`, an [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
 
     Returns:
         The Job object with refreshed state.

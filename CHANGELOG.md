@@ -5,6 +5,11 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+## [0.5.2]
+
+- fix docstring formatting
+- make `get_app_catalog_object` function public
+
 ## [0.5.1]
 
 - added: a couple of extracted helper methods to use outside of `pytest`'s fixture mechanism:
