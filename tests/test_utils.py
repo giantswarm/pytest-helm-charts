@@ -46,7 +46,7 @@ def get_ready_objects_filter_mock(mocker: MockerFixture, k8s_api_call_results: L
     ],
 )
 def test_wait_for_namespaced_objects_condition(
-        mocker: MockFixture, k8s_api_call_results: List[Any], missing_ok: bool, expected_result: Any
+    mocker: MockFixture, k8s_api_call_results: List[Any], missing_ok: bool, expected_result: Any
 ) -> None:
     objects_mock = get_ready_objects_filter_mock(mocker, k8s_api_call_results)
     mocker.patch("tests.test_utils.MockCR")
@@ -67,8 +67,7 @@ def test_wait_for_namespaced_objects_condition(
         )
     except Exception as e:
         if (expected_result is TimeoutError and type(e) is TimeoutError) or (
-                expected_result is pykube.exceptions.ObjectDoesNotExist and type(
-            e) is pykube.exceptions.ObjectDoesNotExist
+            expected_result is pykube.exceptions.ObjectDoesNotExist and type(e) is pykube.exceptions.ObjectDoesNotExist
         ):
             # we have the expected exception
             pass
