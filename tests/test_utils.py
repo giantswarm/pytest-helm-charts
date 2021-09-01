@@ -7,7 +7,7 @@ from pykube import HTTPClient
 from pykube.objects import NamespacedAPIObject
 from pytest_mock import MockerFixture, MockFixture
 
-from pytest_helm_charts.utils import wait_for_namespaced_objects_condition
+from pytest_helm_charts.utils import wait_for_namespaced_objects_condition, make_job_object
 
 MockCR = NamespacedAPIObject
 
@@ -46,7 +46,7 @@ def get_ready_objects_filter_mock(mocker: MockerFixture, k8s_api_call_results: L
     ],
 )
 def test_wait_for_namespaced_objects_condition(
-    mocker: MockFixture, k8s_api_call_results: List[Any], missing_ok: bool, expected_result: Any
+        mocker: MockFixture, k8s_api_call_results: List[Any], missing_ok: bool, expected_result: Any
 ) -> None:
     objects_mock = get_ready_objects_filter_mock(mocker, k8s_api_call_results)
     mocker.patch("tests.test_utils.MockCR")
@@ -67,7 +67,8 @@ def test_wait_for_namespaced_objects_condition(
         )
     except Exception as e:
         if (expected_result is TimeoutError and type(e) is TimeoutError) or (
-            expected_result is pykube.exceptions.ObjectDoesNotExist and type(e) is pykube.exceptions.ObjectDoesNotExist
+                expected_result is pykube.exceptions.ObjectDoesNotExist and type(
+            e) is pykube.exceptions.ObjectDoesNotExist
         ):
             # we have the expected exception
             pass
@@ -78,3 +79,24 @@ def test_wait_for_namespaced_objects_condition(
         assert len(result) == expected_result
         assert result == k8s_api_call_results
         assert check_fun_called
+
+
+def test_make_job_object() -> None:
+    name_prefix = "test_name_prefix"
+    namespace = "test_namespace"
+    command = ["cmd1", "cmd2"]
+    image: str = "quay.io/giantswarm/busybox:1.32.0"
+    restart_policy: str = "OnFailure"
+    backoff_limit: int = 6
+
+    job = make_job_object(
+        cast(HTTPClient, None), name_prefix, namespace, command, image, restart_policy, backoff_limit
+    ).obj
+
+    assert job["metadata"]["generateName"] == name_prefix
+    assert job["metadata"]["namespace"] == namespace
+    assert job["spec"]["backoffLimit"] == backoff_limit
+    assert job["spec"]["template"]["spec"]["containers"][0]["name"] == f"{name_prefix}job"
+    assert job["spec"]["template"]["spec"]["containers"][0]["image"] == image
+    assert job["spec"]["template"]["spec"]["containers"][0]["command"] == command
+    assert job["spec"]["template"]["spec"]["restartPolicy"] == restart_policy
