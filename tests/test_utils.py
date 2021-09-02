@@ -7,7 +7,7 @@ from pykube import HTTPClient
 from pykube.objects import NamespacedAPIObject
 from pytest_mock import MockerFixture, MockFixture
 
-from pytest_helm_charts.utils import wait_for_namespaced_objects_condition
+from pytest_helm_charts.utils import wait_for_namespaced_objects_condition, make_job_object
 
 MockCR = NamespacedAPIObject
 
@@ -78,3 +78,24 @@ def test_wait_for_namespaced_objects_condition(
         assert len(result) == expected_result
         assert result == k8s_api_call_results
         assert check_fun_called
+
+
+def test_make_job_object() -> None:
+    name_prefix = "test_name_prefix"
+    namespace = "test_namespace"
+    command = ["cmd1", "cmd2"]
+    image: str = "quay.io/giantswarm/busybox:1.32.0"
+    restart_policy: str = "OnFailure"
+    backoff_limit: int = 6
+
+    job = make_job_object(
+        cast(HTTPClient, None), name_prefix, namespace, command, image, restart_policy, backoff_limit
+    ).obj
+
+    assert job["metadata"]["generateName"] == name_prefix
+    assert job["metadata"]["namespace"] == namespace
+    assert job["spec"]["backoffLimit"] == backoff_limit
+    assert job["spec"]["template"]["spec"]["containers"][0]["name"] == f"{name_prefix}job"
+    assert job["spec"]["template"]["spec"]["containers"][0]["image"] == image
+    assert job["spec"]["template"]["spec"]["containers"][0]["command"] == command
+    assert job["spec"]["template"]["spec"]["restartPolicy"] == restart_policy
