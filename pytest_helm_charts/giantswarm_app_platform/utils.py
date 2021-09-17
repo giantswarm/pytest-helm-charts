@@ -1,7 +1,6 @@
 from typing import List, Optional
 
 import pykube
-import yaml
 from pykube import HTTPClient, ConfigMap
 
 from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCR
