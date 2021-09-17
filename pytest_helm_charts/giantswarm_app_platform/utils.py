@@ -183,7 +183,7 @@ def create_app(
             "apiVersion": "v1",
             "kind": "ConfigMap",
             "metadata": {"name": app_cm_name, "namespace": namespace},
-            "data": {"values": yaml.dump(config_values)},
+            "data": {"values": config_values},
         }
         app_cm_obj = ConfigMap(kube_client, app_cm)
         app_cm_obj.create()
