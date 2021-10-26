@@ -5,6 +5,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+## [0.6.0]
+
 - breaking change: all App CR related functions and fixtures that require information about the Catalog
   the App references need now also a new `catalog_namespace` parameter
 
