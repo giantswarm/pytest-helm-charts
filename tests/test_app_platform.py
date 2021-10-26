@@ -2,6 +2,7 @@ import logging
 import unittest.mock
 from typing import cast
 
+import pytest
 from pykube import ConfigMap
 from pytest_mock import MockerFixture
 
@@ -87,7 +88,7 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     ).assert_called_once_with(kube_cluster.kube_client, [app_name], app_namespace, 60)
 
 
-def test_catalog_factory_working(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture):
+def test_catalog_factory_working(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
     name = "my_catalog"
     namespace = "my_namespace"
     url = "http://invalid.host:1234"
@@ -113,3 +114,33 @@ def test_catalog_factory_working(catalog_factory: CatalogFactoryFunc, mocker: Mo
     cast(
         unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create  # type: ignore
     ).assert_called_once()
+
+
+def test_double_create_the_same_catalog(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
+    name = "my_catalog"
+    namespace = "my_namespace"
+    url = "http://invalid.host:1234"
+
+    mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
+    catalog_factory(name, namespace, url)
+    # ask the factory the create the same catalog once again
+    catalog_factory(name, namespace, url)
+    # catalog should be created at most once (might have been already requested in another test)
+    assert (
+        cast(
+            unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create  # type: ignore
+        ).call_count
+        <= 1
+    )
+
+
+def test_create_the_same_catalog_name_diff_url(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
+    name = "my_catalog"
+    namespace = "my_namespace"
+    url = "http://invalid.host:1234"
+
+    mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
+    catalog_factory(name, namespace, url)
+    # ask the factory the create the same catalog once again, but with changed URL; this should raise an error
+    with pytest.raises(ValueError):
+        catalog_factory(name, namespace, url + "change")
