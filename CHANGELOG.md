@@ -5,6 +5,9 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+- breaking change: all App CR related functions and fixtures that require information about the Catalog
+  the App references need now also a new `catalog_namespace` parameter
+
 ## [0.5.3]
 
 - add support for Catalog CR from Giant Swarm App Platform

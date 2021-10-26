@@ -4,7 +4,7 @@ from typing import Callable, List
 from pykube import HTTPClient
 
 from pytest_helm_charts.fixtures import NamespaceFactoryFunc
-from pytest_helm_charts.giantswarm_app_platform.app_catalog import AppCatalogFactoryFunc
+from pytest_helm_charts.giantswarm_app_platform.catalog import CatalogFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
 from pytest_helm_charts.giantswarm_app_platform.utils import wait_for_apps_to_run, create_app
 from pytest_helm_charts.utils import YamlDict
@@ -14,7 +14,7 @@ AppFactoryFunc = Callable[..., ConfiguredApp]
 
 def app_factory_func(
     kube_client: HTTPClient,
-    app_catalog_factory: AppCatalogFactoryFunc,
+    catalog_factory: CatalogFactoryFunc,
     namespace_factory: NamespaceFactoryFunc,
     created_apps: List[ConfiguredApp],
 ) -> AppFactoryFunc:
@@ -22,6 +22,7 @@ def app_factory_func(
         app_name: str,
         app_version: str,
         catalog_name: str,
+        catalog_namespace: str,
         catalog_url: str,
         namespace: str = "default",
         deployment_namespace: str = "default",
@@ -36,8 +37,9 @@ def app_factory_func(
              app_name: name of the app in the app catalog
              app_version: version of the app to use from the app catalog
              catalog_name: a name of the catalog used for the
-                [AppCatalogCR](pytest_helm_charts.giantswarm_app_platform.custom_resources.AppCatalogCR);
+                [CatalogCR](pytest_helm_charts.giantswarm_app_platform.custom_resources.CatalogCR);
                 new catalog is created only when one with the same name doesn't already exist
+             catalog_namespace: namespace where the catalog catalog_name is defined
              catalog_url: URL of the catalog to install the application from; this is used only if a catalog
                 with the same name doesn't already exists (then a new catalog with the given name and URL is created
                 in the k8s API)
@@ -61,13 +63,14 @@ def app_factory_func(
                 TimeoutError: when the timeout has been reached.
         """
         assert catalog_url != ""
-        catalog = app_catalog_factory(catalog_name, catalog_url)
+        catalog_factory(catalog_name, catalog_namespace, catalog_url)
         namespace_factory(namespace)
         configured_app = create_app(
             kube_client,
             app_name,
             app_version,
-            catalog.metadata["name"],
+            catalog_name,
+            catalog_namespace,
             namespace,
             deployment_namespace,
             config_values,

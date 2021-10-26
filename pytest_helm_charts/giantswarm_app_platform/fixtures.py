@@ -31,7 +31,6 @@ def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc
 
     for catalog in created_catalogs:
         catalog.delete()
-        # TODO: wait until finalizer is gone and object is deleted
 
 
 @pytest.fixture(scope="module")
@@ -44,18 +43,17 @@ def catalog_factory(kube_cluster: Cluster) -> Iterable[CatalogFactoryFunc]:
 
     for catalog in created_catalogs:
         catalog.delete()
-        # TODO: wait until finalizer is gone and object is deleted
 
 
 @pytest.fixture(scope="module")
 def app_factory(
-    kube_cluster: Cluster, app_catalog_factory: AppCatalogFactoryFunc, namespace_factory: NamespaceFactoryFunc
+    kube_cluster: Cluster, catalog_factory: CatalogFactoryFunc, namespace_factory: NamespaceFactoryFunc
 ) -> Iterable[AppFactoryFunc]:
     """Returns a factory function which can be used to install an app using App CR"""
 
     created_apps: List[ConfiguredApp] = []
 
-    yield app_factory_func(kube_cluster.kube_client, app_catalog_factory, namespace_factory, created_apps)
+    yield app_factory_func(kube_cluster.kube_client, catalog_factory, namespace_factory, created_apps)
 
     for created in created_apps:
         delete_app(created)
