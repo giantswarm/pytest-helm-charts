@@ -6,7 +6,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 ## [Unreleased]
 
 - add support for Catalog CR from Giant Swarm App Platform
-- marked AppCatalog CR related functions and classes as deprecated
+- mark AppCatalog CR related functions and classes as deprecated
 
 ## [0.5.2]
 
