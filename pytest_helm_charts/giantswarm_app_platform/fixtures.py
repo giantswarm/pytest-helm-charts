@@ -1,6 +1,7 @@
 from typing import List, Iterable
 
 import pytest
+from deprecated import deprecated
 
 from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc, app_factory_func
 from pytest_helm_charts.giantswarm_app_platform.app_catalog import (
@@ -19,6 +20,7 @@ from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.fixtures import NamespaceFactoryFunc
 
 
+@deprecated(version="0.5.3", reason="Please use `catalog_factory` fixture instead.")
 @pytest.fixture(scope="module")
 def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc]:
     """Return a factory object, that can be used to configure new AppCatalog CRs
