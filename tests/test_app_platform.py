@@ -3,20 +3,21 @@ import unittest.mock
 from typing import cast
 
 from pykube import ConfigMap
-from pytest_mock import MockFixture
+from pytest_mock import MockerFixture
 
 import pytest_helm_charts
 import pytest_helm_charts.fixtures
 import pytest_helm_charts.giantswarm_app_platform.utils
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc
+from pytest_helm_charts.giantswarm_app_platform.catalog import CatalogFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
 from pytest_helm_charts.utils import YamlDict
 
 logger = logging.getLogger(__name__)
 
 
-def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc, mocker: MockFixture):
+def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc, mocker: MockerFixture):
     catalog_name = "test-dynamic"
     catalog_url = "https://test-dynamic.com"
     app_name = "testing-app"
@@ -67,7 +68,7 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
             "metadata": {
                 "name": app_name,
                 "namespace": app_namespace,
-                "labels": {"app": "testing-app", "app-operator.giantswarm.io/version": "0.0.0"},
+                "labels": {"app": "testing-a", "app-operator.giantswarm.io/version": "0.0.0"},
             },
             "spec": {
                 "catalog": catalog_name,
@@ -84,3 +85,31 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     cast(
         unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.app.wait_for_apps_to_run
     ).assert_called_once_with(kube_cluster.kube_client, [app_name], app_namespace, 60)
+
+
+def test_catalog_factory_working(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture):
+    name = "my_catalog"
+    namespace = "my_namespace"
+    url = "http://invalid.host:1234"
+
+    mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
+    catalog = catalog_factory(name, namespace, url)
+
+    expected_catalog_obj = {
+        "apiVersion": "application.giantswarm.io/v1alpha1",
+        "kind": "Catalog",
+        "metadata": {
+            "name": name,
+            "namespace": namespace,
+        },
+        "spec": {
+            "description": "Catalog for testing.",
+            "storage": {"URL": url, "type": "helm"},
+            "title": name,
+            "logoURL": "https://my-org.github.com/logo.png",
+        },
+    }
+    assert catalog.obj == expected_catalog_obj
+    cast(
+        unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create  # type: ignore
+    ).assert_called_once()

@@ -16,6 +16,7 @@ from pytest_helm_charts.fixtures import values_file_path  # noqa
 from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import gatling_app_factory  # noqa
 from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import stormforger_load_app_factory  # noqa
 from pytest_helm_charts.giantswarm_app_platform.fixtures import app_catalog_factory  # noqa
+from pytest_helm_charts.giantswarm_app_platform.fixtures import catalog_factory  # noqa
 from pytest_helm_charts.giantswarm_app_platform.fixtures import app_factory  # noqa
 
 
