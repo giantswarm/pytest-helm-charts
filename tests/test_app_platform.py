@@ -68,7 +68,7 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
             "metadata": {
                 "name": app_name,
                 "namespace": app_namespace,
-                "labels": {"app": "testing-a", "app-operator.giantswarm.io/version": "0.0.0"},
+                "labels": {"app": "testing-app", "app-operator.giantswarm.io/version": "0.0.0"},
             },
             "spec": {
                 "catalog": catalog_name,
