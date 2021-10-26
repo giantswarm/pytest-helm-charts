@@ -1,12 +1,15 @@
 from typing import Callable, List, Optional
 
 from pykube import HTTPClient
+from deprecated import deprecated
 
 from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCatalogCR
+
 
 AppCatalogFactoryFunc = Callable[[str, Optional[str]], AppCatalogCR]
 
 
+@deprecated(version="0.5.3", reason="Please use `catalog.get_catalog_obj()` instead.")
 def get_app_catalog_obj(catalog_name: str, catalog_uri: str, kube_client: HTTPClient) -> AppCatalogCR:
     app_catalog_cr = {
         "apiVersion": "application.giantswarm.io/v1alpha1",
@@ -25,6 +28,7 @@ def get_app_catalog_obj(catalog_name: str, catalog_uri: str, kube_client: HTTPCl
     return AppCatalogCR(kube_client, app_catalog_cr)
 
 
+@deprecated(version="0.5.3", reason="Please use `catalog.catalog_factory_func()` instead.")
 def app_catalog_factory_func(
     kube_client: HTTPClient, created_app_catalogs: List[AppCatalogCR]
 ) -> AppCatalogFactoryFunc:

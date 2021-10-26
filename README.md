@@ -27,7 +27,8 @@ Most important features:
 - provides [command line options](#usage) to configure the target cluster to run on
 - supports custom resource for the Giant Swarm App Platform:
     - [App](https://docs.giantswarm.io/reference/cp-k8s-api/apps.application.giantswarm.io/)
-    - [AppCatalog](https://docs.giantswarm.io/reference/cp-k8s-api/appcatalogs.application.giantswarm.io/)
+    - [Catalog](https://docs.giantswarm.io/ui-api/management-api/crd/catalogs.application.giantswarm.io/)
+    - (deprecated)[AppCatalog](https://docs.giantswarm.io/reference/cp-k8s-api/appcatalogs.application.giantswarm.io/)
 - provides set of fixtures to easily work with Helm charts
 
 ## Requirements

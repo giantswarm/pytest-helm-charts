@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pytest-helm-charts"
-version = "0.5.2"
+version = "0.5.3"
 description = "A plugin to provide different types and configs of Kubernetes clusters that can be used for testing."
 authors = ["Łukasz Piątkowski <lukasz@giantswarm.io>"]
 license="Apache-2.0"
@@ -36,6 +36,7 @@ pytest = "^6.1.2"
 pykube-ng = ">=20.10,<22.0"
 mkdocs = {version = "^1.1.2", optional = true }
 mkapi = {version = "^1.0.10", optional = true}
+Deprecated = "^1.2.13"
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.5.2"

@@ -2,21 +2,23 @@ import logging
 import unittest.mock
 from typing import cast
 
+import pytest
 from pykube import ConfigMap
-from pytest_mock import MockFixture
+from pytest_mock import MockerFixture
 
 import pytest_helm_charts
 import pytest_helm_charts.fixtures
 import pytest_helm_charts.giantswarm_app_platform.utils
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc
+from pytest_helm_charts.giantswarm_app_platform.catalog import CatalogFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
 from pytest_helm_charts.utils import YamlDict
 
 logger = logging.getLogger(__name__)
 
 
-def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc, mocker: MockFixture):
+def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc, mocker: MockerFixture):
     catalog_name = "test-dynamic"
     catalog_url = "https://test-dynamic.com"
     app_name = "testing-app"
@@ -84,3 +86,61 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     cast(
         unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.app.wait_for_apps_to_run
     ).assert_called_once_with(kube_cluster.kube_client, [app_name], app_namespace, 60)
+
+
+def test_catalog_factory_working(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
+    name = "my_catalog"
+    namespace = "my_namespace"
+    url = "http://invalid.host:1234"
+
+    mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
+    catalog = catalog_factory(name, namespace, url)
+
+    expected_catalog_obj = {
+        "apiVersion": "application.giantswarm.io/v1alpha1",
+        "kind": "Catalog",
+        "metadata": {
+            "name": name,
+            "namespace": namespace,
+        },
+        "spec": {
+            "description": "Catalog for testing.",
+            "storage": {"URL": url, "type": "helm"},
+            "title": name,
+            "logoURL": "https://my-org.github.com/logo.png",
+        },
+    }
+    assert catalog.obj == expected_catalog_obj
+    cast(
+        unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create  # type: ignore
+    ).assert_called_once()
+
+
+def test_double_create_the_same_catalog(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
+    name = "my_catalog"
+    namespace = "my_namespace"
+    url = "http://invalid.host:1234"
+
+    mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
+    catalog_factory(name, namespace, url)
+    # ask the factory the create the same catalog once again
+    catalog_factory(name, namespace, url)
+    # catalog should be created at most once (might have been already requested in another test)
+    assert (
+        cast(
+            unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create  # type: ignore
+        ).call_count
+        <= 1
+    )
+
+
+def test_create_the_same_catalog_name_diff_url(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
+    name = "my_catalog"
+    namespace = "my_namespace"
+    url = "http://invalid.host:1234"
+
+    mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
+    catalog_factory(name, namespace, url)
+    # ask the factory the create the same catalog once again, but with changed URL; this should raise an error
+    with pytest.raises(ValueError):
+        catalog_factory(name, namespace, url + "change")

@@ -1,6 +1,7 @@
 from typing import List, Iterable
 
 import pytest
+from deprecated import deprecated
 
 from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc, app_factory_func
 from pytest_helm_charts.giantswarm_app_platform.app_catalog import (
@@ -8,12 +9,18 @@ from pytest_helm_charts.giantswarm_app_platform.app_catalog import (
     AppCatalogCR,
     app_catalog_factory_func,
 )
+from pytest_helm_charts.giantswarm_app_platform.catalog import (
+    CatalogFactoryFunc,
+    CatalogCR,
+    catalog_factory_func,
+)
 from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
 from pytest_helm_charts.giantswarm_app_platform.utils import delete_app
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.fixtures import NamespaceFactoryFunc
 
 
+@deprecated(version="0.5.3", reason="Please use `catalog_factory` fixture instead.")
 @pytest.fixture(scope="module")
 def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc]:
     """Return a factory object, that can be used to configure new AppCatalog CRs
@@ -21,6 +28,19 @@ def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc
     created_catalogs: List[AppCatalogCR] = []
 
     yield app_catalog_factory_func(kube_cluster.kube_client, created_catalogs)
+
+    for catalog in created_catalogs:
+        catalog.delete()
+        # TODO: wait until finalizer is gone and object is deleted
+
+
+@pytest.fixture(scope="module")
+def catalog_factory(kube_cluster: Cluster) -> Iterable[CatalogFactoryFunc]:
+    """Return a factory object, that can be used to configure new Catalog CRs
+    for the 'app-operator' running in the cluster"""
+    created_catalogs: List[CatalogCR] = []
+
+    yield catalog_factory_func(kube_cluster.kube_client, created_catalogs)
 
     for catalog in created_catalogs:
         catalog.delete()
@@ -39,12 +59,3 @@ def app_factory(
 
     for created in created_apps:
         delete_app(created)
-
-
-# @pytest.fixture(scope="module")
-# def my_chart() -> AppCR:
-#     """Returns AppCR that can be used to deploy the chart under test using the App Platform
-#     tools. The App resource is not yet deployed to the cluster. You need to call create()
-#     and delete() to manage its deployment"""
-#     # FIXME: implement
-#     raise NotImplementedError
