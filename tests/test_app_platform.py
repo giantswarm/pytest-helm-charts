@@ -9,6 +9,7 @@ from pytest_mock import MockerFixture
 import pytest_helm_charts
 import pytest_helm_charts.fixtures
 import pytest_helm_charts.giantswarm_app_platform.utils
+import pytest_helm_charts.giantswarm_app_platform.fixtures
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.catalog import CatalogFactoryFunc
@@ -17,16 +18,18 @@ from pytest_helm_charts.utils import YamlDict
 
 logger = logging.getLogger(__name__)
 
+CATALOG_NAME = "my_catalog"
+CATALOG_NAMESPACE = "my_namespace"
+CATALOG_URL = "http://invalid.host:1234"
+
 
 def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc, mocker: MockerFixture):
-    catalog_name = "test-dynamic"
-    catalog_url = "https://test-dynamic.com"
     app_name = "testing-app"
     app_namespace = "my-namespace"
     app_version = "1.0.0"
 
     config_values: YamlDict = {"key1": {"key2": "my-val"}}
-    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app_catalog.AppCatalogCR.create")
+    mocker.patch("pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create")
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.utils.AppCR", autospec=True)
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.utils.ConfigMap", autospec=True)
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.wait_for_apps_to_run", autospec=True)
@@ -34,8 +37,9 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     test_configured_app: ConfiguredApp = app_factory(
         app_name,
         app_version,
-        catalog_name,
-        catalog_url,
+        CATALOG_NAME,
+        CATALOG_NAMESPACE,
+        CATALOG_URL,
         namespace=app_namespace,
         deployment_namespace=app_namespace,
         config_values=config_values,
@@ -72,7 +76,8 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
                 "labels": {"app": "testing-app", "app-operator.giantswarm.io/version": "0.0.0"},
             },
             "spec": {
-                "catalog": catalog_name,
+                "catalog": CATALOG_NAME,
+                "catalogNamespace": CATALOG_NAMESPACE,
                 "version": app_version,
                 "kubeConfig": {"inCluster": True},
                 "name": app_name,
@@ -89,42 +94,38 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
 
 
 def test_catalog_factory_working(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
-    name = "my_catalog"
-    namespace = "my_namespace"
-    url = "http://invalid.host:1234"
-
     mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
-    catalog = catalog_factory(name, namespace, url)
+    catalog = catalog_factory(CATALOG_NAME, CATALOG_NAMESPACE, CATALOG_URL)
 
     expected_catalog_obj = {
         "apiVersion": "application.giantswarm.io/v1alpha1",
         "kind": "Catalog",
         "metadata": {
-            "name": name,
-            "namespace": namespace,
+            "name": CATALOG_NAME,
+            "namespace": CATALOG_NAMESPACE,
         },
         "spec": {
             "description": "Catalog for testing.",
-            "storage": {"URL": url, "type": "helm"},
-            "title": name,
+            "storage": {"URL": CATALOG_URL, "type": "helm"},
+            "title": CATALOG_NAME,
             "logoURL": "https://my-org.github.com/logo.png",
         },
     }
     assert catalog.obj == expected_catalog_obj
-    cast(
-        unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create  # type: ignore
-    ).assert_called_once()
+    # catalog should be created at most once (might have been already requested in another test)
+    assert (
+        cast(
+            unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create  # type: ignore
+        ).call_count
+        <= 1
+    )
 
 
 def test_double_create_the_same_catalog(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
-    name = "my_catalog"
-    namespace = "my_namespace"
-    url = "http://invalid.host:1234"
-
     mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
-    catalog_factory(name, namespace, url)
+    catalog_factory(CATALOG_NAME, CATALOG_NAMESPACE, CATALOG_URL)
     # ask the factory the create the same catalog once again
-    catalog_factory(name, namespace, url)
+    catalog_factory(CATALOG_NAME, CATALOG_NAMESPACE, CATALOG_URL)
     # catalog should be created at most once (might have been already requested in another test)
     assert (
         cast(
@@ -135,12 +136,10 @@ def test_double_create_the_same_catalog(catalog_factory: CatalogFactoryFunc, moc
 
 
 def test_create_the_same_catalog_name_diff_url(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
-    name = "my_catalog"
-    namespace = "my_namespace"
-    url = "http://invalid.host:1234"
-
     mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
-    catalog_factory(name, namespace, url)
+
+    catalog_cr = catalog_factory(CATALOG_NAME, CATALOG_NAMESPACE, CATALOG_URL)
+    catalog_cr.delete = mocker.Mock()  # type: ignore
     # ask the factory the create the same catalog once again, but with changed URL; this should raise an error
     with pytest.raises(ValueError):
-        catalog_factory(name, namespace, url + "change")
+        catalog_factory(CATALOG_NAME, CATALOG_NAMESPACE, CATALOG_URL + "change")

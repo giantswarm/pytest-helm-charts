@@ -113,7 +113,8 @@ def create_app(
     kube_client: HTTPClient,
     app_name: str,
     app_version: str,
-    catalog_name,
+    catalog_name: str,
+    catalog_namespace: str,
     namespace: str,
     deployment_namespace: str,
     config_values: YamlDict = None,
@@ -127,8 +128,10 @@ def create_app(
         app_name: name of the app in the app catalog
         app_version: version of the app to use from the app catalog
         catalog_name: a name of the catalog used for the
-            [AppCatalogCR](pytest_helm_charts.giantswarm_app_platform.custom_resources.AppCatalogCR);
+            [CatalogCR](pytest_helm_charts.giantswarm_app_platform.custom_resources.CatalogCR);
             must already exist
+        catalog_namespace: a namespace of the
+            [CatalogCR](pytest_helm_charts.giantswarm_app_platform.custom_resources.CatalogCR)
         namespace: namespace where the App CR will be created
         deployment_namespace: namespace where the app will be deployed (can be different than `namespace`)
         config_values: any values that should be used to configure the app (same as `values.yaml` used for
@@ -166,6 +169,7 @@ def create_app(
         },
         "spec": {
             "catalog": catalog_name,
+            "catalogNamespace": catalog_namespace,
             "version": app_version,
             "kubeConfig": {"inCluster": True},
             "name": app_name,
