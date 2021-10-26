@@ -8,6 +8,11 @@ from pytest_helm_charts.giantswarm_app_platform.app_catalog import (
     AppCatalogCR,
     app_catalog_factory_func,
 )
+from pytest_helm_charts.giantswarm_app_platform.catalog import (
+    CatalogFactoryFunc,
+    CatalogCR,
+    catalog_factory_func,
+)
 from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
 from pytest_helm_charts.giantswarm_app_platform.utils import delete_app
 from pytest_helm_charts.clusters import Cluster
@@ -28,6 +33,19 @@ def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc
 
 
 @pytest.fixture(scope="module")
+def catalog_factory(kube_cluster: Cluster) -> Iterable[CatalogFactoryFunc]:
+    """Return a factory object, that can be used to configure new Catalog CRs
+    for the 'app-operator' running in the cluster"""
+    created_catalogs: List[CatalogCR] = []
+
+    yield catalog_factory_func(kube_cluster.kube_client, created_catalogs)
+
+    for catalog in created_catalogs:
+        catalog.delete()
+        # TODO: wait until finalizer is gone and object is deleted
+
+
+@pytest.fixture(scope="module")
 def app_factory(
     kube_cluster: Cluster, app_catalog_factory: AppCatalogFactoryFunc, namespace_factory: NamespaceFactoryFunc
 ) -> Iterable[AppFactoryFunc]:
@@ -39,12 +57,3 @@ def app_factory(
 
     for created in created_apps:
         delete_app(created)
-
-
-# @pytest.fixture(scope="module")
-# def my_chart() -> AppCR:
-#     """Returns AppCR that can be used to deploy the chart under test using the App Platform
-#     tools. The App resource is not yet deployed to the cluster. You need to call create()
-#     and delete() to manage its deployment"""
-#     # FIXME: implement
-#     raise NotImplementedError
