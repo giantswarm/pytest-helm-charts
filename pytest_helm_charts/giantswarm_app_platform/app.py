@@ -63,6 +63,7 @@ def app_factory_func(
                 TimeoutError: when the timeout has been reached.
         """
         assert catalog_url != ""
+        namespace_factory(catalog_namespace)
         catalog_factory(catalog_name, catalog_namespace, catalog_url)
         namespace_factory(namespace)
         configured_app = create_app(
