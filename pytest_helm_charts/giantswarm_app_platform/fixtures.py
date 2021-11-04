@@ -34,12 +34,12 @@ def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc
 
 
 @pytest.fixture(scope="module")
-def catalog_factory(kube_cluster: Cluster) -> Iterable[CatalogFactoryFunc]:
+def catalog_factory(kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc) -> Iterable[CatalogFactoryFunc]:
     """Return a factory object, that can be used to configure new Catalog CRs
     for the 'app-operator' running in the cluster"""
     created_catalogs: List[CatalogCR] = []
 
-    yield catalog_factory_func(kube_cluster.kube_client, created_catalogs)
+    yield catalog_factory_func(kube_cluster.kube_client, namespace_factory, created_catalogs)
 
     for catalog in created_catalogs:
         catalog.delete()

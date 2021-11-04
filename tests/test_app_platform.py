@@ -8,8 +8,8 @@ from pytest_mock import MockerFixture
 
 import pytest_helm_charts
 import pytest_helm_charts.fixtures
-import pytest_helm_charts.giantswarm_app_platform.utils
 import pytest_helm_charts.giantswarm_app_platform.fixtures
+import pytest_helm_charts.giantswarm_app_platform.utils
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.catalog import CatalogFactoryFunc
@@ -61,7 +61,10 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     cast(unittest.mock.Mock, app_cm.create).assert_called_once()
 
     # assert that app was created
-    cast(unittest.mock.Mock, pytest_helm_charts.fixtures.ensure_namespace_exists).assert_called_once_with(
+    cast(unittest.mock.Mock, pytest_helm_charts.fixtures.ensure_namespace_exists).assert_any_call(
+        kube_cluster.kube_client, CATALOG_NAMESPACE
+    )
+    cast(unittest.mock.Mock, pytest_helm_charts.fixtures.ensure_namespace_exists).assert_any_call(
         kube_cluster.kube_client, app_namespace
     )
     app_cr = cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.utils.AppCR)
