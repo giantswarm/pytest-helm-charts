@@ -200,7 +200,7 @@ class GatlingParser:
         assert fields[0] == "failed"
 
     @staticmethod
-    def __parse_result_line(line, header: str) -> Tuple[str, str, str]:
+    def __parse_result_line(line: str, header: str) -> Tuple[str, str, str]:
         assert line[0:2] == "> "
         line = line[2:]
         assert line.find(header) >= 0

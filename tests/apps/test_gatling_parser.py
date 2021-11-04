@@ -1,7 +1,7 @@
 from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import GatlingParser
 
 
-def test_gatling_parser_good():
+def test_gatling_parser_good() -> None:
     text: str = ""
     with open("tests/apps/sample.log") as f:
         text = f.read()
@@ -23,7 +23,7 @@ def test_gatling_parser_good():
     assert p.response_time_99th_percentile == 10
 
 
-def test_gatling_parser_fail():
+def test_gatling_parser_fail() -> None:
     text: str = ""
     with open("tests/apps/sample-fail.log") as f:
         text = f.read()

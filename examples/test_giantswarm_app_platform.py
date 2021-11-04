@@ -9,7 +9,7 @@ from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import Stormfo
 logger = logging.getLogger(__name__)
 
 
-def test_app_catalog_factory_fixture(app_catalog_factory: AppCatalogFactoryFunc):
+def test_app_catalog_factory_fixture(app_catalog_factory: AppCatalogFactoryFunc) -> None:
     """This example shows how to use
     [app_catalog_factory](pytest_helm_charts.giantswarm_app_platform.fixtures.app_app_catalog_factory)
     fixture to create a new AppCatalog CR in the Kubernetes API. You have to define an app catalog before you
@@ -25,7 +25,7 @@ def test_app_catalog_factory_fixture(app_catalog_factory: AppCatalogFactoryFunc)
 
 
 @pytest.mark.xfail(raises=HTTPError)
-def test_app_catalog_bad_name(app_catalog_factory: AppCatalogFactoryFunc):
+def test_app_catalog_bad_name(app_catalog_factory: AppCatalogFactoryFunc) -> None:
     """This example is the same as [test_test_app_catalog_factory_fixture](test_app_catalog_factory_fixture)
     but raises an Exception, as 'test_dynamic' is not a correct name in Kubernetes API. Be careful
     and check for Kubernetes API restrictions as well. In this case, a DNS-compatible name is required.
@@ -36,7 +36,7 @@ def test_app_catalog_bad_name(app_catalog_factory: AppCatalogFactoryFunc):
     assert catalog.metadata["name"] == catalog_name
 
 
-def test_app_factory_fixture(stormforger_load_app_factory: StormforgerLoadAppFactoryFunc):
+def test_app_factory_fixture(stormforger_load_app_factory: StormforgerLoadAppFactoryFunc) -> None:
     """Instead of using the [app_factory](pytest_helm_charts.giantswarm_app_platform.fixtures.app_factory) fixture
     directly to create a new app here, we test the specific case of using it to create
     [stormforger_load_app_factory](pytest_helm_charts.giantswarm_app_platforms.apps.http_testing.stormforger_load_app_factory),

@@ -4,7 +4,7 @@ from pytest_mock import MockFixture
 from tests.helper import run_pytest
 
 
-def test_app_catalog_working_example(testdir: Testdir, mocker: MockFixture):
+def test_app_catalog_working_example(testdir: Testdir, mocker: MockFixture) -> None:
     testdir.copy_example("examples/test_giantswarm_app_platform.py")
     # catalog_name = "test-dynamic"
     # catalog_url = "https://test-dynamic.com"
