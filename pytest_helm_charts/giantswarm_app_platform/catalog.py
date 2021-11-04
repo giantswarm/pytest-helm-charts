@@ -2,6 +2,7 @@ from typing import Callable, List, Optional
 
 from pykube import HTTPClient
 
+from pytest_helm_charts.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.custom_resources import CatalogCR
 
 CatalogFactoryFunc = Callable[[str, str, Optional[str]], CatalogCR]
@@ -25,7 +26,9 @@ def get_catalog_obj(catalog_name: str, catalog_namespace: str, catalog_uri: str,
     return CatalogCR(kube_client, catalog_obj)
 
 
-def catalog_factory_func(kube_client: HTTPClient, created_catalogs: List[CatalogCR]) -> CatalogFactoryFunc:
+def catalog_factory_func(
+    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_catalogs: List[CatalogCR]
+) -> CatalogFactoryFunc:
     """Return a factory object, that can be used to configure new Catalog CRs
     for the 'app-operator' running in the cluster"""
 
@@ -58,6 +61,7 @@ def catalog_factory_func(kube_client: HTTPClient, created_catalogs: List[Catalog
                     f" but it was already registered with another URL {existing_url}."
                 )
 
+        namespace_factory(namespace)
         catalog = get_catalog_obj(name, namespace, str(url), kube_client)
         created_catalogs.append(catalog)
         catalog.create()
