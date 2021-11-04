@@ -4,7 +4,7 @@ import time
 from typing import Dict, Any, List, TypeVar, Callable, Type
 
 import pykube.exceptions
-from pykube import HTTPClient, Job, Deployment
+from pykube import HTTPClient, Job, Deployment, Namespace
 
 # YamlValue = Union[int, float, str, bool, List['YamlValue'], 'YamlDict']
 
@@ -13,6 +13,8 @@ YamlDict = Dict[str, Any]
 logger = logging.getLogger(__name__)
 
 T = TypeVar("T", bound=pykube.objects.NamespacedAPIObject)
+
+NAMESPACE_CREATION_TIMEOUT_SEC = 10
 
 
 def wait_for_objects_condition(
@@ -165,6 +167,41 @@ def wait_for_global_objects_condition(
     return wait_for_objects_condition(
         kube_client, obj_type, obj_names, "", True, obj_condition_func, timeout_sec, missing_ok
     )
+
+
+def _namespace_active(ns: Namespace) -> bool:
+    complete = "status" in ns.obj and "phase" in ns.obj["status"] and ns.obj["status"]["phase"] == "Active"
+    return complete
+
+
+def wait_for_namespaces_to_exist(
+    kube_client: HTTPClient, namespaces_names: List[str], timeout_sec: int, missing_ok: bool = True
+) -> List[Namespace]:
+    """
+    Block until all the Namespaces have status 'Active' or timeout is reached.
+
+    Args:
+        kube_client: client to use to connect to the k8s cluster
+        namespaces_names: a list of Namespace names to check
+        jobs_namespace: namespace where all the Jobs are created (single namespace for all resources)
+        timeout_sec: timeout for the call
+        missing_ok: when `True`, the function ignores that some of the objects listed in the `namespaces_names`
+            don't exist in k8s API and waits for them to show up; when `False`, an
+            [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
+
+    Returns:
+        The list of Namespace resources with all the objects listed in `namespaces_names` included.
+
+    Raises:
+        TimeoutError: when timeout is reached.
+        pykube.exceptions.ObjectDoesNotExist: when `missing_ok == False` and one of the objects
+            listed in `job_names` can't be found in k8s API
+
+    """
+    result = wait_for_global_objects_condition(
+        kube_client, Namespace, namespaces_names, _namespace_active, timeout_sec, missing_ok
+    )
+    return result
 
 
 def _job_complete(job: Job) -> bool:
@@ -376,6 +413,7 @@ def ensure_namespace_exists(kube_client: pykube.HTTPClient, namespace_name: str)
         }
         ns = pykube.Namespace(kube_client, obj)
         ns.create()
+        wait_for_namespaces_to_exist(kube_client, [namespace_name], NAMESPACE_CREATION_TIMEOUT_SEC, True)
     return ns
 
 
