@@ -3,21 +3,21 @@ from pathlib import Path
 
 from _pytest.config.argparsing import Parser
 
-from pytest_helm_charts.fixtures import _existing_cluster_factory  # noqa
-from pytest_helm_charts.fixtures import chart_extra_info  # noqa
-from pytest_helm_charts.fixtures import chart_path  # noqa
-from pytest_helm_charts.fixtures import chart_version  # noqa
-from pytest_helm_charts.fixtures import cluster_type  # noqa
-from pytest_helm_charts.fixtures import kube_cluster  # noqa
-from pytest_helm_charts.fixtures import namespace_factory  # noqa
-from pytest_helm_charts.fixtures import random_namespace  # noqa
-from pytest_helm_charts.fixtures import kube_config  # noqa
-from pytest_helm_charts.fixtures import values_file_path  # noqa
-from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import gatling_app_factory  # noqa
-from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import stormforger_load_app_factory  # noqa
-from pytest_helm_charts.giantswarm_app_platform.fixtures import app_catalog_factory  # noqa
-from pytest_helm_charts.giantswarm_app_platform.fixtures import catalog_factory  # noqa
-from pytest_helm_charts.giantswarm_app_platform.fixtures import app_factory  # noqa
+from pytest_helm_charts.fixtures import _existing_cluster_factory  # noqa: F401
+from pytest_helm_charts.fixtures import chart_extra_info  # noqa: F401
+from pytest_helm_charts.fixtures import chart_path  # noqa: F401
+from pytest_helm_charts.fixtures import chart_version  # noqa: F401
+from pytest_helm_charts.fixtures import cluster_type  # noqa: F401
+from pytest_helm_charts.fixtures import kube_cluster  # noqa: F401
+from pytest_helm_charts.fixtures import namespace_factory  # noqa: F401
+from pytest_helm_charts.fixtures import random_namespace  # noqa: F401
+from pytest_helm_charts.fixtures import kube_config  # noqa: F401
+from pytest_helm_charts.fixtures import values_file_path  # noqa: F401
+from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import gatling_app_factory  # noqa: F401
+from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import stormforger_load_app_factory  # noqa: F401
+from pytest_helm_charts.giantswarm_app_platform.fixtures import app_catalog_factory  # noqa: F401
+from pytest_helm_charts.giantswarm_app_platform.fixtures import catalog_factory  # noqa: F401
+from pytest_helm_charts.giantswarm_app_platform.fixtures import app_factory  # noqa: F401
 
 
 def pytest_addoption(parser: Parser) -> None:

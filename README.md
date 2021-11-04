@@ -1,11 +1,11 @@
+# pytest-helm-charts
+
 [![build](https://github.com/giantswarm/pytest-helm-charts/workflows/build/badge.svg)](https://github.com/giantswarm/pytest-helm-charts/workflows/build/badge.svg)
 [![codecov](https://codecov.io/gh/giantswarm/pytest-helm-charts/branch/master/graph/badge.svg)](https://codecov.io/gh/giantswarm/pytest-helm-charts)
 [![Documentation Status](https://readthedocs.org/projects/pytest-helm-charts/badge/?version=latest)](https://pytest-helm-charts.readthedocs.io/en/latest/?badge=latest)
 [![PyPI Version](https://img.shields.io/pypi/v/pytest-helm-charts.svg)](https://pypi.org/project/pytest-helm-charts/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/pytest-helm-charts.svg)](https://pypi.org/project/pytest-helm-charts/)
 [![Apache License](https://img.shields.io/badge/license-apache-blue.svg)](https://pypi.org/project/pytest-helm-charts/)
-
-# pytest-helm-charts
 
 A plugin to test helm charts on Kubernetes clusters.
 
@@ -26,9 +26,9 @@ Most important features:
 - provides [pykube-ng](http://pykube.readthedocs.io/) interface to access Kubernetes clusters
 - provides [command line options](#usage) to configure the target cluster to run on
 - supports custom resource for the Giant Swarm App Platform:
-    - [App](https://docs.giantswarm.io/reference/cp-k8s-api/apps.application.giantswarm.io/)
-    - [Catalog](https://docs.giantswarm.io/ui-api/management-api/crd/catalogs.application.giantswarm.io/)
-    - (deprecated)[AppCatalog](https://docs.giantswarm.io/reference/cp-k8s-api/appcatalogs.application.giantswarm.io/)
+  - [App](https://docs.giantswarm.io/reference/cp-k8s-api/apps.application.giantswarm.io/)
+  - [Catalog](https://docs.giantswarm.io/ui-api/management-api/crd/catalogs.application.giantswarm.io/)
+  - (deprecated)[AppCatalog](https://docs.giantswarm.io/reference/cp-k8s-api/appcatalogs.application.giantswarm.io/)
 - provides set of fixtures to easily work with Helm charts
 
 ## Requirements
@@ -41,8 +41,8 @@ Most important features:
 
 You can install "pytest-helm-charts" via `pip` from `PyPI`:
 
-```
-$ pip install pytest-helm-charts
+```bash
+pip install pytest-helm-charts
 ```
 
 ## Usage
@@ -70,7 +70,7 @@ The easiest way to get started is by checking our
 [examples](https://pytest-helm-charts.readthedocs.io/en/latest/examples/basic).
 
 The list of available fixtures can be found by running `pytest --fixtures`, but
-you can also just check [the most important fixtures](fixtures.md).
+you can also just check [the most important fixtures](docs/fixtures.md).
 
 Full [API docs](https://pytest-helm-charts.readthedocs.io/en/latest/api/pytest_helm_charts/)
 are also available.
@@ -97,4 +97,5 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## Issues
 
-If you encounter any problems, please [file an issue](https://github.com/giantswarm/pytest-helm-charts/issues) along with a detailed description.
+If you encounter any problems, please [file an issue](https://github.com/giantswarm/pytest-helm-charts/issues)
+along with a detailed description.

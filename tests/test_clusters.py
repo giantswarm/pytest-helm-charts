@@ -15,7 +15,7 @@ def patch_for_construction(mocker: MockFixture) -> None:
     mocker.patch("pytest_helm_charts.clusters.HTTPClient")
 
 
-def test_create_existing(mocker: MockFixture):
+def test_create_existing(mocker: MockFixture) -> None:
     kube_config_path = "/fake/path/kube.config"
     patch_for_construction(mocker)
 
@@ -26,7 +26,7 @@ def test_create_existing(mocker: MockFixture):
     assert cluster.kube_config_path == kube_config_path
 
 
-def test_destroy_existing(mocker: MockFixture):
+def test_destroy_existing(mocker: MockFixture) -> None:
     kube_config_path = "/fake/path/kube.config"
     mocker.patch("pytest_helm_charts.clusters.KubeConfig.from_file", autospec=True)
     mocker.patch("pytest_helm_charts.clusters.HTTPClient")
@@ -60,7 +60,7 @@ def load_text_file(file_name: str) -> str:
         (["get", "pod"], "tests/resources/get_pod_result.json", ["app-operator-unique-647f46968b-wbn4h"]),
     ],
 )
-def test_kubectl_in_existing(cmd: List[str], file_name: str, expected_pods: List[str], request: FixtureRequest):
+def test_kubectl_in_existing(cmd: List[str], file_name: str, expected_pods: List[str], request: FixtureRequest) -> None:
     kube_config_path = "/fake/path/kube.config"
     mocker = request.getfixturevalue("mocker")
     patch_for_construction(mocker)

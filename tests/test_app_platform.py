@@ -23,7 +23,7 @@ CATALOG_NAMESPACE = "my_namespace"
 CATALOG_URL = "http://invalid.host:1234"
 
 
-def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc, mocker: MockerFixture):
+def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc, mocker: MockerFixture) -> None:
     app_name = "testing-app"
     app_namespace = "my-namespace"
     app_version = "1.0.0"
