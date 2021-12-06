@@ -126,5 +126,7 @@ def namespace_factory(kube_cluster: Cluster) -> Iterable[NamespaceFactoryFunc]:
 @pytest.fixture(scope="module")
 def random_namespace(namespace_factory: NamespaceFactoryFunc) -> pykube.Namespace:
     """Create and return a random kubernetes namespace that will be deleted at the end of test run."""
-    name = f"pytest-{''.join(random.choices(string.ascii_lowercase, k=5))}"
+    name = (
+        f"pytest-{''.join(random.choices(string.ascii_lowercase, k=5))}"  # nosec B311 - this is non-cryptographic use
+    )
     return namespace_factory(name)
