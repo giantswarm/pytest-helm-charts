@@ -1,16 +1,20 @@
 """This modules contains apps useful for testing HTTP applications."""
 import math
-from typing import Callable, Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Protocol, Tuple
 
 import pytest
 from pykube import ConfigMap
-
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
 from pytest_helm_charts.utils import YamlDict
 
-StormforgerLoadAppFactoryFunc = Callable[[int, str, Optional[Dict[str, str]]], ConfiguredApp]
+
+class StormforgerLoadAppFactoryFunc(Protocol):
+    def __call__(
+        self, replicas: int, host_url: str, node_affinity_selector: Optional[Dict[str, str]] = None
+    ) -> ConfiguredApp:
+        ...
 
 
 @pytest.fixture(scope="module")
@@ -63,15 +67,16 @@ def stormforger_load_app_factory(app_factory: AppFactoryFunc) -> StormforgerLoad
             "default",
             "default",
             "https://giantswarm.github.io/default-catalog/",
-            "default",
-            config_values,
+            config_values=config_values,
         )
         return stormforger_app
 
     return _stormforger_load_app_factory
 
 
-GatlingAppFactoryFunc = Callable[[str, Optional[Dict[str, str]]], ConfiguredApp]
+class GatlingAppFactoryFunc(Protocol):
+    def __call__(self, simulation_file: str, node_affinity_selector: Optional[Dict[str, str]] = None) -> ConfiguredApp:
+        ...
 
 
 @pytest.fixture(scope="module")
@@ -118,8 +123,8 @@ def gatling_app_factory(kube_cluster: Cluster, app_factory: AppFactoryFunc) -> I
             "giantswarm-playground",
             "default",
             "https://giantswarm.github.io/giantswarm-playground-catalog/",
-            namespace,
-            config_values,
+            namespace=namespace,
+            config_values=config_values,
         )
         return gatling_app
 

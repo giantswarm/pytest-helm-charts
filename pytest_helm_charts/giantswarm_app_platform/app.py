@@ -1,15 +1,30 @@
 from copy import deepcopy
-from typing import Callable, List
+from typing import List, Protocol
 
 from pykube import HTTPClient
-
 from pytest_helm_charts.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.catalog import CatalogFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
 from pytest_helm_charts.giantswarm_app_platform.utils import wait_for_apps_to_run, create_app
 from pytest_helm_charts.utils import YamlDict
 
-AppFactoryFunc = Callable[..., ConfiguredApp]
+
+class AppFactoryFunc(Protocol):
+    def __call__(
+        self,
+        app_name: str,
+        app_version: str,
+        catalog_name: str,
+        catalog_namespace: str,
+        catalog_url: str,
+        namespace: str = "default",
+        deployment_namespace: str = "default",
+        config_values: YamlDict = None,
+        namespace_config_annotations: YamlDict = None,
+        namespace_config_labels: YamlDict = None,
+        timeout_sec: int = 60,
+    ) -> ConfiguredApp:
+        ...
 
 
 def app_factory_func(

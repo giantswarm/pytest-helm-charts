@@ -3,7 +3,7 @@ import logging
 import random
 import string
 import sys
-from typing import Callable, Iterable, Dict, List
+from typing import Iterable, Dict, List, Protocol
 
 import pykube
 import pytest
@@ -64,7 +64,9 @@ def cluster_type(pytestconfig: Config) -> str:
     return pytestconfig.getoption("cluster_type")
 
 
-ConfigFactoryFunction = Callable[[], Cluster]
+class ConfigFactoryFunction(Protocol):
+    def __call__(self) -> Cluster:
+        pass
 
 
 @pytest.fixture(scope="module")
@@ -98,7 +100,9 @@ def kube_cluster(
         logger.error(f"Error of type {exc[0]} when releasing cluster. Value: {exc[1]}\nStacktrace:\n{exc[2]}")
 
 
-NamespaceFactoryFunc = Callable[[str], pykube.Namespace]
+class NamespaceFactoryFunc(Protocol):
+    def __call__(self, name: str) -> pykube.Namespace:
+        ...
 
 
 @pytest.fixture(scope="module")

@@ -6,8 +6,6 @@ from typing import Dict, Any, List, TypeVar, Callable, Type
 import pykube.exceptions
 from pykube import HTTPClient, Job, Deployment
 
-# YamlValue = Union[int, float, str, bool, List['YamlValue'], 'YamlDict']
-
 YamlDict = Dict[str, Any]
 
 logger = logging.getLogger(__name__)
