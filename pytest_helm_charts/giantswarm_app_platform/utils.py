@@ -3,10 +3,9 @@ from typing import List, Optional
 import pykube
 import yaml
 from pykube import HTTPClient, ConfigMap
-
 from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCR
 from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
-from pytest_helm_charts.utils import wait_for_namespaced_objects_condition, YamlDict
+from pytest_helm_charts.utils import wait_for_namespaced_objects_condition, YamlDict, inject_extra
 
 
 def _app_has_status(app: AppCR, status: str) -> bool:
@@ -109,7 +108,7 @@ def delete_app(configured_app: ConfiguredApp) -> None:
     # TODO: wait until finalizer is gone
 
 
-def create_app(
+def make_app_object(
     kube_client: HTTPClient,
     app_name: str,
     app_version: str,
@@ -118,10 +117,10 @@ def create_app(
     namespace: str,
     deployment_namespace: str,
     config_values: YamlDict = None,
-    namespace_config_annotations: YamlDict = None,
-    namespace_config_labels: YamlDict = None,
+    extra_metadata: Optional[dict] = None,
+    extra_spec: Optional[dict] = None,
 ) -> ConfiguredApp:
-    """Creates and deploys a new app using App CR. Optionally creates a values ConfigMap. Calls are blocking.
+    """Creates a new App object. Optionally creates a values ConfigMap. Objects are not sent to API server.
 
     Args:
         kube_client: client to use to connect to the k8s cluster
@@ -136,21 +135,14 @@ def create_app(
         deployment_namespace: namespace where the app will be deployed (can be different than `namespace`)
         config_values: any values that should be used to configure the app (same as `values.yaml` used for
             a Helm Chart directly).
-        namespace_config_annotations: a dictionary of annotations that need to be added to the
-            `deployment_namespace` created for the app
-        namespace_config_labels: a dictionary of labels that need to be added to the `deployment_namespace`
-            created for the app
+        extra_metadata: optional dict that will be merged with the 'metadata:' section of the object
+        extra_spec: optional dict that will be merged with the 'spec:' section of the object
 
     Returns:
-        The [ConfiguredApp](.entities.ConfiguredApp) object that includes both AppCR and ConfigMap created to
-        deploy the app.
+        The [ConfiguredApp](.entities.ConfiguredApp) object that includes both AppCR and ConfigMap.
     """
     if config_values is None:
         config_values = {}
-    if namespace_config_annotations is None:
-        namespace_config_annotations = {}
-    if namespace_config_labels is None:
-        namespace_config_labels = {}
 
     # TODO: include proper regexp validation
     assert app_name != ""
@@ -174,10 +166,6 @@ def create_app(
             "kubeConfig": {"inCluster": True},
             "name": app_name,
             "namespace": deployment_namespace,
-            "namespaceConfig": {
-                "annotations": namespace_config_annotations,
-                "labels": namespace_config_labels,
-            },
         },
     }
     app_cm_obj: Optional[ConfigMap] = None
@@ -190,7 +178,36 @@ def create_app(
             "data": {"values": yaml.dump(config_values)},
         }
         app_cm_obj = ConfigMap(kube_client, app_cm)
-        app_cm_obj.create()
+    app = inject_extra(app, extra_metadata, extra_spec)
     app_obj = AppCR(kube_client, app)
-    app_obj.create()
     return ConfiguredApp(app_obj, app_cm_obj)
+
+
+def create_app(
+    kube_client: HTTPClient,
+    app_name: str,
+    app_version: str,
+    catalog_name: str,
+    catalog_namespace: str,
+    namespace: str,
+    deployment_namespace: str,
+    config_values: YamlDict = None,
+    extra_metadata: Optional[dict] = None,
+    extra_spec: Optional[dict] = None,
+) -> ConfiguredApp:
+    configured_app = make_app_object(
+        kube_client,
+        app_name,
+        app_version,
+        catalog_name,
+        catalog_namespace,
+        namespace,
+        deployment_namespace,
+        config_values,
+        extra_metadata,
+        extra_spec,
+    )
+    if configured_app.app_cm:
+        configured_app.app_cm.create()
+    configured_app.app.create()
+    return configured_app

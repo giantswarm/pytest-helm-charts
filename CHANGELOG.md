@@ -4,6 +4,16 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+- changed:
+  - switch from `Callable` to `Protocol` for factory types (much better type hinting)
+  - all functions making API objects take now optional `extra_metadata` and `extra_spec` arguments,
+    which are merged with object definitions without any restrictions nor validation
+  - cleanups:
+    - all methods creating objects, but not submitting them to k8s API, have now `make-*-object` pattern
+    - `HTTPClient` connection object is always the first parameter
+    - removed the `namespaceConfig*` arguments of `make_app_object`, as they can be now included
+      using the `extra-*` args
+
 ## [0.6.0]
 
 - breaking change: all App CR related functions and fixtures that require information about the Catalog

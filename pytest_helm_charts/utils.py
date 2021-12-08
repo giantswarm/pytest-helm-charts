@@ -1,12 +1,10 @@
 """Different utilities required over the whole testing lib."""
 import logging
 import time
-from typing import Dict, Any, List, TypeVar, Callable, Type
+from typing import Dict, Any, List, TypeVar, Callable, Type, Optional
 
 import pykube.exceptions
 from pykube import HTTPClient, Job, Deployment
-
-# YamlValue = Union[int, float, str, bool, List['YamlValue'], 'YamlDict']
 
 YamlDict = Dict[str, Any]
 
@@ -268,12 +266,51 @@ def wait_for_daemon_sets_to_run(
     return result
 
 
-def ensure_namespace_exists(kube_client: pykube.HTTPClient, namespace_name: str) -> pykube.Namespace:
+def inject_extra(
+    cr_dict: YamlDict,
+    extra_metadata: Optional[YamlDict] = None,
+    extra_spec: Optional[YamlDict] = None,
+) -> YamlDict:
+    if extra_metadata:
+        cr_dict["metadata"].update(extra_metadata)
+    if extra_spec:
+        cr_dict["spec"].update(extra_spec)
+    return cr_dict
+
+
+def make_namespace_object(
+    kube_client: pykube.HTTPClient,
+    namespace_name: str,
+    extra_metadata: Optional[dict] = None,
+    extra_spec: Optional[dict] = None,
+) -> pykube.Namespace:
+    obj = inject_extra(
+        {
+            "apiVersion": "v1",
+            "kind": "Namespace",
+            "metadata": {
+                "name": namespace_name,
+            },
+        },
+        extra_metadata,
+        extra_spec,
+    )
+    return pykube.Namespace(kube_client, obj)
+
+
+def ensure_namespace_exists(
+    kube_client: pykube.HTTPClient,
+    namespace_name: str,
+    extra_metadata: Optional[dict] = None,
+    extra_spec: Optional[dict] = None,
+) -> pykube.Namespace:
     """
     Checks if the Namespace exists and creates it if it doesn't
     Args:
         kube_client: client to use to connect to the k8s cluster
         namespace_name: a name of the Namespace to ensure
+        extra_metadata: optional dict that will be merged with the 'metadata:' section of the object
+        extra_spec: optional dict that will be merged with the 'spec:' section of the object
 
     Returns:
         Namespace resource object
@@ -281,14 +318,7 @@ def ensure_namespace_exists(kube_client: pykube.HTTPClient, namespace_name: str)
     """
     ns = pykube.Namespace.objects(kube_client).get_or_none(name=namespace_name)
     if ns is None:
-        obj = {
-            "apiVersion": "v1",
-            "kind": "Namespace",
-            "metadata": {
-                "name": namespace_name,
-            },
-        }
-        ns = pykube.Namespace(kube_client, obj)
+        ns = make_namespace_object(kube_client, namespace_name, extra_metadata, extra_spec)
         ns.create()
     return ns
 
@@ -301,6 +331,8 @@ def make_job_object(
     image: str = "quay.io/giantswarm/busybox:1.32.0",
     restart_policy: str = "OnFailure",
     backoff_limit: int = 6,  # 6 is the default from k8s
+    extra_metadata: Optional[dict] = None,
+    extra_spec: Optional[dict] = None,
 ) -> pykube.Job:
     """
     Creates a Job object according to the parameters.
@@ -313,12 +345,13 @@ def make_job_object(
         image: container image to use
         restart_policy: Job's restart policy (as in k8s API)
         backoff_limit: Job's backoff limit (as in k8s API)
+        extra_metadata: optional dict that will be merged with the 'metadata:' section of the object
+        extra_spec: optional dict that will be merged with the 'spec:' section of the object
 
     Returns:
         Job object. The Job is not sent for creation to API server.
     """
-    return pykube.Job(
-        kube_client,
+    obj = inject_extra(
         {
             "apiVersion": "batch/v1",
             "kind": "Job",
@@ -339,7 +372,10 @@ def make_job_object(
                 },
             },
         },
+        extra_metadata,
+        extra_spec,
     )
+    return pykube.Job(kube_client, obj)
 
 
 def create_job_and_run_to_completion(

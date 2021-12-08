@@ -3,12 +3,11 @@ import logging
 import random
 import string
 import sys
-from typing import Callable, Iterable, Dict, List
+from typing import Iterable, Dict, List, Protocol, Optional
 
 import pykube
 import pytest
 from _pytest.config import Config
-
 from pytest_helm_charts.clusters import ExistingCluster, Cluster
 from pytest_helm_charts.utils import ensure_namespace_exists
 
@@ -64,7 +63,9 @@ def cluster_type(pytestconfig: Config) -> str:
     return pytestconfig.getoption("cluster_type")
 
 
-ConfigFactoryFunction = Callable[[], Cluster]
+class ConfigFactoryFunction(Protocol):
+    def __call__(self) -> Cluster:
+        pass
 
 
 @pytest.fixture(scope="module")
@@ -98,7 +99,11 @@ def kube_cluster(
         logger.error(f"Error of type {exc[0]} when releasing cluster. Value: {exc[1]}\nStacktrace:\n{exc[2]}")
 
 
-NamespaceFactoryFunc = Callable[[str], pykube.Namespace]
+class NamespaceFactoryFunc(Protocol):
+    def __call__(
+        self, name: str, extra_metadata: Optional[dict] = None, extra_spec: Optional[dict] = None
+    ) -> pykube.Namespace:
+        ...
 
 
 @pytest.fixture(scope="module")
@@ -106,12 +111,16 @@ def namespace_factory(kube_cluster: Cluster) -> Iterable[NamespaceFactoryFunc]:
     """Return a new namespace that is deleted once the fixture is disposed."""
     created_namespaces: List[pykube.Namespace] = []
 
-    def _namespace_factory(name: str) -> pykube.Namespace:
+    def _namespace_factory(
+        name: str,
+        extra_metadata: Optional[dict] = None,
+        extra_spec: Optional[dict] = None,
+    ) -> pykube.Namespace:
         for namespace in created_namespaces:
             if namespace.metadata["name"] == name:
                 return namespace
 
-        ns = ensure_namespace_exists(kube_cluster.kube_client, name)
+        ns = ensure_namespace_exists(kube_cluster.kube_client, name, extra_metadata, extra_spec)
         logger.info(f"Ensured the namespace '{name}'.")
         created_namespaces.append(ns)
         return ns

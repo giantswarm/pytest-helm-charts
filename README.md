@@ -33,7 +33,7 @@ Most important features:
 
 ## Requirements
 
-- python 3.7+
+- python 3.8+
 - pytest 5.4.2+
 - pykube-ng = 20.7.0+
 
