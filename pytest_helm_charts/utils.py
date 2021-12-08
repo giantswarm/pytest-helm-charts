@@ -298,12 +298,19 @@ def make_namespace_object(
     return pykube.Namespace(kube_client, obj)
 
 
-def ensure_namespace_exists(kube_client: pykube.HTTPClient, namespace_name: str) -> pykube.Namespace:
+def ensure_namespace_exists(
+    kube_client: pykube.HTTPClient,
+    namespace_name: str,
+    extra_metadata: Optional[dict] = None,
+    extra_spec: Optional[dict] = None,
+) -> pykube.Namespace:
     """
     Checks if the Namespace exists and creates it if it doesn't
     Args:
         kube_client: client to use to connect to the k8s cluster
         namespace_name: a name of the Namespace to ensure
+        extra_metadata: optional dict that will be merged with the 'metadata:' section of the object
+        extra_spec: optional dict that will be merged with the 'spec:' section of the object
 
     Returns:
         Namespace resource object
@@ -311,7 +318,7 @@ def ensure_namespace_exists(kube_client: pykube.HTTPClient, namespace_name: str)
     """
     ns = pykube.Namespace.objects(kube_client).get_or_none(name=namespace_name)
     if ns is None:
-        ns = make_namespace_object(kube_client, namespace_name)
+        ns = make_namespace_object(kube_client, namespace_name, extra_metadata, extra_spec)
         ns.create()
     return ns
 
@@ -338,6 +345,8 @@ def make_job_object(
         image: container image to use
         restart_policy: Job's restart policy (as in k8s API)
         backoff_limit: Job's backoff limit (as in k8s API)
+        extra_metadata: optional dict that will be merged with the 'metadata:' section of the object
+        extra_spec: optional dict that will be merged with the 'spec:' section of the object
 
     Returns:
         Job object. The Job is not sent for creation to API server.

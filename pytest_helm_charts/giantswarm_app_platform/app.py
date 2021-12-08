@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import List, Protocol
+from typing import List, Protocol, Optional
 
 from pykube import HTTPClient
 from pytest_helm_charts.fixtures import NamespaceFactoryFunc
@@ -22,6 +22,8 @@ class AppFactoryFunc(Protocol):
         config_values: YamlDict = None,
         namespace_config_annotations: YamlDict = None,
         namespace_config_labels: YamlDict = None,
+        extra_metadata: Optional[dict] = None,
+        extra_spec: Optional[dict] = None,
         timeout_sec: int = 60,
     ) -> ConfiguredApp:
         ...
@@ -44,6 +46,8 @@ def app_factory_func(
         config_values: YamlDict = None,
         namespace_config_annotations: YamlDict = None,
         namespace_config_labels: YamlDict = None,
+        extra_metadata: Optional[dict] = None,
+        extra_spec: Optional[dict] = None,
         timeout_sec: int = 60,
     ) -> ConfiguredApp:
         """Factory function used to create and deploy new apps using App CR. Calls are blocking.
@@ -66,6 +70,8 @@ def app_factory_func(
                 `deployment_namespace` created for the app
              namespace_config_labels: a dictionary of labels that need to be added to the `deployment_namespace`
                 created for the app
+             extra_metadata: optional dict that will be merged with the 'metadata:' section of the object
+             extra_spec: optional dict that will be merged with the 'spec:' section of the object
              timeout_sec: timeout in seconds for the create operation
 
         Returns:
@@ -91,6 +97,8 @@ def app_factory_func(
             config_values,
             namespace_config_annotations,
             namespace_config_labels,
+            extra_metadata,
+            extra_spec,
         )
         created_apps.append(configured_app)
         if timeout_sec > 0:

@@ -3,28 +3,47 @@ from typing import List, Optional, Protocol
 from pykube import HTTPClient
 
 from pytest_helm_charts.giantswarm_app_platform.custom_resources import CatalogCR
+from pytest_helm_charts.utils import inject_extra
 
 
 class CatalogFactoryFunc(Protocol):
-    def __call__(self, catalog_name: str, catalog_namespace: str, catalog_url: Optional[str]) -> CatalogCR:
+    def __call__(
+        self,
+        catalog_name: str,
+        catalog_namespace: str,
+        catalog_url: Optional[str],
+        extra_metadata: Optional[dict] = None,
+        extra_spec: Optional[dict] = None,
+    ) -> CatalogCR:
         ...
 
 
-def get_catalog_obj(catalog_name: str, catalog_namespace: str, catalog_url: str, kube_client: HTTPClient) -> CatalogCR:
-    catalog_obj = {
-        "apiVersion": "application.giantswarm.io/v1alpha1",
-        "kind": "Catalog",
-        "metadata": {
-            "name": catalog_name,
-            "namespace": catalog_namespace,
+def make_catalog_obj(
+    kube_client: HTTPClient,
+    catalog_name: str,
+    catalog_namespace: str,
+    catalog_url: str,
+    extra_metadata: Optional[dict] = None,
+    extra_spec: Optional[dict] = None,
+) -> CatalogCR:
+    catalog_obj = inject_extra(
+        {
+            "apiVersion": "application.giantswarm.io/v1alpha1",
+            "kind": "Catalog",
+            "metadata": {
+                "name": catalog_name,
+                "namespace": catalog_namespace,
+            },
+            "spec": {
+                "description": "Catalog for testing.",
+                "storage": {"URL": catalog_url, "type": "helm"},
+                "title": catalog_name,
+                "logoURL": "https://my-org.github.com/logo.png",
+            },
         },
-        "spec": {
-            "description": "Catalog for testing.",
-            "storage": {"URL": catalog_url, "type": "helm"},
-            "title": catalog_name,
-            "logoURL": "https://my-org.github.com/logo.png",
-        },
-    }
+        extra_metadata,
+        extra_spec,
+    )
     return CatalogCR(kube_client, catalog_obj)
 
 
@@ -33,7 +52,11 @@ def catalog_factory_func(kube_client: HTTPClient, created_catalogs: List[Catalog
     for the 'app-operator' running in the cluster"""
 
     def _catalog_factory(
-        catalog_name: str, catalog_namespace: str = "default", catalog_url: Optional[str] = ""
+        catalog_name: str,
+        catalog_namespace: str = "default",
+        catalog_url: Optional[str] = None,
+        extra_metadata: Optional[dict] = None,
+        extra_spec: Optional[dict] = None,
     ) -> CatalogCR:
         """A factory function used to create catalogs in the k8s API using Catalog CR.
 
@@ -51,7 +74,7 @@ def catalog_factory_func(kube_client: HTTPClient, created_catalogs: List[Catalog
             ValueError: if catalog with the same name, but different URL already exists.
 
         """
-        if catalog_url == "":
+        if not catalog_url:
             catalog_url = "https://giantswarm.github.io/{}-catalog/".format(catalog_name)
         for c in created_catalogs:
             if c.metadata["name"] == catalog_name and c.metadata["namespace"] == catalog_namespace:
@@ -63,7 +86,9 @@ def catalog_factory_func(kube_client: HTTPClient, created_catalogs: List[Catalog
                     f"with URL {catalog_url}, but it was already registered with another URL {existing_url}."
                 )
 
-        catalog = get_catalog_obj(catalog_name, catalog_namespace, str(catalog_url), kube_client)
+        catalog = make_catalog_obj(
+            kube_client, catalog_name, catalog_namespace, catalog_url, extra_metadata, extra_spec
+        )
         created_catalogs.append(catalog)
         catalog.create()
         # TODO: check that app catalog is present
