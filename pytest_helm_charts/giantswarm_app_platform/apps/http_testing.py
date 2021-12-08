@@ -12,7 +12,12 @@ from pytest_helm_charts.utils import YamlDict
 
 class StormforgerLoadAppFactoryFunc(Protocol):
     def __call__(
-        self, replicas: int, host_url: str, node_affinity_selector: Optional[Dict[str, str]] = None
+        self,
+        replicas: int,
+        host_url: str,
+        node_affinity_selector: Optional[Dict[str, str]] = None,
+        extra_metadata: Optional[dict] = None,
+        extra_spec: Optional[dict] = None,
     ) -> ConfiguredApp:
         ...
 
@@ -35,7 +40,11 @@ def stormforger_load_app_factory(app_factory: AppFactoryFunc) -> StormforgerLoad
     """
 
     def _stormforger_load_app_factory(
-        replicas: int, host_url: str, node_affinity_selector: Optional[Dict[str, str]] = None
+        replicas: int,
+        host_url: str,
+        node_affinity_selector: Optional[Dict[str, str]] = None,
+        extra_metadata: Optional[dict] = None,
+        extra_spec: Optional[dict] = None,
     ) -> ConfiguredApp:
         """Creates and deploys stormforger load app by creating the relevant App CR in the API.
 
@@ -43,6 +52,8 @@ def stormforger_load_app_factory(app_factory: AppFactoryFunc) -> StormforgerLoad
             replicas: number of replicas of Pods the app should run.
             host_url: the URL under which the app will serve requests.
             node_affinity_selector: option node affinity Kubernetes selector. Default={default}.
+             extra_metadata: optional dict that will be merged with the 'metadata:' section of the object
+             extra_spec: optional dict that will be merged with the 'spec:' section of the object
 
         Returns:
             [AppCR](AppCR) describing the CR created in API.
@@ -68,6 +79,8 @@ def stormforger_load_app_factory(app_factory: AppFactoryFunc) -> StormforgerLoad
             "default",
             "https://giantswarm.github.io/default-catalog/",
             config_values=config_values,
+            extra_metadata=extra_metadata,
+            extra_spec=extra_spec,
         )
         return stormforger_app
 
@@ -75,7 +88,13 @@ def stormforger_load_app_factory(app_factory: AppFactoryFunc) -> StormforgerLoad
 
 
 class GatlingAppFactoryFunc(Protocol):
-    def __call__(self, simulation_file: str, node_affinity_selector: Optional[Dict[str, str]] = None) -> ConfiguredApp:
+    def __call__(
+        self,
+        simulation_file: str,
+        node_affinity_selector: Optional[Dict[str, str]] = None,
+        extra_metadata: Optional[dict] = None,
+        extra_spec: Optional[dict] = None,
+    ) -> ConfiguredApp:
         ...
 
 
@@ -95,7 +114,10 @@ def gatling_app_factory(kube_cluster: Cluster, app_factory: AppFactoryFunc) -> I
     created_configmaps: List[ConfigMap] = []
 
     def _gatling_app_factory(
-        simulation_file: str, node_affinity_selector: Optional[Dict[str, str]] = None
+        simulation_file: str,
+        node_affinity_selector: Optional[Dict[str, str]] = None,
+        extra_metadata: Optional[dict] = None,
+        extra_spec: Optional[dict] = None,
     ) -> ConfiguredApp:
         namespace = "default"
         with open(simulation_file) as f:
@@ -125,6 +147,8 @@ def gatling_app_factory(kube_cluster: Cluster, app_factory: AppFactoryFunc) -> I
             "https://giantswarm.github.io/giantswarm-playground-catalog/",
             namespace=namespace,
             config_values=config_values,
+            extra_metadata=extra_metadata,
+            extra_spec=extra_spec,
         )
         return gatling_app
 

@@ -4,7 +4,13 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
-- switch from `Callable` to `Protocol` for factory types
+- changed:
+  - switch from `Callable` to `Protocol` for factory types (much better type hinting)
+  - all functions making API objects take now optional `extra_metadata` and `extra_spec` arguments,
+    which are merged with object definitions without any restrictions nor validation
+  - cleanups:
+    - all methods creating objects, but not submitting them to k8s API, have now `make-*-object` pattern
+    - `HTTPClient` connection object is always the first parameter
 
 ## [0.6.0]
 
