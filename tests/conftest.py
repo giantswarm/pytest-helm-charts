@@ -3,7 +3,7 @@ from pykube import HTTPClient
 from pytest_mock import MockFixture
 
 from pytest_helm_charts.clusters import Cluster
-from pytest_helm_charts.test_runtime_fixtures import ConfigFactoryFunction
+from pytest_helm_charts.fixtures import ConfigFactoryFunction
 
 pytest_plugins = ["pytester"]
 

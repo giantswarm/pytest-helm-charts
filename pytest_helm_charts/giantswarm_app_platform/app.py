@@ -2,7 +2,7 @@ from copy import deepcopy
 from typing import List, Protocol, Optional
 
 from pykube import HTTPClient
-from pytest_helm_charts.fixtures import NamespaceFactoryFunc
+from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.catalog import CatalogFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
 from pytest_helm_charts.giantswarm_app_platform.utils import wait_for_apps_to_run, create_app

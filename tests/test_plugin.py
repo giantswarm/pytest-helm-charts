@@ -1,5 +1,5 @@
 # noinspection PyProtectedMember
-from pytest_helm_charts.test_runtime_fixtures import _parse_extra_info  # noqa: F401
+from pytest_helm_charts.fixtures import _parse_extra_info  # noqa: F401
 
 
 def test_parse_chart_extra_info() -> None:

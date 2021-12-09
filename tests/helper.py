@@ -5,7 +5,7 @@ from pytest_mock import MockFixture
 
 
 def run_pytest(testdir: Testdir, mocker: MockFixture, *args: Any) -> RunResult:
-    mocker.patch("pytest_helm_charts.test_runtime_fixtures.ExistingCluster", autospec=True)
+    mocker.patch("pytest_helm_charts.fixtures.ExistingCluster", autospec=True)
     result = testdir.runpytest(
         "--cluster-type",
         "existing",

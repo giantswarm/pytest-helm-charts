@@ -17,7 +17,7 @@ from pytest_helm_charts.giantswarm_app_platform.catalog import (
 from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
 from pytest_helm_charts.giantswarm_app_platform.utils import delete_app
 from pytest_helm_charts.clusters import Cluster
-from pytest_helm_charts.fixtures import NamespaceFactoryFunc
+from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 
 
 @deprecated(version="0.5.3", reason="Please use `catalog_factory` fixture instead.")
