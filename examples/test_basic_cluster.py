@@ -5,7 +5,7 @@ from typing import Dict
 
 import pykube
 
-from pytest_helm_charts.fixtures import Cluster
+from pytest_helm_charts.test_runtime_fixtures import Cluster
 
 logger = logging.getLogger(__name__)
 
