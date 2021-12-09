@@ -7,7 +7,8 @@ from pykube import HTTPClient
 from pykube.objects import NamespacedAPIObject
 from pytest_mock import MockerFixture, MockFixture
 
-from pytest_helm_charts.utils import wait_for_namespaced_objects_condition, make_job_object
+from pytest_helm_charts.utils import wait_for_namespaced_objects_condition
+from pytest_helm_charts.api.job import make_job_object
 
 MockCR = NamespacedAPIObject
 
