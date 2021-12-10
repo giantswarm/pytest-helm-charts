@@ -2,9 +2,16 @@ from typing import List, Optional, Protocol
 
 from pykube import HTTPClient
 from deprecated import deprecated
+from pykube.objects import APIObject
 
-from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCatalogCR
 from pytest_helm_charts.utils import inject_extra
+
+
+@deprecated(version="0.5.3", reason="Please use `CatalogCR` instead.")
+class AppCatalogCR(APIObject):
+    version = "application.giantswarm.io/v1alpha1"
+    endpoint = "appcatalogs"
+    kind = "AppCatalog"
 
 
 class AppCatalogFactoryFunc(Protocol):

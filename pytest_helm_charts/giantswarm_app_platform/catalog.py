@@ -1,9 +1,15 @@
 from typing import List, Optional, Protocol
 
 from pykube import HTTPClient
+from pykube.objects import NamespacedAPIObject
 
-from pytest_helm_charts.giantswarm_app_platform.custom_resources import CatalogCR
 from pytest_helm_charts.utils import inject_extra
+
+
+class CatalogCR(NamespacedAPIObject):
+    version = "application.giantswarm.io/v1alpha1"
+    endpoint = "catalogs"
+    kind = "Catalog"
 
 
 class CatalogFactoryFunc(Protocol):
