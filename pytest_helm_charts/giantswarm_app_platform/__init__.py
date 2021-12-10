@@ -1,1 +1,1 @@
-"""This package include utilities to work with Giant Swarm application platform."""
+"""This package includes utilities to work with Giant Swarm application platform."""
