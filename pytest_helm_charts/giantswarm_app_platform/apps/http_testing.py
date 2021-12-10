@@ -5,8 +5,7 @@ from typing import Dict, Iterable, List, Optional, Protocol, Tuple
 import pytest
 from pykube import ConfigMap
 from pytest_helm_charts.clusters import Cluster
-from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc
-from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
+from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc, ConfiguredApp
 from pytest_helm_charts.utils import YamlDict
 
 

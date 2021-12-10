@@ -13,9 +13,8 @@ import pytest_helm_charts.fixtures
 import pytest_helm_charts.giantswarm_app_platform.app
 import pytest_helm_charts.giantswarm_app_platform.fixtures
 from pytest_helm_charts.clusters import Cluster
-from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc
+from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc, ConfiguredApp
 from pytest_helm_charts.giantswarm_app_platform.catalog import CatalogFactoryFunc
-from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
 from pytest_helm_charts.utils import YamlDict
 
 logger = logging.getLogger(__name__)

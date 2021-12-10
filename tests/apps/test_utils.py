@@ -8,8 +8,12 @@ from pytest_mock import MockFixture
 
 import pytest_helm_charts
 from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCR
-from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
-from pytest_helm_charts.giantswarm_app_platform.app import wait_for_apps_to_run, wait_for_app_to_be_deleted, delete_app
+from pytest_helm_charts.giantswarm_app_platform.app import (
+    wait_for_apps_to_run,
+    wait_for_app_to_be_deleted,
+    delete_app,
+    ConfiguredApp,
+)
 from tests.test_utils import get_ready_objects_filter_mock
 
 

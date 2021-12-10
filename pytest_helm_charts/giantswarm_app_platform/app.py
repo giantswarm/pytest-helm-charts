@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import List, Protocol, Optional
+from typing import List, Protocol, Optional, NamedTuple
 
 import pykube
 import yaml
@@ -8,8 +8,14 @@ from pykube import HTTPClient, ConfigMap
 from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.catalog import CatalogFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCR
-from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
 from pytest_helm_charts.utils import YamlDict, wait_for_namespaced_objects_condition, inject_extra
+
+
+class ConfiguredApp(NamedTuple):
+    """Class that represents application deployed by App CR and its optional configuration in ConfigMap."""
+
+    app: AppCR
+    app_cm: Optional[ConfigMap]
 
 
 class AppFactoryFunc(Protocol):

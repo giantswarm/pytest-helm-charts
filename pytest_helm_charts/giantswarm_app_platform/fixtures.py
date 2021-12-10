@@ -3,7 +3,7 @@ from typing import List, Iterable
 import pytest
 from deprecated import deprecated
 
-from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc, app_factory_func, delete_app
+from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc, app_factory_func, delete_app, ConfiguredApp
 from pytest_helm_charts.giantswarm_app_platform.app_catalog import (
     AppCatalogFactoryFunc,
     AppCatalogCR,
@@ -14,7 +14,6 @@ from pytest_helm_charts.giantswarm_app_platform.catalog import (
     CatalogCR,
     catalog_factory_func,
 )
-from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 
