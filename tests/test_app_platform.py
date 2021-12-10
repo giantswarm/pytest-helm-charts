@@ -8,6 +8,7 @@ from pytest_mock import MockerFixture
 
 import pytest_helm_charts
 import pytest_helm_charts.api.fixtures
+import pytest_helm_charts.api.namespace
 import pytest_helm_charts.fixtures
 import pytest_helm_charts.giantswarm_app_platform.utils
 import pytest_helm_charts.giantswarm_app_platform.fixtures
