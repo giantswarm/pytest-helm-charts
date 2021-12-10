@@ -13,9 +13,3 @@ class CatalogCR(NamespacedAPIObject):
     version = "application.giantswarm.io/v1alpha1"
     endpoint = "catalogs"
     kind = "Catalog"
-
-
-class AppCR(NamespacedAPIObject):
-    version = "application.giantswarm.io/v1alpha1"
-    endpoint = "apps"
-    kind = "App"

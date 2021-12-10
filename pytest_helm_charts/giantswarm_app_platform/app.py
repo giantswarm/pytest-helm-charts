@@ -5,10 +5,17 @@ import pykube
 import yaml
 
 from pykube import HTTPClient, ConfigMap
+from pykube.objects import NamespacedAPIObject
+
 from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.catalog import CatalogFactoryFunc
-from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCR
 from pytest_helm_charts.utils import YamlDict, wait_for_namespaced_objects_condition, inject_extra
+
+
+class AppCR(NamespacedAPIObject):
+    version = "application.giantswarm.io/v1alpha1"
+    endpoint = "apps"
+    kind = "App"
 
 
 class ConfiguredApp(NamedTuple):
