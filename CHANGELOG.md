@@ -9,10 +9,13 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
   - all functions making API objects take now optional `extra_metadata` and `extra_spec` arguments,
     which are merged with object definitions without any restrictions nor validation
   - cleanups:
-    - all methods creating objects, but not submitting them to k8s API, have now `make-*-object` pattern
-    - `HTTPClient` connection object is always the first parameter
+    - all methods creating objects, but not submitting them to k8s API, match now `make-*-object` pattern
+    - `HTTPClient` connection object is always the first method parameter
     - removed the `namespaceConfig*` arguments of `make_app_object`, as they can be now included
       using the `extra-*` args
+    - multiple classes were moved across modules and packages to match the following rules:
+      - every Resource / CustomResource is a single module
+      - groups of API Resources (like giant swarm app platform or flux - in the future) go to packages
 
 ## [0.6.0]
 

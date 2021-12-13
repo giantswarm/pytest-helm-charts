@@ -7,12 +7,12 @@ from pykube import ConfigMap, HTTPClient
 from pytest_mock import MockFixture
 
 import pytest_helm_charts
-from pytest_helm_charts.giantswarm_app_platform.custom_resources import AppCR
-from pytest_helm_charts.giantswarm_app_platform.entities import ConfiguredApp
-from pytest_helm_charts.giantswarm_app_platform.utils import (
-    delete_app,
+from pytest_helm_charts.giantswarm_app_platform.app import (
     wait_for_apps_to_run,
     wait_for_app_to_be_deleted,
+    delete_app,
+    ConfiguredApp,
+    AppCR,
 )
 from tests.test_utils import get_ready_objects_filter_mock
 
@@ -41,8 +41,8 @@ class MockAppCR:
 def test_wait_for_apps_to_run(mocker: MockFixture) -> None:
     app_mock = MockAppCR("deployed")
     objects_mock = get_ready_objects_filter_mock(mocker, [app_mock])
-    mocker.patch("pytest_helm_charts.giantswarm_app_platform.utils.AppCR")
-    cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.utils.AppCR).objects.return_value = objects_mock
+    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.AppCR")
+    cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.app.AppCR).objects.return_value = objects_mock
 
     result = wait_for_apps_to_run(cast(HTTPClient, None), ["test_app"], "test_ns", 10)
     assert app_mock == result[0]
@@ -64,8 +64,8 @@ def test_wait_for_app_to_be_deleted(
     mocker: MockFixture, k8s_api_call_results: List[Any], expected_del_result: bool
 ) -> None:
     objects_mock = get_ready_objects_filter_mock(mocker, k8s_api_call_results)
-    mocker.patch("pytest_helm_charts.giantswarm_app_platform.utils.AppCR")
-    cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.utils.AppCR).objects.return_value = objects_mock
+    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.AppCR")
+    cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.app.AppCR).objects.return_value = objects_mock
 
     try:
         del_result = wait_for_app_to_be_deleted(cast(HTTPClient, None), "test_app", "test_ns", 1)

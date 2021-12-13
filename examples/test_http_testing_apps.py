@@ -2,7 +2,7 @@ from pykube import Service
 
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import StormforgerLoadAppFactoryFunc
-from pytest_helm_charts.utils import wait_for_deployments_to_run
+from pytest_helm_charts.api.deployment import wait_for_deployments_to_run
 
 
 def test_stormforger_load_app_creation(
