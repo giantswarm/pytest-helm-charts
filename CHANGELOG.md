@@ -14,7 +14,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
     - removed the `namespaceConfig*` arguments of `make_app_object`, as they can be now included
       using the `extra-*` args
     - multiple classes were moved across modules and packages to match the following rules:
-      - every Resource / CutomResource is a single module
+      - every Resource / CustomResource is a single module
       - groups of API Resources (like giant swarm app platform or flux - in the future) go to packages
 
 ## [0.6.0]
