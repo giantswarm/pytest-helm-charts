@@ -16,6 +16,7 @@ from pytest_helm_charts.giantswarm_app_platform.catalog import (
 )
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
+from pytest_helm_charts.utils import namespaced_object_factory_helper
 
 
 @deprecated(version="0.5.3", reason="Please use `catalog_factory` fixture instead.")
@@ -35,12 +36,8 @@ def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc
 def catalog_factory(kube_cluster: Cluster) -> Iterable[CatalogFactoryFunc]:
     """Return a factory object, that can be used to configure new Catalog CRs
     for the 'app-operator' running in the cluster"""
-    created_catalogs: List[CatalogCR] = []
-
-    yield catalog_factory_func(kube_cluster.kube_client, created_catalogs)
-
-    for catalog in created_catalogs:
-        catalog.delete()
+    for o in namespaced_object_factory_helper(kube_cluster, catalog_factory_func, CatalogCR):
+        yield o
 
 
 @pytest.fixture(scope="module")

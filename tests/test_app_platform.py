@@ -93,7 +93,19 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     ).assert_called_once_with(kube_cluster.kube_client, [app_name], app_namespace, 60)
 
 
+def mock_final_catalog_cleanup(mocker: MockerFixture) -> None:
+    if type(getattr(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "objects")) is mocker.MagicMock:
+        return
+    get_or_none_call = mocker.MagicMock(name="get_or_none_call")
+    get_or_none_call.get_or_none = mocker.MagicMock(name="get_or_none_res")
+    get_or_none_call.get_or_none.return_value = None
+    objects_call = mocker.MagicMock(name="custom_objects_call")
+    objects_call.return_value = get_or_none_call
+    setattr(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "objects", objects_call)
+
+
 def test_catalog_factory_working(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
+    mock_final_catalog_cleanup(mocker)
     mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
     catalog = catalog_factory(CATALOG_NAME, CATALOG_NAMESPACE, CATALOG_URL)
 
@@ -122,6 +134,7 @@ def test_catalog_factory_working(catalog_factory: CatalogFactoryFunc, mocker: Mo
 
 
 def test_double_create_the_same_catalog(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
+    mock_final_catalog_cleanup(mocker)
     mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
     catalog_factory(CATALOG_NAME, CATALOG_NAMESPACE, CATALOG_URL)
     # ask the factory the create the same catalog once again
@@ -136,6 +149,7 @@ def test_double_create_the_same_catalog(catalog_factory: CatalogFactoryFunc, moc
 
 
 def test_create_the_same_catalog_name_diff_url(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
+    mock_final_catalog_cleanup(mocker)
     mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
 
     catalog_cr = catalog_factory(CATALOG_NAME, CATALOG_NAMESPACE, CATALOG_URL)

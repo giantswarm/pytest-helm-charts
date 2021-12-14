@@ -1,16 +1,20 @@
 """Different utilities required over the whole testing lib."""
 import logging
 import time
-from typing import Dict, Any, List, TypeVar, Callable, Type, Optional
+from typing import Dict, Any, List, TypeVar, Callable, Type, Optional, Iterable
 
 import pykube.exceptions
 from pykube import HTTPClient
+
+from pytest_helm_charts.clusters import Cluster
 
 YamlDict = Dict[str, Any]
 
 logger = logging.getLogger(__name__)
 
 T = TypeVar("T", bound=pykube.objects.NamespacedAPIObject)
+FactoryFunc = Callable[..., T]
+MetaFactoryFunc = Callable[[pykube.HTTPClient, list[T]], FactoryFunc]
 
 
 def wait_for_namespaced_objects_condition(
@@ -89,3 +93,23 @@ def inject_extra(
     if extra_spec:
         cr_dict["spec"].update(extra_spec)
     return cr_dict
+
+
+def namespaced_object_factory_helper(
+    kube_cluster: Cluster, meta_func: MetaFactoryFunc, obj_type: Type[T]
+) -> Iterable[FactoryFunc]:
+    created_objects: list[T] = []
+
+    yield meta_func(kube_cluster.kube_client, created_objects)
+
+    for flux_object in created_objects:
+        flux_object.delete()
+
+    any_exists = True
+    while any_exists:
+        any_exists = False
+        for o in created_objects:
+            if getattr(obj_type, "objects")(kube_cluster.kube_client, namespace=o.namespace).get_or_none(name=o.name):
+                any_exists = True
+                time.sleep(0.5)
+                break
