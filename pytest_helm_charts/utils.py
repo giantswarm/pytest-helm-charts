@@ -7,6 +7,9 @@ import pykube.exceptions
 from pykube import HTTPClient
 
 from pytest_helm_charts.clusters import Cluster
+from pytest_helm_charts.errors import WaitTimeoutError
+
+DEFAULT_DELETE_TIMEOUT_SEC = 120
 
 YamlDict = Dict[str, Any]
 
@@ -95,21 +98,34 @@ def inject_extra(
     return cr_dict
 
 
+def delete_and_wait_namespaced_objects(
+    kube_client: HTTPClient,
+    obj_type: Type[T],
+    objects_to_del: Iterable[T],
+    timeout_sec: int = DEFAULT_DELETE_TIMEOUT_SEC,
+) -> None:
+    for kube_object in objects_to_del:
+        kube_object.delete()
+
+    any_exists = True
+    times = 0
+    while any_exists:
+        if times >= timeout_sec:
+            raise WaitTimeoutError(f"timeout of {timeout_sec} s crossed while waiting for objects to be deleted")
+        any_exists = False
+        for o in objects_to_del:
+            if getattr(obj_type, "objects")(kube_client, namespace=o.namespace).get_or_none(name=o.name):
+                any_exists = True
+                time.sleep(1)
+                times += 1
+                break
+
+
 def namespaced_object_factory_helper(
-    kube_cluster: Cluster, meta_func: MetaFactoryFunc, obj_type: Type[T]
+    kube_cluster: Cluster, meta_func: MetaFactoryFunc, obj_type: Type[T], timeout_sec: int = DEFAULT_DELETE_TIMEOUT_SEC
 ) -> Iterable[FactoryFunc]:
     created_objects: list[T] = []
 
     yield meta_func(kube_cluster.kube_client, created_objects)
 
-    for flux_object in created_objects:
-        flux_object.delete()
-
-    any_exists = True
-    while any_exists:
-        any_exists = False
-        for o in created_objects:
-            if getattr(obj_type, "objects")(kube_cluster.kube_client, namespace=o.namespace).get_or_none(name=o.name):
-                any_exists = True
-                time.sleep(0.5)
-                break
+    delete_and_wait_namespaced_objects(kube_cluster.kube_client, obj_type, created_objects, timeout_sec)
