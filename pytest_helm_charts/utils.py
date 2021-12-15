@@ -15,20 +15,21 @@ YamlDict = Dict[str, Any]
 
 logger = logging.getLogger(__name__)
 
-T = TypeVar("T", bound=pykube.objects.NamespacedAPIObject)
+TNS = TypeVar("TNS", bound=pykube.objects.NamespacedAPIObject)
+T = TypeVar("T", bound=pykube.objects.APIObject)
 FactoryFunc = Callable[..., T]
 MetaFactoryFunc = Callable[[pykube.HTTPClient, list[T]], FactoryFunc]
 
 
 def wait_for_namespaced_objects_condition(
     kube_client: HTTPClient,
-    obj_type: Type[T],
+    obj_type: Type[TNS],
     obj_names: List[str],
     objs_namespace: str,
-    obj_condition_func: Callable[[T], bool],
+    obj_condition_func: Callable[[TNS], bool],
     timeout_sec: int,
     missing_ok: bool,
-) -> List[T]:
+) -> List[TNS]:
     """
     Block until all the namespaced kubernetes objects of type `obj_type` pass `obj_condition_fun` or timeout is reached.
 
@@ -61,7 +62,7 @@ def wait_for_namespaced_objects_condition(
 
     retries = 0
     all_ready = False
-    matching_objs: List[T] = []
+    matching_objs: List[TNS] = []
     while retries < timeout_sec:
         response = obj_type.objects(kube_client).filter(namespace=objs_namespace)
         retries += 1

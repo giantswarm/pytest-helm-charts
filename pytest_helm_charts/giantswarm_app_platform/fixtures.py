@@ -30,12 +30,14 @@ from pytest_helm_charts.utils import object_factory_helper, delete_and_wait_for_
 def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc]:
     """Return a factory object, that can be used to configure new AppCatalog CRs
     for the 'app-operator' running in the cluster"""
-    created_catalogs: List[AppCatalogCR] = []
-
-    yield app_catalog_factory_func(kube_cluster.kube_client, created_catalogs)
-
-    for catalog in created_catalogs:
-        catalog.delete()
+    for o in object_factory_helper(kube_cluster, app_catalog_factory_func, AppCatalogCR):
+        yield o
+    # created_catalogs: List[AppCatalogCR] = []
+    #
+    # yield app_catalog_factory_func(kube_cluster.kube_client, created_catalogs)
+    #
+    # for catalog in created_catalogs:
+    #     catalog.delete()
 
 
 @pytest.fixture(scope="module")
