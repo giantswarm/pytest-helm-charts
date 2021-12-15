@@ -98,7 +98,7 @@ def inject_extra(
     return cr_dict
 
 
-def delete_and_wait_namespaced_objects(
+def delete_and_wait_for_objects(
     kube_client: HTTPClient,
     obj_type: Type[T],
     objects_to_del: Iterable[T],
@@ -114,7 +114,13 @@ def delete_and_wait_namespaced_objects(
             raise WaitTimeoutError(f"timeout of {timeout_sec} s crossed while waiting for objects to be deleted")
         any_exists = False
         for o in objects_to_del:
-            if getattr(obj_type, "objects")(kube_client, namespace=o.namespace).get_or_none(name=o.name):
+            objects_method = getattr(obj_type, "objects")
+            objects_res = (
+                objects_method(kube_client, namespace=o.namespace)
+                if "namespace" in o.metadata
+                else objects_method(kube_client)
+            )
+            if objects_res.get_or_none(name=o.name):
                 any_exists = True
                 time.sleep(1)
                 times += 1
@@ -128,4 +134,4 @@ def namespaced_object_factory_helper(
 
     yield meta_func(kube_cluster.kube_client, created_objects)
 
-    delete_and_wait_namespaced_objects(kube_cluster.kube_client, obj_type, created_objects, timeout_sec)
+    delete_and_wait_for_objects(kube_cluster.kube_client, obj_type, created_objects, timeout_sec)

@@ -22,7 +22,7 @@ from pytest_helm_charts.giantswarm_app_platform.catalog import (
 )
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
-from pytest_helm_charts.utils import namespaced_object_factory_helper, delete_and_wait_namespaced_objects
+from pytest_helm_charts.utils import namespaced_object_factory_helper, delete_and_wait_for_objects
 
 
 @deprecated(version="0.5.3", reason="Please use `catalog_factory` fixture instead.")
@@ -57,6 +57,6 @@ def app_factory(
     yield app_factory_func(kube_cluster.kube_client, catalog_factory, namespace_factory, created_apps)
 
     apps_to_delete = [a.app for a in created_apps]
-    delete_and_wait_namespaced_objects(kube_cluster.kube_client, AppCR, apps_to_delete)
+    delete_and_wait_for_objects(kube_cluster.kube_client, AppCR, apps_to_delete)
     cms_to_delete = [a.app_cm for a in created_apps if a.app_cm is not None]
-    delete_and_wait_namespaced_objects(kube_cluster.kube_client, ConfigMap, cms_to_delete)
+    delete_and_wait_for_objects(kube_cluster.kube_client, ConfigMap, cms_to_delete)
