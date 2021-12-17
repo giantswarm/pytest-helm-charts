@@ -129,7 +129,10 @@ def delete_and_wait_for_objects(
 
 
 def object_factory_helper(
-    kube_cluster: Cluster, meta_func: MetaFactoryFunc, obj_type: Type[T], timeout_sec: int = DEFAULT_DELETE_TIMEOUT_SEC
+    kube_cluster: Cluster,
+    meta_func: MetaFactoryFunc,
+    obj_type: Type[T],
+    timeout_sec: int = DEFAULT_DELETE_TIMEOUT_SEC,
 ) -> Iterable[FactoryFunc]:
     created_objects: list[T] = []
 

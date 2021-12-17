@@ -3,6 +3,7 @@ from typing import List, Optional, Protocol
 from pykube import HTTPClient
 from pykube.objects import NamespacedAPIObject
 
+from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.utils import inject_extra
 
 
@@ -53,7 +54,9 @@ def make_catalog_obj(
     return CatalogCR(kube_client, catalog_obj)
 
 
-def catalog_factory_func(kube_client: HTTPClient, created_catalogs: List[CatalogCR]) -> CatalogFactoryFunc:
+def catalog_factory_func(
+    kube_client: HTTPClient, objects: List[CatalogCR], namespace_factory: NamespaceFactoryFunc
+) -> CatalogFactoryFunc:
     """Return a factory object, that can be used to configure new Catalog CRs
     for the 'app-operator' running in the cluster"""
 
@@ -80,9 +83,11 @@ def catalog_factory_func(kube_client: HTTPClient, created_catalogs: List[Catalog
             ValueError: if catalog with the same name, but different URL already exists.
 
         """
+
+        namespace_factory(catalog_namespace)
         if not catalog_url:
             catalog_url = "https://giantswarm.github.io/{}-catalog/".format(catalog_name)
-        for c in created_catalogs:
+        for c in objects:
             if c.metadata["name"] == catalog_name and c.metadata["namespace"] == catalog_namespace:
                 existing_url = c.obj["spec"]["storage"]["URL"]
                 if existing_url == catalog_url:
@@ -95,7 +100,7 @@ def catalog_factory_func(kube_client: HTTPClient, created_catalogs: List[Catalog
         catalog = make_catalog_obj(
             kube_client, catalog_name, catalog_namespace, catalog_url, extra_metadata, extra_spec
         )
-        created_catalogs.append(catalog)
+        objects.append(catalog)
         catalog.create()
         # TODO: check that app catalog is present
         return catalog

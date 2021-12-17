@@ -3,6 +3,7 @@ import unittest.mock
 from typing import cast, Type
 
 import pytest
+import pykube
 from pykube import ConfigMap, Namespace
 from pytest_mock import MockerFixture
 
@@ -32,7 +33,10 @@ def mock_final_object_cleanup(mocker: MockerFixture, obj_type: Type[T]) -> None:
     get_or_none_call.get_or_none.return_value = None
     objects_call = mocker.MagicMock(name="custom_objects_call")
     objects_call.return_value = get_or_none_call
+    delete_call = mocker.MagicMock(name="delete_call")
+    delete_call.return_value = True
     setattr(obj_type, "objects", objects_call)
+    setattr(obj_type, "delete", delete_call)
 
 
 def mock_final_configured_app_cleanup(mocker: MockerFixture) -> None:
@@ -80,8 +84,13 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     cast(unittest.mock.Mock, app_cm.create).assert_called_once()
 
     # assert that app was created
-    cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).assert_called_once_with(
+    assert cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).call_count == 2
+    cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).assert_called_with(
         kube_cluster.kube_client, app_namespace, None, None
+    )
+    # FIXME: assert_called_with checks only latest call
+    cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).assert_called_with(
+        kube_cluster.kube_client, CATALOG_NAMESPACE, None, None
     )
     app_cr = cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.app.AppCR)
     app_cr.assert_called_once_with(
@@ -112,6 +121,7 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
 
 
 def mock_final_catalog_cleanup(mocker: MockerFixture) -> None:
+    mock_final_object_cleanup(mocker, pykube.Namespace)
     mock_final_object_cleanup(mocker, pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR)
 
 

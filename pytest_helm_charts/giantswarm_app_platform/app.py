@@ -75,7 +75,7 @@ def app_factory_func(
                 with the same name doesn't already exists (then a new catalog with the given name and URL is created
                 in the k8s API)
              namespace: namespace where the App CR will be created
-             deployment_namespace: namespace where the app will be deployed (can be different than `namespace`)
+             deployment_namespace: namespace where the app will be deployed (can be different from `namespace`)
              config_values: any values that should be used to configure the app (same as `values.yaml` used for
                 a Helm Chart directly).
              extra_metadata: optional dict that will be merged with the 'metadata:' section of the object
