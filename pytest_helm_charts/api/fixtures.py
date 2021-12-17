@@ -8,6 +8,7 @@ import pytest
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.fixtures import logger
 from pytest_helm_charts.api.namespace import ensure_namespace_exists
+from pytest_helm_charts.utils import delete_and_wait_for_objects
 
 
 class NamespaceFactoryFunc(Protocol):
@@ -38,9 +39,7 @@ def namespace_factory(kube_cluster: Cluster) -> Iterable[NamespaceFactoryFunc]:
 
     yield _namespace_factory
 
-    for created_ns in created_namespaces:
-        created_ns.delete()
-        logger.info(f"Deleted the namespace '{created_ns.name}'.")
+    delete_and_wait_for_objects(kube_cluster.kube_client, pykube.Namespace, created_namespaces)
 
 
 @pytest.fixture(scope="module")

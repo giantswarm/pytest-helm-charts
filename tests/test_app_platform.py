@@ -3,7 +3,7 @@ import unittest.mock
 from typing import cast, Type
 
 import pytest
-from pykube import ConfigMap
+from pykube import ConfigMap, Namespace
 from pytest_mock import MockerFixture
 
 import pytest_helm_charts
@@ -24,7 +24,7 @@ CATALOG_NAMESPACE = "my_namespace"
 CATALOG_URL = "http://invalid.host:1234"
 
 
-def mock_final_namespaced_object_cleanup(mocker: MockerFixture, obj_type: Type[T]) -> None:
+def mock_final_object_cleanup(mocker: MockerFixture, obj_type: Type[T]) -> None:
     if type(getattr(obj_type, "objects")) is mocker.MagicMock:
         return
     get_or_none_call = mocker.MagicMock(name="get_or_none_call")
@@ -36,8 +36,9 @@ def mock_final_namespaced_object_cleanup(mocker: MockerFixture, obj_type: Type[T
 
 
 def mock_final_configured_app_cleanup(mocker: MockerFixture) -> None:
-    mock_final_namespaced_object_cleanup(mocker, ConfigMap)
-    mock_final_namespaced_object_cleanup(mocker, pytest_helm_charts.giantswarm_app_platform.app.AppCR)
+    mock_final_object_cleanup(mocker, Namespace)
+    mock_final_object_cleanup(mocker, ConfigMap)
+    mock_final_object_cleanup(mocker, pytest_helm_charts.giantswarm_app_platform.app.AppCR)
 
 
 def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc, mocker: MockerFixture) -> None:
@@ -111,7 +112,7 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
 
 
 def mock_final_catalog_cleanup(mocker: MockerFixture) -> None:
-    mock_final_namespaced_object_cleanup(mocker, pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR)
+    mock_final_object_cleanup(mocker, pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR)
 
 
 def test_catalog_factory_working(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
