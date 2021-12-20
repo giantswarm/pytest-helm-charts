@@ -1,27 +1,35 @@
 """Different utilities required over the whole testing lib."""
 import logging
 import time
-from typing import Dict, Any, List, TypeVar, Callable, Type, Optional
+from typing import Dict, Any, List, TypeVar, Callable, Type, Optional, Iterable
 
 import pykube.exceptions
 from pykube import HTTPClient
+
+from pytest_helm_charts.clusters import Cluster
+from pytest_helm_charts.errors import WaitTimeoutError
+
+DEFAULT_DELETE_TIMEOUT_SEC = 120
 
 YamlDict = Dict[str, Any]
 
 logger = logging.getLogger(__name__)
 
-T = TypeVar("T", bound=pykube.objects.NamespacedAPIObject)
+TNS = TypeVar("TNS", bound=pykube.objects.NamespacedAPIObject)
+T = TypeVar("T", bound=pykube.objects.APIObject)
+FactoryFunc = Callable[..., T]
+MetaFactoryFunc = Callable[[pykube.HTTPClient, List[T]], FactoryFunc]
 
 
 def wait_for_namespaced_objects_condition(
     kube_client: HTTPClient,
-    obj_type: Type[T],
+    obj_type: Type[TNS],
     obj_names: List[str],
     objs_namespace: str,
-    obj_condition_func: Callable[[T], bool],
+    obj_condition_func: Callable[[TNS], bool],
     timeout_sec: int,
     missing_ok: bool,
-) -> List[T]:
+) -> List[TNS]:
     """
     Block until all the namespaced kubernetes objects of type `obj_type` pass `obj_condition_fun` or timeout is reached.
 
@@ -54,7 +62,7 @@ def wait_for_namespaced_objects_condition(
 
     retries = 0
     all_ready = False
-    matching_objs: List[T] = []
+    matching_objs: List[TNS] = []
     while retries < timeout_sec:
         response = obj_type.objects(kube_client).filter(namespace=objs_namespace)
         retries += 1
@@ -89,3 +97,45 @@ def inject_extra(
     if extra_spec:
         cr_dict["spec"].update(extra_spec)
     return cr_dict
+
+
+def delete_and_wait_for_objects(
+    kube_client: HTTPClient,
+    obj_type: Type[T],
+    objects_to_del: Iterable[T],
+    timeout_sec: int = DEFAULT_DELETE_TIMEOUT_SEC,
+) -> None:
+    for kube_object in objects_to_del:
+        kube_object.delete()
+
+    any_exists = True
+    times = 0
+    while any_exists:
+        if times >= timeout_sec:
+            raise WaitTimeoutError(f"timeout of {timeout_sec} s exceeded while waiting for objects to be deleted")
+        any_exists = False
+        for o in objects_to_del:
+            objects_method = getattr(obj_type, "objects")
+            objects_res = (
+                objects_method(kube_client, namespace=o.namespace)
+                if "namespace" in o.metadata
+                else objects_method(kube_client)
+            )
+            if objects_res.get_or_none(name=o.name):
+                any_exists = True
+                time.sleep(1)
+                times += 1
+                break
+
+
+def object_factory_helper(
+    kube_cluster: Cluster,
+    meta_func: MetaFactoryFunc,
+    obj_type: Type[T],
+    timeout_sec: int = DEFAULT_DELETE_TIMEOUT_SEC,
+) -> Iterable[FactoryFunc]:
+    created_objects: List[T] = []
+
+    yield meta_func(kube_cluster.kube_client, created_objects)
+
+    delete_and_wait_for_objects(kube_cluster.kube_client, obj_type, created_objects, timeout_sec)

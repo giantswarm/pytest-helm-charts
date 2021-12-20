@@ -1,9 +1,10 @@
 import logging
 import unittest.mock
-from typing import cast
+from typing import cast, Type
 
 import pytest
-from pykube import ConfigMap
+import pykube
+from pykube import ConfigMap, Namespace
 from pytest_mock import MockerFixture
 
 import pytest_helm_charts
@@ -15,7 +16,7 @@ import pytest_helm_charts.giantswarm_app_platform.fixtures
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc, ConfiguredApp
 from pytest_helm_charts.giantswarm_app_platform.catalog import CatalogFactoryFunc
-from pytest_helm_charts.utils import YamlDict
+from pytest_helm_charts.utils import YamlDict, T
 
 logger = logging.getLogger(__name__)
 
@@ -24,17 +25,38 @@ CATALOG_NAMESPACE = "my_namespace"
 CATALOG_URL = "http://invalid.host:1234"
 
 
+def mock_final_object_cleanup(mocker: MockerFixture, obj_type: Type[T]) -> None:
+    if type(getattr(obj_type, "objects")) is mocker.MagicMock:
+        return
+    get_or_none_call = mocker.MagicMock(name="get_or_none_call")
+    get_or_none_call.get_or_none = mocker.MagicMock(name="get_or_none_res")
+    get_or_none_call.get_or_none.return_value = None
+    objects_call = mocker.MagicMock(name="custom_objects_call")
+    objects_call.return_value = get_or_none_call
+    delete_call = mocker.MagicMock(name="delete_call")
+    delete_call.return_value = True
+    setattr(obj_type, "objects", objects_call)
+    setattr(obj_type, "delete", delete_call)
+
+
+def mock_final_configured_app_cleanup(mocker: MockerFixture) -> None:
+    mock_final_object_cleanup(mocker, Namespace)
+    mock_final_object_cleanup(mocker, ConfigMap)
+    mock_final_object_cleanup(mocker, pytest_helm_charts.giantswarm_app_platform.app.AppCR)
+
+
 def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc, mocker: MockerFixture) -> None:
     app_name = "testing-app"
     app_namespace = "my-namespace"
     app_version = "1.0.0"
 
     config_values: YamlDict = {"key1": {"key2": "my-val"}}
+    mock_final_configured_app_cleanup(mocker)
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create")
-    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.AppCR", autospec=True)
-    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.ConfigMap", autospec=True)
-    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.wait_for_apps_to_run", autospec=True)
-    mocker.patch("pytest_helm_charts.api.fixtures.ensure_namespace_exists", autospec=True)
+    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.AppCR")
+    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.ConfigMap")
+    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.wait_for_apps_to_run")
+    mocker.patch("pytest_helm_charts.api.fixtures.ensure_namespace_exists")
     test_configured_app: ConfiguredApp = app_factory(
         app_name,
         app_version,
@@ -62,8 +84,12 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     cast(unittest.mock.Mock, app_cm.create).assert_called_once()
 
     # assert that app was created
-    cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).assert_called_once_with(
+    assert cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).call_count == 2
+    cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).assert_any_call(
         kube_cluster.kube_client, app_namespace, None, None
+    )
+    cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).assert_any_call(
+        kube_cluster.kube_client, CATALOG_NAMESPACE, None, None
     )
     app_cr = cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.app.AppCR)
     app_cr.assert_called_once_with(
@@ -93,7 +119,13 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     ).assert_called_once_with(kube_cluster.kube_client, [app_name], app_namespace, 60)
 
 
+def mock_final_catalog_cleanup(mocker: MockerFixture) -> None:
+    mock_final_object_cleanup(mocker, pykube.Namespace)
+    mock_final_object_cleanup(mocker, pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR)
+
+
 def test_catalog_factory_working(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
+    mock_final_catalog_cleanup(mocker)
     mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
     catalog = catalog_factory(CATALOG_NAME, CATALOG_NAMESPACE, CATALOG_URL)
 
@@ -122,6 +154,7 @@ def test_catalog_factory_working(catalog_factory: CatalogFactoryFunc, mocker: Mo
 
 
 def test_double_create_the_same_catalog(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
+    mock_final_catalog_cleanup(mocker)
     mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
     catalog_factory(CATALOG_NAME, CATALOG_NAMESPACE, CATALOG_URL)
     # ask the factory the create the same catalog once again
@@ -136,6 +169,7 @@ def test_double_create_the_same_catalog(catalog_factory: CatalogFactoryFunc, moc
 
 
 def test_create_the_same_catalog_name_diff_url(catalog_factory: CatalogFactoryFunc, mocker: MockerFixture) -> None:
+    mock_final_catalog_cleanup(mocker)
     mocker.patch.object(pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR, "create")
 
     catalog_cr = catalog_factory(CATALOG_NAME, CATALOG_NAMESPACE, CATALOG_URL)

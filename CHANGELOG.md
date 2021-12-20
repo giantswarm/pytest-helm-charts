@@ -5,6 +5,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 ## [Unreleased]
 
 - changed:
+  - all fixture factories that create objects and delete them after they are out of scope, now
+    actively wait for the object to be gone. Previously, only `delete()` request was sent without
+    checking if the object is gone, which was causing a bunch of race conditions between test runs.
+  - All recursively-required missing resources are now automatically created. This usually means
+    that if the `Namespace` you want to put your resource in doesn't exist, it will be created
+    automatically for you. The same applies to `App` and the required `Catalog`.
   - switch from `Callable` to `Protocol` for factory types (much better type hinting)
   - all functions making API objects take now optional `extra_metadata` and `extra_spec` arguments,
     which are merged with object definitions without any restrictions nor validation

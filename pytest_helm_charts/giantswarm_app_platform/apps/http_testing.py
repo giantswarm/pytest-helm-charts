@@ -6,7 +6,7 @@ import pytest
 from pykube import ConfigMap
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.app import AppFactoryFunc, ConfiguredApp
-from pytest_helm_charts.utils import YamlDict
+from pytest_helm_charts.utils import YamlDict, delete_and_wait_for_objects
 
 
 class StormforgerLoadAppFactoryFunc(Protocol):
@@ -153,8 +153,7 @@ def gatling_app_factory(kube_cluster: Cluster, app_factory: AppFactoryFunc) -> I
 
     yield _gatling_app_factory
 
-    for cm in created_configmaps:
-        cm.delete()
+    delete_and_wait_for_objects(kube_cluster.kube_client, ConfigMap, created_configmaps)
 
 
 class GatlingParser:
