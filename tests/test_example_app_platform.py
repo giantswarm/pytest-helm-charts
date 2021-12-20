@@ -11,6 +11,7 @@ def test_app_catalog_working_example(testdir: Testdir, mocker: MockerFixture) ->
     # catalog_url = "https://test-dynamic.com"
 
     mock_final_catalog_cleanup(mocker)
+    mocker.patch("pykube.Namespace.create")
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create")
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.delete")
     # run pytest with the following cmd args

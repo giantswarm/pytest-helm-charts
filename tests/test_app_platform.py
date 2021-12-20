@@ -85,11 +85,10 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
 
     # assert that app was created
     assert cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).call_count == 2
-    cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).assert_called_with(
+    cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).assert_any_call(
         kube_cluster.kube_client, app_namespace, None, None
     )
-    # FIXME: assert_called_with checks only latest call
-    cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).assert_called_with(
+    cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).assert_any_call(
         kube_cluster.kube_client, CATALOG_NAMESPACE, None, None
     )
     app_cr = cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.app.AppCR)
