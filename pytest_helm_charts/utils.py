@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 TNS = TypeVar("TNS", bound=pykube.objects.NamespacedAPIObject)
 T = TypeVar("T", bound=pykube.objects.APIObject)
 FactoryFunc = Callable[..., T]
-MetaFactoryFunc = Callable[[pykube.HTTPClient, list[T]], FactoryFunc]
+MetaFactoryFunc = Callable[[pykube.HTTPClient, List[T]], FactoryFunc]
 
 
 def wait_for_namespaced_objects_condition(
@@ -134,7 +134,7 @@ def object_factory_helper(
     obj_type: Type[T],
     timeout_sec: int = DEFAULT_DELETE_TIMEOUT_SEC,
 ) -> Iterable[FactoryFunc]:
-    created_objects: list[T] = []
+    created_objects: List[T] = []
 
     yield meta_func(kube_cluster.kube_client, created_objects)
 
