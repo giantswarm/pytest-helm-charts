@@ -53,10 +53,10 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     config_values: YamlDict = {"key1": {"key2": "my-val"}}
     mock_final_configured_app_cleanup(mocker)
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create")
-    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.AppCR", autospec=True)
-    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.ConfigMap", autospec=True)
-    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.wait_for_apps_to_run", autospec=True)
-    mocker.patch("pytest_helm_charts.api.fixtures.ensure_namespace_exists", autospec=True)
+    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.AppCR")
+    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.ConfigMap")
+    mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.wait_for_apps_to_run")
+    mocker.patch("pytest_helm_charts.api.fixtures.ensure_namespace_exists")
     test_configured_app: ConfiguredApp = app_factory(
         app_name,
         app_version,
