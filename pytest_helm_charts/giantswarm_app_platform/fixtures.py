@@ -38,7 +38,7 @@ def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc
 def catalog_factory(kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc) -> Iterable[CatalogFactoryFunc]:
     """Return a factory object, that can be used to configure new Catalog CRs
     for the 'app-operator' running in the cluster"""
-    created_objects: list[CatalogCR] = []
+    created_objects: List[CatalogCR] = []
 
     yield catalog_factory_func(kube_cluster.kube_client, created_objects, namespace_factory)
 
