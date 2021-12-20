@@ -112,7 +112,7 @@ def delete_and_wait_for_objects(
     times = 0
     while any_exists:
         if times >= timeout_sec:
-            raise WaitTimeoutError(f"timeout of {timeout_sec} s crossed while waiting for objects to be deleted")
+            raise WaitTimeoutError(f"timeout of {timeout_sec} s exceeded while waiting for objects to be deleted")
         any_exists = False
         for o in objects_to_del:
             objects_method = getattr(obj_type, "objects")
