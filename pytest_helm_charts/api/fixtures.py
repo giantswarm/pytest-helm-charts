@@ -20,7 +20,7 @@ class NamespaceFactoryFunc(Protocol):
 
 @pytest.fixture(scope="module")
 def namespace_factory(kube_cluster: Cluster) -> Iterable[NamespaceFactoryFunc]:
-    """Return a new namespace that is deleted once the fixture is disposed."""
+    """Return a new namespace that is deleted once the fixture is disposed. Fixture's scope is 'module'."""
     created_namespaces: List[pykube.Namespace] = []
 
     def _namespace_factory(
@@ -44,7 +44,8 @@ def namespace_factory(kube_cluster: Cluster) -> Iterable[NamespaceFactoryFunc]:
 
 @pytest.fixture(scope="module")
 def random_namespace(namespace_factory: NamespaceFactoryFunc) -> pykube.Namespace:
-    """Create and return a random kubernetes namespace that will be deleted at the end of test run."""
+    """Create and return a random kubernetes namespace that will be deleted at the end of test run.
+    Fixture's scope is 'module'."""
     name = (
         f"pytest-{''.join(random.choices(string.ascii_lowercase, k=5))}"  # nosec B311 - this is non-cryptographic use
     )

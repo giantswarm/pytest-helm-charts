@@ -29,7 +29,7 @@ from pytest_helm_charts.utils import object_factory_helper, delete_and_wait_for_
 @pytest.fixture(scope="module")
 def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc]:
     """Return a factory object, that can be used to configure new AppCatalog CRs
-    for the 'app-operator' running in the cluster"""
+    for the 'app-operator' running in the cluster. Fixture's scope is 'module'."""
     for o in object_factory_helper(kube_cluster, app_catalog_factory_func, AppCatalogCR):
         yield o
 
@@ -37,7 +37,7 @@ def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc
 @pytest.fixture(scope="module")
 def catalog_factory(kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc) -> Iterable[CatalogFactoryFunc]:
     """Return a factory object, that can be used to configure new Catalog CRs
-    for the 'app-operator' running in the cluster"""
+    for the 'app-operator' running in the cluster. Fixture's scope is 'module'."""
     created_objects: List[CatalogCR] = []
 
     yield catalog_factory_func(kube_cluster.kube_client, created_objects, namespace_factory)
@@ -49,7 +49,7 @@ def catalog_factory(kube_cluster: Cluster, namespace_factory: NamespaceFactoryFu
 def app_factory(
     kube_cluster: Cluster, catalog_factory: CatalogFactoryFunc, namespace_factory: NamespaceFactoryFunc
 ) -> Iterable[AppFactoryFunc]:
-    """Returns a factory function which can be used to install an app using App CR"""
+    """Returns a factory function which can be used to install an app using App CR. Fixture's scope is 'module'."""
 
     created_apps: List[ConfiguredApp] = []
 
