@@ -1,38 +1,31 @@
 from time import sleep
-from typing import Iterable, TypeVar, Callable, Type
+from typing import Iterable, TypeVar, Callable, Type, List
 
 import pykube
 import pytest
 
 from pytest_helm_charts.api.deployment import wait_for_deployments_to_run
 from pytest_helm_charts.clusters import Cluster
-
-from custom_resources import (
-    NamespacedFluxCR,
-    KustomizationCR,
+from pytest_helm_charts.flux.git_repository import (
     GitRepositoryCR,
-    HelmRepositoryCR,
-    HelmReleaseCR,
-)
-from pytest_helm_charts.flux.fixture_helpers import (
-    KustomizationFactoryFunc,
-    kustomization_factory_func,
     GitRepositoryFactoryFunc,
     git_repository_factory_func,
+)
+from pytest_helm_charts.flux.helm_release import HelmReleaseCR, HelmReleaseFactoryFunc, helm_release_factory_func
+from pytest_helm_charts.flux.helm_repository import (
+    HelmRepositoryCR,
     HelmRepositoryFactoryFunc,
     helm_repository_factory_func,
-    HelmReleaseFactoryFunc,
-    helm_release_factory_func,
 )
+from pytest_helm_charts.flux.kustomization import KustomizationCR, KustomizationFactoryFunc, kustomization_factory_func
+from pytest_helm_charts.flux.utils import NamespacedFluxCR
 
 FLUX_NAMESPACE_NAME = "default"
-FLUX_DEPLOYMENT_TIMEOUT: int = 180
+FLUX_DEPLOYMENTS_READY_TIMEOUT: int = 180
 
 
-# scope "module" means this is run only once, for the first test case requesting! It might be tricky
-# if you want to assert this multiple times
 @pytest.fixture(scope="module")
-def flux_deployments(kube_cluster: Cluster) -> list[pykube.Deployment]:
+def flux_deployments(kube_cluster: Cluster) -> List[pykube.Deployment]:
     deployments = wait_for_deployments_to_run(
         kube_cluster.kube_client,
         [
@@ -44,18 +37,18 @@ def flux_deployments(kube_cluster: Cluster) -> list[pykube.Deployment]:
             "source-controller",
         ],
         FLUX_NAMESPACE_NAME,
-        FLUX_DEPLOYMENT_TIMEOUT,
+        FLUX_DEPLOYMENTS_READY_TIMEOUT,
     )
     return deployments
 
 
 T = TypeVar("T", bound=NamespacedFluxCR)
 FactoryFunc = Callable[..., T]
-MetaFactoryFunc = Callable[[pykube.HTTPClient, list[T]], FactoryFunc]
+MetaFactoryFunc = Callable[[pykube.HTTPClient, List[T]], FactoryFunc]
 
 
 def _flux_factory(kube_cluster: Cluster, meta_func: MetaFactoryFunc, obj_type: Type[T]) -> Iterable[FactoryFunc]:
-    created_objects: list[T] = []
+    created_objects: List[T] = []
 
     yield meta_func(kube_cluster.kube_client, created_objects)
 
@@ -74,8 +67,7 @@ def _flux_factory(kube_cluster: Cluster, meta_func: MetaFactoryFunc, obj_type: T
 
 @pytest.fixture(scope="module")
 def kustomization_factory(kube_cluster: Cluster) -> Iterable[KustomizationFactoryFunc]:
-    for f in _flux_factory(kube_cluster, kustomization_factory_func, KustomizationCR):
-        yield f
+    yield from _flux_factory(kube_cluster, kustomization_factory_func, KustomizationCR)
 
 
 @pytest.fixture(scope="module")
