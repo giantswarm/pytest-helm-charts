@@ -1,4 +1,4 @@
-from typing import Protocol, Optional, Any, List
+from typing import Protocol, Optional, Any, List, Dict
 
 from pykube import HTTPClient
 
@@ -108,7 +108,7 @@ def make_helm_repository_obj(
     extra_metadata: Optional[dict] = None,
     extra_spec: Optional[dict] = None,
 ) -> HelmRepositoryCR:
-    cr: dict[str, Any] = {
+    cr: Dict[str, Any] = {
         "apiVersion": HelmRepositoryCR.version,
         "kind": HelmRepositoryCR.kind,
         "metadata": {

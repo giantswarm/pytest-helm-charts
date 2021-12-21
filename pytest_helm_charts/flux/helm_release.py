@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field, asdict
-from typing import Protocol, Optional, List, Any
+from typing import Protocol, Optional, List, Any, Dict
 
 from pykube import HTTPClient
 
@@ -152,7 +152,7 @@ def make_helm_release_obj(
     extra_metadata: Optional[dict] = None,
     extra_spec: Optional[dict] = None,
 ) -> HelmReleaseCR:
-    cr: dict[str, Any] = {
+    cr: Dict[str, Any] = {
         "apiVersion": HelmReleaseCR.version,
         "kind": HelmReleaseCR.kind,
         "metadata": {

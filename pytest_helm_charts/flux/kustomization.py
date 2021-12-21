@@ -1,4 +1,4 @@
-from typing import Protocol, Optional, Any, List
+from typing import Protocol, Optional, Any, List, Dict
 
 from pykube import HTTPClient
 
@@ -104,7 +104,7 @@ def make_kustomization_obj(
     extra_metadata: Optional[dict] = None,
     extra_spec: Optional[dict] = None,
 ) -> KustomizationCR:
-    cr: dict[str, Any] = {
+    cr: Dict[str, Any] = {
         "apiVersion": KustomizationCR.version,
         "kind": KustomizationCR.kind,
         "metadata": {

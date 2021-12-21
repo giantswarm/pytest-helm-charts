@@ -1,4 +1,4 @@
-from typing import Protocol, Optional, Any, List
+from typing import Protocol, Optional, Any, List, Dict
 
 from pykube import HTTPClient
 
@@ -29,7 +29,7 @@ class GitRepositoryFactoryFunc(Protocol):
 
 
 def git_repository_factory_func(
-    kube_client: HTTPClient, created_git_repositories: list[GitRepositoryCR]
+    kube_client: HTTPClient, created_git_repositories: List[GitRepositoryCR]
 ) -> GitRepositoryFactoryFunc:
     """Return a factory object, that can be used to create a new GitRepository CRs"""
 
@@ -104,7 +104,7 @@ def make_git_repository_obj(
     extra_metadata: Optional[dict] = None,
     extra_spec: Optional[dict] = None,
 ) -> GitRepositoryCR:
-    cr: dict[str, Any] = {
+    cr: Dict[str, Any] = {
         "apiVersion": GitRepositoryCR.version,
         "kind": GitRepositoryCR.kind,
         "metadata": {
