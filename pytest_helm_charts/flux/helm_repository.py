@@ -3,7 +3,7 @@ from typing import Protocol, Optional, Any, List
 from pykube import HTTPClient
 
 from pytest_helm_charts.flux.utils import NamespacedFluxCR, FLUX_CR_READY_TIMEOUT_SEC, _flux_cr_ready
-from pytest_helm_charts.utils import wait_for_namespaced_objects_condition
+from pytest_helm_charts.utils import wait_for_namespaced_objects_condition, inject_extra
 
 
 class HelmRepositoryCR(NamespacedFluxCR):
@@ -72,7 +72,7 @@ def helm_repository_factory_func(
             if hr.metadata["name"] == name and hr.metadata["namespace"] == namespace:
                 return hr
 
-        helm_repository = get_helm_repository_obj(
+        helm_repository = make_helm_repository_obj(
             kube_client,
             name,
             namespace,
@@ -95,7 +95,7 @@ def helm_repository_factory_func(
     return _helm_repository_factory
 
 
-def get_helm_repository_obj(
+def make_helm_repository_obj(
     kube_client: HTTPClient,
     name: str,
     namespace: str,
@@ -129,10 +129,7 @@ def get_helm_repository_obj(
     if timeout:
         cr["spec"]["timeout"] = timeout
 
-    if extra_metadata:
-        cr["metadata"].update(extra_metadata)
-    if extra_spec:
-        cr["spec"].update(extra_spec)
+    cr = inject_extra(cr, extra_metadata, extra_spec)
     return HelmRepositoryCR(kube_client, cr)
 
 

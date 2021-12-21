@@ -3,7 +3,7 @@ from typing import Protocol, Optional, Any, List
 from pykube import HTTPClient
 
 from pytest_helm_charts.flux.utils import NamespacedFluxCR, FLUX_CR_READY_TIMEOUT_SEC, _flux_cr_ready
-from pytest_helm_charts.utils import wait_for_namespaced_objects_condition
+from pytest_helm_charts.utils import wait_for_namespaced_objects_condition, inject_extra
 
 
 class GitRepositoryCR(NamespacedFluxCR):
@@ -70,7 +70,7 @@ def git_repository_factory_func(
             if gr.metadata["name"] == name and gr.metadata["namespace"] == namespace:
                 return gr
 
-        git_repository = get_git_repository_obj(
+        git_repository = make_git_repository_obj(
             kube_client,
             name,
             namespace,
@@ -92,7 +92,7 @@ def git_repository_factory_func(
     return _git_repository_factory
 
 
-def get_git_repository_obj(
+def make_git_repository_obj(
     kube_client: HTTPClient,
     name: str,
     namespace: str,
@@ -126,10 +126,7 @@ def get_git_repository_obj(
     if ignore_pattern:
         cr["spec"]["ignore"] = ignore_pattern
 
-    if extra_metadata:
-        cr["metadata"].update(extra_metadata)
-    if extra_spec:
-        cr["spec"].update(extra_spec)
+    cr = inject_extra(cr, extra_metadata, extra_spec)
     return GitRepositoryCR(kube_client, cr)
 
 
