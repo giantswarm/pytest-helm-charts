@@ -1,5 +1,4 @@
-from time import sleep
-from typing import Iterable, TypeVar, Callable, Type, List
+from typing import Iterable, List
 
 import pykube
 import pytest
@@ -18,7 +17,7 @@ from pytest_helm_charts.flux.helm_repository import (
     helm_repository_factory_func,
 )
 from pytest_helm_charts.flux.kustomization import KustomizationCR, KustomizationFactoryFunc, kustomization_factory_func
-from pytest_helm_charts.flux.utils import NamespacedFluxCR
+from pytest_helm_charts.utils import delete_and_wait_for_objects
 
 FLUX_NAMESPACE_NAME = "default"
 FLUX_DEPLOYMENTS_READY_TIMEOUT: int = 180
@@ -42,49 +41,73 @@ def flux_deployments(kube_cluster: Cluster) -> List[pykube.Deployment]:
     return deployments
 
 
-T = TypeVar("T", bound=NamespacedFluxCR)
-FactoryFunc = Callable[..., T]
-MetaFactoryFunc = Callable[[pykube.HTTPClient, List[T]], FactoryFunc]
-
-
-def _flux_factory(kube_cluster: Cluster, meta_func: MetaFactoryFunc, obj_type: Type[T]) -> Iterable[FactoryFunc]:
-    created_objects: List[T] = []
-
-    yield meta_func(kube_cluster.kube_client, created_objects)
-
-    for flux_object in created_objects:
-        flux_object.delete()
-
-    any_exists = True
-    while any_exists:
-        any_exists = False
-        for o in created_objects:
-            if getattr(obj_type, "objects")(kube_cluster.kube_client, namespace=o.namespace).get_or_none(name=o.name):
-                any_exists = True
-                sleep(0.1)
-                break
+@pytest.fixture(scope="function")
+def kustomization_factory_function_scope(kube_cluster: Cluster) -> Iterable[KustomizationFactoryFunc]:
+    yield from _kustomization_factory_impl(kube_cluster)
 
 
 @pytest.fixture(scope="module")
 def kustomization_factory(kube_cluster: Cluster) -> Iterable[KustomizationFactoryFunc]:
-    yield from _flux_factory(kube_cluster, kustomization_factory_func, KustomizationCR)
+    yield from _kustomization_factory_impl(kube_cluster)
+
+
+def _kustomization_factory_impl(kube_cluster: Cluster) -> Iterable[KustomizationFactoryFunc]:
+    created_objects: List[KustomizationCR] = []
+
+    yield kustomization_factory_func(kube_cluster.kube_client, created_objects)
+
+    delete_and_wait_for_objects(kube_cluster.kube_client, KustomizationCR, created_objects)
+
+
+@pytest.fixture(scope="function")
+def git_repository_factory_function_scope(kube_cluster: Cluster) -> Iterable[GitRepositoryFactoryFunc]:
+    yield from _git_repository_factory_impl(kube_cluster)
 
 
 @pytest.fixture(scope="module")
 def git_repository_factory(kube_cluster: Cluster) -> Iterable[GitRepositoryFactoryFunc]:
-    for f in _flux_factory(kube_cluster, git_repository_factory_func, GitRepositoryCR):
-        yield f
+    yield from _git_repository_factory_impl(kube_cluster)
+
+
+def _git_repository_factory_impl(kube_cluster: Cluster) -> Iterable[GitRepositoryFactoryFunc]:
+    created_objects: List[GitRepositoryCR] = []
+
+    yield git_repository_factory_func(kube_cluster.kube_client, created_objects)
+
+    delete_and_wait_for_objects(kube_cluster.kube_client, GitRepositoryCR, created_objects)
+
+
+@pytest.fixture(scope="function")
+def helm_repository_factory_function_scope(kube_cluster: Cluster) -> Iterable[HelmRepositoryFactoryFunc]:
+    yield from _helm_repository_factory_impl(kube_cluster)
 
 
 @pytest.fixture(scope="module")
-def helm_repository_factory(
-    kube_cluster: Cluster,
-) -> Iterable[HelmRepositoryFactoryFunc]:
-    for f in _flux_factory(kube_cluster, helm_repository_factory_func, HelmRepositoryCR):
-        yield f
+def helm_repository_factory(kube_cluster: Cluster) -> Iterable[HelmRepositoryFactoryFunc]:
+    yield from _helm_repository_factory_impl(kube_cluster)
+
+
+def _helm_repository_factory_impl(kube_cluster: Cluster) -> Iterable[HelmRepositoryFactoryFunc]:
+    created_objects: List[HelmRepositoryCR] = []
+
+    yield helm_repository_factory_func(kube_cluster.kube_client, created_objects)
+
+    delete_and_wait_for_objects(kube_cluster.kube_client, HelmRepositoryCR, created_objects)
+
+
+@pytest.fixture(scope="function")
+def helm_release_factory_function_scope(kube_cluster: Cluster) -> Iterable[HelmReleaseFactoryFunc]:
+    yield from _helm_release_factory_impl(kube_cluster)
 
 
 @pytest.fixture(scope="module")
 def helm_release_factory(kube_cluster: Cluster) -> Iterable[HelmReleaseFactoryFunc]:
-    for f in _flux_factory(kube_cluster, helm_release_factory_func, HelmReleaseCR):
-        yield f
+    yield from _helm_release_factory_impl(kube_cluster)
+
+
+def _helm_release_factory_impl(kube_cluster: Cluster) -> Iterable[HelmReleaseFactoryFunc]:
+    created_objects: List[HelmReleaseCR] = []
+
+    yield helm_release_factory_func(kube_cluster.kube_client, created_objects)
+
+    delete_and_wait_for_objects(kube_cluster.kube_client, HelmReleaseCR, created_objects)
