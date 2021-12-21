@@ -29,15 +29,29 @@ from pytest_helm_charts.utils import object_factory_helper, delete_and_wait_for_
 @pytest.fixture(scope="module")
 def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc]:
     """Return a factory object, that can be used to configure new AppCatalog CRs
-    for the 'app-operator' running in the cluster"""
-    for o in object_factory_helper(kube_cluster, app_catalog_factory_func, AppCatalogCR):
-        yield o
+    for the 'app-operator' running in the cluster. Fixture's scope is 'module'."""
+    yield from object_factory_helper(kube_cluster, app_catalog_factory_func, AppCatalogCR)
+
+
+@pytest.fixture(scope="function")
+def catalog_factory_function_scope(
+    kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
+) -> Iterable[CatalogFactoryFunc]:
+    """Return a factory object, that can be used to configure new Catalog CRs
+    for the 'app-operator' running in the cluster. Fixture's scope is 'function'."""
+    yield from _catalog_factory_impl(kube_cluster, namespace_factory)
 
 
 @pytest.fixture(scope="module")
 def catalog_factory(kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc) -> Iterable[CatalogFactoryFunc]:
     """Return a factory object, that can be used to configure new Catalog CRs
-    for the 'app-operator' running in the cluster"""
+    for the 'app-operator' running in the cluster. Fixture's scope is 'module'."""
+    yield from _catalog_factory_impl(kube_cluster, namespace_factory)
+
+
+def _catalog_factory_impl(
+    kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
+) -> Iterable[CatalogFactoryFunc]:
     created_objects: List[CatalogCR] = []
 
     yield catalog_factory_func(kube_cluster.kube_client, created_objects, namespace_factory)
@@ -49,7 +63,22 @@ def catalog_factory(kube_cluster: Cluster, namespace_factory: NamespaceFactoryFu
 def app_factory(
     kube_cluster: Cluster, catalog_factory: CatalogFactoryFunc, namespace_factory: NamespaceFactoryFunc
 ) -> Iterable[AppFactoryFunc]:
-    """Returns a factory function which can be used to install an app using App CR"""
+    """Returns a factory function which can be used to install an app using App CR. Fixture's scope is 'module'."""
+    yield from _app_factory_impl(kube_cluster, catalog_factory, namespace_factory)
+
+
+@pytest.fixture(scope="function")
+def app_factory_function_scope(
+    kube_cluster: Cluster, catalog_factory: CatalogFactoryFunc, namespace_factory: NamespaceFactoryFunc
+) -> Iterable[AppFactoryFunc]:
+    """Returns a factory function which can be used to install an app using App CR. Fixture's scope is 'module'."""
+    yield from _app_factory_impl(kube_cluster, catalog_factory, namespace_factory)
+
+
+def _app_factory_impl(
+    kube_cluster: Cluster, catalog_factory: CatalogFactoryFunc, namespace_factory: NamespaceFactoryFunc
+) -> Iterable[AppFactoryFunc]:
+    """Returns a factory function which can be used to install an app using App CR."""
 
     created_apps: List[ConfiguredApp] = []
 

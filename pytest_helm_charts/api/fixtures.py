@@ -18,8 +18,19 @@ class NamespaceFactoryFunc(Protocol):
         ...
 
 
+@pytest.fixture(scope="function")
+def namespace_factory_function_scope(kube_cluster: Cluster) -> Iterable[NamespaceFactoryFunc]:
+    """Return a new namespace that is deleted once the fixture is disposed. Fixture's scope is 'function'."""
+    yield from _namespace_factory_impl(kube_cluster)
+
+
 @pytest.fixture(scope="module")
 def namespace_factory(kube_cluster: Cluster) -> Iterable[NamespaceFactoryFunc]:
+    """Return a new namespace that is deleted once the fixture is disposed. Fixture's scope is 'module'."""
+    yield from _namespace_factory_impl(kube_cluster)
+
+
+def _namespace_factory_impl(kube_cluster: Cluster) -> Iterable[NamespaceFactoryFunc]:
     """Return a new namespace that is deleted once the fixture is disposed."""
     created_namespaces: List[pykube.Namespace] = []
 
@@ -42,10 +53,19 @@ def namespace_factory(kube_cluster: Cluster) -> Iterable[NamespaceFactoryFunc]:
     delete_and_wait_for_objects(kube_cluster.kube_client, pykube.Namespace, created_namespaces)
 
 
+def _random_ns_name() -> str:
+    return f"pytest-{''.join(random.choices(string.ascii_lowercase, k=5))}"  # nosec B311 - non-cryptographic use
+
+
+@pytest.fixture(scope="function")
+def random_namespace_function_scope(namespace_factory: NamespaceFactoryFunc) -> pykube.Namespace:
+    """Create and return a random kubernetes namespace that will be deleted at the end of test run.
+    Fixture's scope is 'module'."""
+    return namespace_factory(_random_ns_name())
+
+
 @pytest.fixture(scope="module")
 def random_namespace(namespace_factory: NamespaceFactoryFunc) -> pykube.Namespace:
-    """Create and return a random kubernetes namespace that will be deleted at the end of test run."""
-    name = (
-        f"pytest-{''.join(random.choices(string.ascii_lowercase, k=5))}"  # nosec B311 - this is non-cryptographic use
-    )
-    return namespace_factory(name)
+    """Create and return a random kubernetes namespace that will be deleted at the end of test run.
+    Fixture's scope is 'module'."""
+    return namespace_factory(_random_ns_name())
