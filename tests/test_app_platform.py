@@ -2,8 +2,8 @@ import logging
 import unittest.mock
 from typing import cast, Type
 
-import pytest
 import pykube
+import pytest
 from pykube import ConfigMap, Namespace
 from pytest_mock import MockerFixture
 
@@ -57,6 +57,10 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.ConfigMap")
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.wait_for_apps_to_run")
     mocker.patch("pytest_helm_charts.api.fixtures.ensure_namespace_exists")
+    cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).return_value = (
+        mocker.MagicMock(),
+        True,
+    )
     test_configured_app: ConfiguredApp = app_factory(
         app_name,
         app_version,

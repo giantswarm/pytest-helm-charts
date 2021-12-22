@@ -25,6 +25,9 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
     - multiple classes were moved across modules and packages to match the following rules:
       - every Resource / CustomResource is a single module
       - groups of API Resources (like giant swarm app platform or flux - in the future) go to packages
+- fixed:
+  - namespaces requested from `namespace_factory*` fixtures are now deleted only if they were created by the fixture
+    (and not already existing in the cluster)
 
 ## [0.6.0]
 
