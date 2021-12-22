@@ -23,7 +23,7 @@ class StormforgerLoadAppFactoryFunc(Protocol):
 
 @pytest.fixture(scope="module")
 def stormforger_load_app_factory(app_factory: AppFactoryFunc) -> StormforgerLoadAppFactoryFunc:
-    """A factory fixture to return a function that can produce Stromforger Load App instances.
+    """A factory fixture to return a function that can produce Stromforger Load App instances. Fixture's scope is 'module'..
 
     Args:
         app_factory: auto-injected [app_factory](..app.app_factory) fixture.
@@ -100,7 +100,7 @@ class GatlingAppFactoryFunc(Protocol):
 @pytest.fixture(scope="module")
 def gatling_app_factory(kube_cluster: Cluster, app_factory: AppFactoryFunc) -> Iterable[GatlingAppFactoryFunc]:
     """A factory fixture to return a function that can produce Gatling instances. Gatling is a HTTP
-    performance testing tool.
+    performance testing tool. Fixture's scope is 'module'..
 
     Args:
         app_factory: auto-injected [app_factory](..app.app_factory) fixture.

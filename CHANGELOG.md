@@ -4,6 +4,9 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+- added:
+  - all kubernetes API Objects targeting fixtures have now a function scoped counterpart named `*_function_scope`
+  - package `flux` was added to deal with Flux CRs
 - changed:
   - all fixture factories that create objects and delete them after they are out of scope, now
     actively wait for the object to be gone. Previously, only `delete()` request was sent without
