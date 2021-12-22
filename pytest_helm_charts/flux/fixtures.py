@@ -43,19 +43,25 @@ def flux_deployments(kube_cluster: Cluster) -> List[pykube.Deployment]:
 
 
 @pytest.fixture(scope="function")
-def kustomization_factory_function_scope(kube_cluster: Cluster) -> Iterable[KustomizationFactoryFunc]:
-    yield from _kustomization_factory_impl(kube_cluster)
+def kustomization_factory_function_scope(
+    kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
+) -> Iterable[KustomizationFactoryFunc]:
+    yield from _kustomization_factory_impl(kube_cluster, namespace_factory)
 
 
 @pytest.fixture(scope="module")
-def kustomization_factory(kube_cluster: Cluster) -> Iterable[KustomizationFactoryFunc]:
-    yield from _kustomization_factory_impl(kube_cluster)
+def kustomization_factory(
+    kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
+) -> Iterable[KustomizationFactoryFunc]:
+    yield from _kustomization_factory_impl(kube_cluster, namespace_factory)
 
 
-def _kustomization_factory_impl(kube_cluster: Cluster) -> Iterable[KustomizationFactoryFunc]:
+def _kustomization_factory_impl(
+    kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
+) -> Iterable[KustomizationFactoryFunc]:
     created_objects: List[KustomizationCR] = []
 
-    yield kustomization_factory_func(kube_cluster.kube_client, created_objects)
+    yield kustomization_factory_func(kube_cluster.kube_client, namespace_factory, created_objects)
 
     delete_and_wait_for_objects(kube_cluster.kube_client, KustomizationCR, created_objects)
 
