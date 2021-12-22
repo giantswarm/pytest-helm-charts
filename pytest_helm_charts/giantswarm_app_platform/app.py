@@ -127,6 +127,10 @@ def _app_has_status(app: AppCR, status: str) -> bool:
     return complete
 
 
+def _app_failed(app: AppCR) -> bool:
+    return _app_has_status(app, "failed")
+
+
 def _app_deployed(app: AppCR) -> bool:
     return _app_has_status(app, "deployed")
 
@@ -162,10 +166,11 @@ def wait_for_apps_to_run(
         TimeoutError: when timeout is reached.
         pykube.exceptions.ObjectDoesNotExist: when `missing_ok == False` and one of the apps
             listed in `app_names` can't be found in k8s API
+        ObjectStatusError: when App object has `Status: failed` status.
 
     """
     apps = wait_for_objects_condition(
-        kube_client, AppCR, app_names, app_namespace, _app_deployed, timeout_sec, missing_ok
+        kube_client, AppCR, app_names, app_namespace, _app_deployed, timeout_sec, missing_ok, _app_failed
     )
     return apps
 
