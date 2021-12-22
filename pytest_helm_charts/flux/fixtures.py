@@ -4,6 +4,7 @@ import pykube
 import pytest
 
 from pytest_helm_charts.api.deployment import wait_for_deployments_to_run
+from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.flux.git_repository import (
     GitRepositoryCR,
@@ -60,19 +61,25 @@ def _kustomization_factory_impl(kube_cluster: Cluster) -> Iterable[Kustomization
 
 
 @pytest.fixture(scope="function")
-def git_repository_factory_function_scope(kube_cluster: Cluster) -> Iterable[GitRepositoryFactoryFunc]:
-    yield from _git_repository_factory_impl(kube_cluster)
+def git_repository_factory_function_scope(
+    kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
+) -> Iterable[GitRepositoryFactoryFunc]:
+    yield from _git_repository_factory_impl(kube_cluster, namespace_factory)
 
 
 @pytest.fixture(scope="module")
-def git_repository_factory(kube_cluster: Cluster) -> Iterable[GitRepositoryFactoryFunc]:
-    yield from _git_repository_factory_impl(kube_cluster)
+def git_repository_factory(
+    kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
+) -> Iterable[GitRepositoryFactoryFunc]:
+    yield from _git_repository_factory_impl(kube_cluster, namespace_factory)
 
 
-def _git_repository_factory_impl(kube_cluster: Cluster) -> Iterable[GitRepositoryFactoryFunc]:
+def _git_repository_factory_impl(
+    kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
+) -> Iterable[GitRepositoryFactoryFunc]:
     created_objects: List[GitRepositoryCR] = []
 
-    yield git_repository_factory_func(kube_cluster.kube_client, created_objects)
+    yield git_repository_factory_func(kube_cluster.kube_client, namespace_factory, created_objects)
 
     delete_and_wait_for_objects(kube_cluster.kube_client, GitRepositoryCR, created_objects)
 
