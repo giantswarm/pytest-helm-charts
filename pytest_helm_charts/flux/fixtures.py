@@ -85,19 +85,25 @@ def _git_repository_factory_impl(
 
 
 @pytest.fixture(scope="function")
-def helm_repository_factory_function_scope(kube_cluster: Cluster) -> Iterable[HelmRepositoryFactoryFunc]:
-    yield from _helm_repository_factory_impl(kube_cluster)
+def helm_repository_factory_function_scope(
+    kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
+) -> Iterable[HelmRepositoryFactoryFunc]:
+    yield from _helm_repository_factory_impl(kube_cluster, namespace_factory)
 
 
 @pytest.fixture(scope="module")
-def helm_repository_factory(kube_cluster: Cluster) -> Iterable[HelmRepositoryFactoryFunc]:
-    yield from _helm_repository_factory_impl(kube_cluster)
+def helm_repository_factory(
+    kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
+) -> Iterable[HelmRepositoryFactoryFunc]:
+    yield from _helm_repository_factory_impl(kube_cluster, namespace_factory)
 
 
-def _helm_repository_factory_impl(kube_cluster: Cluster) -> Iterable[HelmRepositoryFactoryFunc]:
+def _helm_repository_factory_impl(
+    kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
+) -> Iterable[HelmRepositoryFactoryFunc]:
     created_objects: List[HelmRepositoryCR] = []
 
-    yield helm_repository_factory_func(kube_cluster.kube_client, created_objects)
+    yield helm_repository_factory_func(kube_cluster.kube_client, namespace_factory, created_objects)
 
     delete_and_wait_for_objects(kube_cluster.kube_client, HelmRepositoryCR, created_objects)
 
