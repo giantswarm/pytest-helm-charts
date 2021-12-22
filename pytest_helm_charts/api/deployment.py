@@ -2,7 +2,7 @@ from typing import List
 
 from pykube import Deployment, HTTPClient
 
-from pytest_helm_charts.utils import wait_for_namespaced_objects_condition
+from pytest_helm_charts.utils import wait_for_objects_condition
 
 
 def _deployment_running(deploy: Deployment) -> bool:
@@ -46,7 +46,7 @@ def wait_for_deployments_to_run(
             listed in `deployment_names` can't be found in k8s API
 
     """
-    result = wait_for_namespaced_objects_condition(
+    result = wait_for_objects_condition(
         kube_client,
         Deployment,
         deployment_names,

@@ -4,7 +4,7 @@ from typing import Protocol, Optional, List, Any, Dict
 from pykube import HTTPClient
 
 from pytest_helm_charts.flux.utils import NamespacedFluxCR, FLUX_CR_READY_TIMEOUT_SEC, _flux_cr_ready
-from pytest_helm_charts.utils import wait_for_namespaced_objects_condition, inject_extra
+from pytest_helm_charts.utils import wait_for_objects_condition, inject_extra
 
 
 class HelmReleaseCR(NamespacedFluxCR):
@@ -191,7 +191,7 @@ def wait_for_helm_releases_to_be_ready(
     timeout_sec: int,
     missing_ok: bool = False,
 ) -> List[HelmReleaseCR]:
-    objects = wait_for_namespaced_objects_condition(
+    objects = wait_for_objects_condition(
         kube_client,
         HelmReleaseCR,
         helm_release_names,

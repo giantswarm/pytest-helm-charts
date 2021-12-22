@@ -9,7 +9,7 @@ from pykube.objects import NamespacedAPIObject
 
 from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.catalog import CatalogFactoryFunc
-from pytest_helm_charts.utils import YamlDict, wait_for_namespaced_objects_condition, inject_extra
+from pytest_helm_charts.utils import YamlDict, wait_for_objects_condition, inject_extra
 
 
 class AppCR(NamespacedAPIObject):
@@ -164,7 +164,7 @@ def wait_for_apps_to_run(
             listed in `app_names` can't be found in k8s API
 
     """
-    apps = wait_for_namespaced_objects_condition(
+    apps = wait_for_objects_condition(
         kube_client, AppCR, app_names, app_namespace, _app_deployed, timeout_sec, missing_ok
     )
     return apps
@@ -193,7 +193,7 @@ def wait_for_app_to_be_deleted(
 
     """
     try:
-        apps = wait_for_namespaced_objects_condition(
+        apps = wait_for_objects_condition(
             kube_client, AppCR, [app_name], app_namespace, _app_deleted, timeout_sec, missing_ok=False
         )
     except pykube.exceptions.ObjectDoesNotExist:

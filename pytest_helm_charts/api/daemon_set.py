@@ -3,7 +3,7 @@ from typing import List
 import pykube
 from pykube import HTTPClient
 
-from pytest_helm_charts.utils import wait_for_namespaced_objects_condition
+from pytest_helm_charts.utils import wait_for_objects_condition
 
 
 def _daemon_set_ready(ds: pykube.DaemonSet) -> bool:
@@ -43,7 +43,7 @@ def wait_for_daemon_sets_to_run(
             listed in `daemon_set_names` can't be found in k8s API
 
     """
-    result = wait_for_namespaced_objects_condition(
+    result = wait_for_objects_condition(
         kube_client,
         pykube.DaemonSet,
         daemon_set_names,

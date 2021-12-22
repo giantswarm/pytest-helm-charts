@@ -3,7 +3,7 @@ from typing import List, Optional
 import pykube
 from pykube import Job, HTTPClient
 
-from pytest_helm_charts.utils import wait_for_namespaced_objects_condition, inject_extra
+from pytest_helm_charts.utils import wait_for_objects_condition, inject_extra
 
 
 def _job_complete(job: Job) -> bool:
@@ -40,7 +40,7 @@ def wait_for_jobs_to_complete(
             listed in `job_names` can't be found in k8s API
 
     """
-    result = wait_for_namespaced_objects_condition(
+    result = wait_for_objects_condition(
         kube_client, Job, job_names, jobs_namespace, _job_complete, timeout_sec, missing_ok
     )
     return result
