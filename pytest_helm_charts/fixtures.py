@@ -39,6 +39,13 @@ def chart_extra_info(pytestconfig: Config) -> Dict[str, str]:
 
 
 @pytest.fixture(scope="module")
+def test_extra_info(pytestconfig: Config) -> Dict[str, str]:
+    """Return an optional dict of keywords and values passed to the test using '--test-extra-info' config option."""
+    arg = pytestconfig.getoption("test_extra_info")
+    return _parse_extra_info(arg)
+
+
+@pytest.fixture(scope="module")
 def values_file_path(pytestconfig: Config) -> str:
     """Return a path to the yaml file that needs to be used to configure chart under test
     (from command line argument).

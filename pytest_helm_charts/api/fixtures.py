@@ -43,9 +43,10 @@ def _namespace_factory_impl(kube_cluster: Cluster) -> Iterable[NamespaceFactoryF
             if namespace.metadata["name"] == name:
                 return namespace
 
-        ns = ensure_namespace_exists(kube_cluster.kube_client, name, extra_metadata, extra_spec)
+        ns, created = ensure_namespace_exists(kube_cluster.kube_client, name, extra_metadata, extra_spec)
         logger.info(f"Ensured the namespace '{name}'.")
-        created_namespaces.append(ns)
+        if created:
+            created_namespaces.append(ns)
         return ns
 
     yield _namespace_factory
