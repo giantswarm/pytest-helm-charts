@@ -32,7 +32,6 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
   - namespaces requested from `namespace_factory*` fixtures are now deleted only if they were created by the fixture
     (and not already existing in the cluster)
 
-
 ## [0.6.0]
 
 - breaking change: all App CR related functions and fixtures that require information about the Catalog
