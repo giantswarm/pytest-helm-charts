@@ -17,6 +17,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
   - switch from `Callable` to `Protocol` for factory types (much better type hinting)
   - all functions making API objects take now optional `extra_metadata` and `extra_spec` arguments,
     which are merged with object definitions without any restrictions nor validation
+  - `wait_for_apps_to_run` accepts now a new parameter `fail_fast: bool = False`; when it's `True` and the App's
+    status ever reaches `failed`, the wait fails as well, without waiting for subsequent state changes.
   - cleanups:
     - all methods creating objects, but not submitting them to k8s API, match now `make-*-object` pattern
     - `HTTPClient` connection object is always the first method parameter

@@ -3,7 +3,6 @@ from typing import List, Protocol, Optional, NamedTuple
 
 import pykube
 import yaml
-
 from pykube import HTTPClient, ConfigMap
 from pykube.objects import NamespacedAPIObject
 
@@ -145,6 +144,7 @@ def wait_for_apps_to_run(
     app_namespace: str,
     timeout_sec: int,
     missing_ok: bool = False,
+    fail_fast: bool = False,
 ) -> List[AppCR]:
     """
     Block until all the apps are running or timeout is reached.
@@ -158,6 +158,8 @@ def wait_for_apps_to_run(
         missing_ok: when `True`, the function ignores that some of the apps listed in the `app_names`
             don't exist in k8s API and waits for them to show up; when `False`, an
             [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
+        fail_fast: if set to True, the function fails as soon as the App reaches 'status=failed`, without
+            waiting for any subsequent status changes.
 
     Returns:
         The list of App CRs with all the apps listed in `app_names` included.
@@ -170,7 +172,14 @@ def wait_for_apps_to_run(
 
     """
     apps = wait_for_objects_condition(
-        kube_client, AppCR, app_names, app_namespace, _app_deployed, timeout_sec, missing_ok, _app_failed
+        kube_client,
+        AppCR,
+        app_names,
+        app_namespace,
+        _app_deployed,
+        timeout_sec,
+        missing_ok,
+        _app_failed if fail_fast else None,
     )
     return apps
 
