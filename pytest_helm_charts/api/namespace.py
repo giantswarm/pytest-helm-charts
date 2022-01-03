@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 import pykube
 
@@ -30,7 +30,7 @@ def ensure_namespace_exists(
     namespace_name: str,
     extra_metadata: Optional[dict] = None,
     extra_spec: Optional[dict] = None,
-) -> pykube.Namespace:
+) -> Tuple[pykube.Namespace, bool]:
     """
     Checks if the Namespace exists and creates it if it doesn't
     Args:
@@ -40,11 +40,13 @@ def ensure_namespace_exists(
         extra_spec: optional dict that will be merged with the 'spec:' section of the object
 
     Returns:
-        Namespace resource object
+        Namespace resource object and bool equal True if the namespace was created by this function.
 
     """
+    created = False
     ns = pykube.Namespace.objects(kube_client).get_or_none(name=namespace_name)
     if ns is None:
         ns = make_namespace_object(kube_client, namespace_name, extra_metadata, extra_spec)
         ns.create()
-    return ns
+        created = True
+    return ns, created
