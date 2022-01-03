@@ -2,6 +2,7 @@ from typing import Protocol, Optional, Any, List, Dict
 
 from pykube import HTTPClient
 
+from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.flux.utils import NamespacedFluxCR, FLUX_CR_READY_TIMEOUT_SEC, _flux_cr_ready
 from pytest_helm_charts.utils import wait_for_objects_condition, inject_extra
 
@@ -30,7 +31,7 @@ class KustomizationFactoryFunc(Protocol):
 
 
 def kustomization_factory_func(
-    kube_client: HTTPClient, created_kustomizations: List[KustomizationCR]
+    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_kustomizations: List[KustomizationCR]
 ) -> KustomizationFactoryFunc:
     """Return a factory object, that can be used to create a new Kustomization CRs"""
 
@@ -70,6 +71,7 @@ def kustomization_factory_func(
             if k.metadata["name"] == name and k.metadata["namespace"] == namespace:
                 return k
 
+        namespace_factory(namespace)
         kustomization = make_kustomization_obj(
             kube_client,
             name,

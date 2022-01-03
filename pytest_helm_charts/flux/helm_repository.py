@@ -2,6 +2,7 @@ from typing import Protocol, Optional, Any, List, Dict
 
 from pykube import HTTPClient
 
+from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.flux.utils import NamespacedFluxCR, FLUX_CR_READY_TIMEOUT_SEC, _flux_cr_ready
 from pytest_helm_charts.utils import wait_for_objects_condition, inject_extra
 
@@ -30,7 +31,7 @@ class HelmRepositoryFactoryFunc(Protocol):
 
 
 def helm_repository_factory_func(
-    kube_client: HTTPClient, created_helm_repositories: List[HelmRepositoryCR]
+    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_helm_repositories: List[HelmRepositoryCR]
 ) -> HelmRepositoryFactoryFunc:
     """Return a factory object, that can be used to create a new HelmRepository CRs"""
 
@@ -72,6 +73,7 @@ def helm_repository_factory_func(
             if hr.metadata["name"] == name and hr.metadata["namespace"] == namespace:
                 return hr
 
+        namespace_factory(namespace)
         helm_repository = make_helm_repository_obj(
             kube_client,
             name,

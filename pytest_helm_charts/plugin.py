@@ -37,3 +37,9 @@ def pytest_addoption(parser: Parser) -> None:
         default="",
         help="Pass any additional info about the chart in the 'key1=val1,key2=val2' format",
     )
+    group.addoption(
+        "--test-extra-info",
+        action="store",
+        default="",
+        help="Pass any additional info about the test in the 'key1=val1,key2=val2' format",
+    )
