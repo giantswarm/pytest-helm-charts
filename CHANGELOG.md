@@ -4,6 +4,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+## [0.7.0-beta.1]
+
 - added:
   - all kubernetes API Objects targeting fixtures have now a function scoped counterpart named `*_function_scope`
   - package `flux` was added to deal with Flux CRs
