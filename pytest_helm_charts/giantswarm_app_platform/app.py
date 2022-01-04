@@ -3,13 +3,12 @@ from typing import List, Protocol, Optional, NamedTuple
 
 import pykube
 import yaml
-
 from pykube import HTTPClient, ConfigMap
 from pykube.objects import NamespacedAPIObject
 
 from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.catalog import CatalogFactoryFunc
-from pytest_helm_charts.utils import YamlDict, wait_for_namespaced_objects_condition, inject_extra
+from pytest_helm_charts.utils import YamlDict, wait_for_objects_condition, inject_extra
 
 
 class AppCR(NamespacedAPIObject):
@@ -127,6 +126,10 @@ def _app_has_status(app: AppCR, status: str) -> bool:
     return complete
 
 
+def _app_failed(app: AppCR) -> bool:
+    return _app_has_status(app, "failed")
+
+
 def _app_deployed(app: AppCR) -> bool:
     return _app_has_status(app, "deployed")
 
@@ -141,6 +144,7 @@ def wait_for_apps_to_run(
     app_namespace: str,
     timeout_sec: int,
     missing_ok: bool = False,
+    fail_fast: bool = False,
 ) -> List[AppCR]:
     """
     Block until all the apps are running or timeout is reached.
@@ -154,6 +158,8 @@ def wait_for_apps_to_run(
         missing_ok: when `True`, the function ignores that some of the apps listed in the `app_names`
             don't exist in k8s API and waits for them to show up; when `False`, an
             [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
+        fail_fast: if set to True, the function fails as soon as the App reaches 'status=failed`, without
+            waiting for any subsequent status changes.
 
     Returns:
         The list of App CRs with all the apps listed in `app_names` included.
@@ -162,10 +168,18 @@ def wait_for_apps_to_run(
         TimeoutError: when timeout is reached.
         pykube.exceptions.ObjectDoesNotExist: when `missing_ok == False` and one of the apps
             listed in `app_names` can't be found in k8s API
+        ObjectStatusError: when App object has `Status: failed` status.
 
     """
-    apps = wait_for_namespaced_objects_condition(
-        kube_client, AppCR, app_names, app_namespace, _app_deployed, timeout_sec, missing_ok
+    apps = wait_for_objects_condition(
+        kube_client,
+        AppCR,
+        app_names,
+        app_namespace,
+        _app_deployed,
+        timeout_sec,
+        missing_ok,
+        _app_failed if fail_fast else None,
     )
     return apps
 
@@ -193,7 +207,7 @@ def wait_for_app_to_be_deleted(
 
     """
     try:
-        apps = wait_for_namespaced_objects_condition(
+        apps = wait_for_objects_condition(
             kube_client, AppCR, [app_name], app_namespace, _app_deleted, timeout_sec, missing_ok=False
         )
     except pykube.exceptions.ObjectDoesNotExist:

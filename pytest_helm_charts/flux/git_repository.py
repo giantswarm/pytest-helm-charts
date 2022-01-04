@@ -4,7 +4,7 @@ from pykube import HTTPClient
 
 from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.flux.utils import NamespacedFluxCR, FLUX_CR_READY_TIMEOUT_SEC, _flux_cr_ready
-from pytest_helm_charts.utils import wait_for_namespaced_objects_condition, inject_extra
+from pytest_helm_charts.utils import wait_for_objects_condition, inject_extra
 
 
 class GitRepositoryCR(NamespacedFluxCR):
@@ -139,7 +139,7 @@ def wait_for_git_repositories_to_be_ready(
     timeout_sec: int,
     missing_ok: bool = False,
 ) -> List[GitRepositoryCR]:
-    objects = wait_for_namespaced_objects_condition(
+    objects = wait_for_objects_condition(
         kube_client,
         GitRepositoryCR,
         git_repo_names,
