@@ -18,6 +18,7 @@ from pytest_helm_charts.fixtures import (  # noqa: F401
     kube_cluster,
     kube_config,
     values_file_path,
+    _existing_cluster_factory,
 )
 from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import (  # noqa: F401
     gatling_app_factory,
