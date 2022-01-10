@@ -8,8 +8,8 @@ from pykube import ConfigMap, Namespace
 from pytest_mock import MockerFixture
 
 import pytest_helm_charts
-import pytest_helm_charts.api.fixtures
-import pytest_helm_charts.api.namespace
+import pytest_helm_charts.k8s.fixtures
+import pytest_helm_charts.k8s.namespace
 import pytest_helm_charts.fixtures
 import pytest_helm_charts.giantswarm_app_platform.app
 import pytest_helm_charts.giantswarm_app_platform.fixtures
@@ -56,8 +56,8 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.AppCR")
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.ConfigMap")
     mocker.patch("pytest_helm_charts.giantswarm_app_platform.app.wait_for_apps_to_run")
-    mocker.patch("pytest_helm_charts.api.fixtures.ensure_namespace_exists")
-    cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).return_value = (
+    mocker.patch("pytest_helm_charts.k8s.fixtures.ensure_namespace_exists")
+    cast(unittest.mock.Mock, pytest_helm_charts.k8s.fixtures.ensure_namespace_exists).return_value = (
         mocker.MagicMock(),
         True,
     )
@@ -88,11 +88,11 @@ def test_app_factory_working(kube_cluster: Cluster, app_factory: AppFactoryFunc,
     cast(unittest.mock.Mock, app_cm.create).assert_called_once()
 
     # assert that app was created
-    assert cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).call_count == 2
-    cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).assert_any_call(
+    assert cast(unittest.mock.Mock, pytest_helm_charts.k8s.fixtures.ensure_namespace_exists).call_count == 2
+    cast(unittest.mock.Mock, pytest_helm_charts.k8s.fixtures.ensure_namespace_exists).assert_any_call(
         kube_cluster.kube_client, app_namespace, None, None
     )
-    cast(unittest.mock.Mock, pytest_helm_charts.api.fixtures.ensure_namespace_exists).assert_any_call(
+    cast(unittest.mock.Mock, pytest_helm_charts.k8s.fixtures.ensure_namespace_exists).assert_any_call(
         kube_cluster.kube_client, CATALOG_NAMESPACE, None, None
     )
     app_cr = cast(unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.app.AppCR)

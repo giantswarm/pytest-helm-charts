@@ -7,7 +7,7 @@ import pytest
 
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.fixtures import logger
-from pytest_helm_charts.api.namespace import ensure_namespace_exists
+from pytest_helm_charts.k8s.namespace import ensure_namespace_exists
 from pytest_helm_charts.utils import delete_and_wait_for_objects
 
 
@@ -44,7 +44,7 @@ def _namespace_factory_impl(kube_cluster: Cluster) -> Iterable[NamespaceFactoryF
                 return namespace
 
         ns, created = ensure_namespace_exists(kube_cluster.kube_client, name, extra_metadata, extra_spec)
-        logger.info(f"Ensured the namespace '{name}'.")
+        logger.debug(f"Ensured the namespace '{name}'.")
         if created:
             created_namespaces.append(ns)
         return ns

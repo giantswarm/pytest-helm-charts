@@ -3,20 +3,45 @@ from pathlib import Path
 
 from _pytest.config.argparsing import Parser
 
-from pytest_helm_charts.api.fixtures import namespace_factory, random_namespace  # noqa: F401
-from pytest_helm_charts.fixtures import _existing_cluster_factory  # noqa: F401
-from pytest_helm_charts.fixtures import chart_extra_info  # noqa: F401
-from pytest_helm_charts.fixtures import chart_path  # noqa: F401
-from pytest_helm_charts.fixtures import chart_version  # noqa: F401
-from pytest_helm_charts.fixtures import cluster_type  # noqa: F401
-from pytest_helm_charts.fixtures import kube_cluster  # noqa: F401
-from pytest_helm_charts.fixtures import kube_config  # noqa: F401
-from pytest_helm_charts.fixtures import values_file_path  # noqa: F401
-from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import gatling_app_factory  # noqa: F401
-from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import stormforger_load_app_factory  # noqa: F401
-from pytest_helm_charts.giantswarm_app_platform.fixtures import app_catalog_factory  # noqa: F401
-from pytest_helm_charts.giantswarm_app_platform.fixtures import catalog_factory  # noqa: F401
-from pytest_helm_charts.giantswarm_app_platform.fixtures import app_factory  # noqa: F401
+from pytest_helm_charts.k8s.fixtures import (  # noqa: F401
+    namespace_factory,
+    namespace_factory_function_scope,
+    random_namespace,
+    random_namespace_function_scope,
+)
+from pytest_helm_charts.fixtures import (  # noqa: F401
+    chart_path,
+    chart_version,
+    chart_extra_info,
+    test_extra_info,
+    cluster_type,
+    kube_cluster,
+    kube_config,
+    values_file_path,
+    _existing_cluster_factory,
+)
+from pytest_helm_charts.giantswarm_app_platform.apps.http_testing import (  # noqa: F401
+    gatling_app_factory,
+    stormforger_load_app_factory,
+)
+from pytest_helm_charts.giantswarm_app_platform.fixtures import (  # noqa: F401
+    app_catalog_factory,
+    app_factory,
+    app_factory_function_scope,
+    catalog_factory,
+    catalog_factory_function_scope,
+)
+from pytest_helm_charts.flux.fixtures import (  # noqa: F401
+    flux_deployments,
+    kustomization_factory,
+    kustomization_factory_function_scope,
+    git_repository_factory,
+    git_repository_factory_function_scope,
+    helm_repository_factory,
+    helm_repository_factory_function_scope,
+    helm_release_factory,
+    helm_release_factory_function_scope,
+)
 
 
 def pytest_addoption(parser: Parser) -> None:

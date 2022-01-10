@@ -4,6 +4,14 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+- changed:
+  - rename 'api' module to 'k8s'
+  - update Kustomization to v1beta2
+- fixed:
+  - in HelmRelease, ensure 'targetNamespace' if it doesn't exist
+  - logging level adjusted (debug only if no errors) and added consistent log messages about creating and deleting resources
+  - add missing imports in plugin.py
+
 ## [0.7.0-beta.1]
 
 - added:

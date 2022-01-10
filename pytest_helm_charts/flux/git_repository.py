@@ -1,10 +1,14 @@
+import logging
 from typing import Protocol, Optional, Any, List, Dict
 
 from pykube import HTTPClient
 
-from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
+from pytest_helm_charts.k8s.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.flux.utils import NamespacedFluxCR, FLUX_CR_READY_TIMEOUT_SEC, _flux_cr_ready
 from pytest_helm_charts.utils import wait_for_objects_condition, inject_extra
+
+
+logger = logging.getLogger(__name__)
 
 
 class GitRepositoryCR(NamespacedFluxCR):
@@ -86,6 +90,7 @@ def git_repository_factory_func(
         )
         created_git_repositories.append(git_repository)
         git_repository.create()
+        logger.debug(f"Created Flux GitRepository '{git_repository.namespace}/{git_repository.name}'.")
         wait_for_git_repositories_to_be_ready(
             kube_client, [name], namespace, FLUX_CR_READY_TIMEOUT_SEC, missing_ok=True
         )

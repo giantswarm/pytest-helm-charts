@@ -10,7 +10,7 @@ def run_pytest(testdir: Testdir, mocker: MockFixture, *args: Any) -> RunResult:
         "--cluster-type",
         "existing",
         "--log-cli-level",
-        "info",
+        "debug",
         "--kube-config",
         "/tmp/kat_test/kube.config",  # nosec
         '--chart-extra-info="key1=val1,external_cluster_type=kind"',
@@ -18,6 +18,6 @@ def run_pytest(testdir: Testdir, mocker: MockFixture, *args: Any) -> RunResult:
         *args,
     )
     # fnmatch_lines does an assertion internally
-    result.stdout.fnmatch_lines(["*Cluster configured*", "*Cluster released*"])
+    result.stdout.fnmatch_lines(["*Cluster connection configured*", "*Cluster connection released*"])
 
     return result
