@@ -116,6 +116,8 @@ def helm_release_factory_func(
                 return hr
 
         namespace_factory(namespace)
+        if target_namespace:
+            namespace_factory(target_namespace)
         helm_release = make_helm_release_obj(
             kube_client,
             name,
