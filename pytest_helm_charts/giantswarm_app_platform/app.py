@@ -1,3 +1,4 @@
+import logging
 from copy import deepcopy
 from typing import List, Protocol, Optional, NamedTuple
 
@@ -9,6 +10,9 @@ from pykube.objects import NamespacedAPIObject
 from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.giantswarm_app_platform.catalog import CatalogFactoryFunc
 from pytest_helm_charts.utils import YamlDict, wait_for_objects_condition, inject_extra
+
+
+logger = logging.getLogger(__name__)
 
 
 class AppCR(NamespacedAPIObject):
@@ -106,6 +110,7 @@ def app_factory_func(
             extra_spec,
         )
         created_apps.append(configured_app)
+        logger.debug(f"Created App '{configured_app.app.namespace}/{configured_app.app.name}'.")
         if timeout_sec > 0:
             wait_for_apps_to_run(kube_client, [app_name], namespace, timeout_sec)
 

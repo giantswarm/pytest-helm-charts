@@ -1,3 +1,4 @@
+import logging
 from typing import List, Optional, Protocol
 
 from pykube import HTTPClient
@@ -5,6 +6,8 @@ from pykube.objects import NamespacedAPIObject
 
 from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.utils import inject_extra
+
+logger = logging.getLogger(__name__)
 
 
 class CatalogCR(NamespacedAPIObject):
@@ -102,7 +105,8 @@ def catalog_factory_func(
         )
         objects.append(catalog)
         catalog.create()
-        # TODO: check that app catalog is present
+        logger.debug(f"Created Catalog '{catalog.namespace}/{catalog.name}'.")
+        # TODO: once Catalog CR supports `status` fields, check here that the catalog is present
         return catalog
 
     return _catalog_factory

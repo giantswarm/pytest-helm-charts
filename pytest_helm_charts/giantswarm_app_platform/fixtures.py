@@ -1,9 +1,12 @@
+import logging
 from typing import List, Iterable
 
 import pytest
 from deprecated import deprecated
 from pykube import ConfigMap
 
+from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
+from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.app import (
     AppFactoryFunc,
     app_factory_func,
@@ -20,9 +23,9 @@ from pytest_helm_charts.giantswarm_app_platform.catalog import (
     CatalogCR,
     catalog_factory_func,
 )
-from pytest_helm_charts.clusters import Cluster
-from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.utils import object_factory_helper, delete_and_wait_for_objects
+
+logger = logging.getLogger(__name__)
 
 
 @deprecated(version="0.5.3", reason="Please use `catalog_factory` fixture instead.")

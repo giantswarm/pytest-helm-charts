@@ -1,10 +1,13 @@
+import logging
 from typing import List, Optional, Protocol
 
-from pykube import HTTPClient
 from deprecated import deprecated
+from pykube import HTTPClient
 from pykube.objects import APIObject
 
 from pytest_helm_charts.utils import inject_extra
+
+logger = logging.getLogger(__name__)
 
 
 @deprecated(version="0.5.3", reason="Please use `CatalogCR` instead.")
@@ -97,7 +100,7 @@ def app_catalog_factory_func(
         app_catalog = make_app_catalog_object(kube_client, catalog_name, catalog_url, extra_metadata, extra_spec)
         created_app_catalogs.append(app_catalog)
         app_catalog.create()
-        # TODO: check that app catalog is present
+        logger.debug(f"Created AppCatalog '{app_catalog.name}'.")
         return app_catalog
 
     return _app_catalog_factory

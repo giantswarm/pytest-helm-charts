@@ -1,3 +1,4 @@
+import logging
 from typing import Protocol, Optional, Any, List, Dict
 
 from pykube import HTTPClient
@@ -5,6 +6,9 @@ from pykube import HTTPClient
 from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.flux.utils import NamespacedFluxCR, FLUX_CR_READY_TIMEOUT_SEC, _flux_cr_ready
 from pytest_helm_charts.utils import wait_for_objects_condition, inject_extra
+
+
+logger = logging.getLogger(__name__)
 
 
 class KustomizationCR(NamespacedFluxCR):
@@ -87,6 +91,7 @@ def kustomization_factory_func(
         )
         created_kustomizations.append(kustomization)
         kustomization.create()
+        logger.debug(f"Created Flux Kustomization '{kustomization.namespace}/{kustomization.name}'.")
         wait_for_kustomizations_to_be_ready(kube_client, [name], namespace, FLUX_CR_READY_TIMEOUT_SEC, missing_ok=True)
         return kustomization
 

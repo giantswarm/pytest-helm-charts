@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass, field, asdict
 from typing import Protocol, Optional, List, Any, Dict
 
@@ -6,6 +7,9 @@ from pykube import HTTPClient
 from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.flux.utils import NamespacedFluxCR, FLUX_CR_READY_TIMEOUT_SEC, _flux_cr_ready
 from pytest_helm_charts.utils import wait_for_objects_condition, inject_extra
+
+
+logger = logging.getLogger(__name__)
 
 
 class HelmReleaseCR(NamespacedFluxCR):
@@ -131,6 +135,7 @@ def helm_release_factory_func(
         )
         created_helm_releases.append(helm_release)
         helm_release.create()
+        logger.debug(f"Created Flux HelmRelease '{helm_release.namespace}/{helm_release.name}'.")
         wait_for_helm_releases_to_be_ready(kube_client, [name], namespace, FLUX_CR_READY_TIMEOUT_SEC, missing_ok=True)
         return helm_release
 

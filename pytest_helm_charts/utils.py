@@ -125,6 +125,8 @@ def delete_and_wait_for_objects(
 ) -> None:
     for kube_object in objects_to_del:
         kube_object.delete()
+        obj_name = f"{kube_object.namespace}/{kube_object.name}" if kube_object.namespace else kube_object.name
+        logger.debug(f"Deleted object of kind '{obj_type}' named '{obj_name}'.")
 
     any_exists = True
     times = 0
