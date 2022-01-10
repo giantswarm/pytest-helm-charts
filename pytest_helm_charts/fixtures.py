@@ -90,13 +90,13 @@ def kube_cluster(
     cluster = _existing_cluster_factory()
 
     cluster.create()
-    logger.info("Cluster configured")
+    logger.debug("Cluster connection configured")
     yield cluster
 
     # noinspection PyBroadException
     try:
         cluster.destroy()
-        logger.info("Cluster released")
+        logger.debug("Cluster connection released")
     except Exception:
         exc = sys.exc_info()
         logger.error(f"Error of type {exc[0]} when releasing cluster. Value: {exc[1]}\nStacktrace:\n{exc[2]}")
