@@ -3,8 +3,8 @@ from typing import Iterable, List
 import pykube
 import pytest
 
-from pytest_helm_charts.api.deployment import wait_for_deployments_to_run
-from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
+from pytest_helm_charts.k8s.deployment import wait_for_deployments_to_run
+from pytest_helm_charts.k8s.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.flux.git_repository import (
     GitRepositoryCR,

@@ -3,7 +3,7 @@ from pathlib import Path
 
 from _pytest.config.argparsing import Parser
 
-from pytest_helm_charts.api.fixtures import (  # noqa: F401
+from pytest_helm_charts.k8s.fixtures import (  # noqa: F401
     namespace_factory,
     namespace_factory_function_scope,
     random_namespace,

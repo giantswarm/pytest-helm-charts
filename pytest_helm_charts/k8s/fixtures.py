@@ -7,7 +7,7 @@ import pytest
 
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.fixtures import logger
-from pytest_helm_charts.api.namespace import ensure_namespace_exists
+from pytest_helm_charts.k8s.namespace import ensure_namespace_exists
 from pytest_helm_charts.utils import delete_and_wait_for_objects
 
 

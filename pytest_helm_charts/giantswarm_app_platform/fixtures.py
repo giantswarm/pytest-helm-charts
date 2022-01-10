@@ -5,7 +5,7 @@ import pytest
 from deprecated import deprecated
 from pykube import ConfigMap
 
-from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
+from pytest_helm_charts.k8s.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.clusters import Cluster
 from pytest_helm_charts.giantswarm_app_platform.app import (
     AppFactoryFunc,

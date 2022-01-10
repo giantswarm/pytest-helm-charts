@@ -3,7 +3,7 @@ from typing import Protocol, Optional, Any, List, Dict
 
 from pykube import HTTPClient
 
-from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
+from pytest_helm_charts.k8s.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.flux.utils import NamespacedFluxCR, FLUX_CR_READY_TIMEOUT_SEC, _flux_cr_ready
 from pytest_helm_charts.utils import wait_for_objects_condition, inject_extra
 

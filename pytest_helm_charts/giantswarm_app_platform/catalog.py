@@ -4,7 +4,7 @@ from typing import List, Optional, Protocol
 from pykube import HTTPClient
 from pykube.objects import NamespacedAPIObject
 
-from pytest_helm_charts.api.fixtures import NamespaceFactoryFunc
+from pytest_helm_charts.k8s.fixtures import NamespaceFactoryFunc
 from pytest_helm_charts.utils import inject_extra
 
 logger = logging.getLogger(__name__)
