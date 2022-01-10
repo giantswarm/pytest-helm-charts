@@ -8,7 +8,7 @@ from pytest_helm_charts.utils import wait_for_objects_condition, inject_extra
 
 
 class KustomizationCR(NamespacedFluxCR):
-    version = "kustomize.toolkit.fluxcd.io/v1beta1"
+    version = "kustomize.toolkit.fluxcd.io/v1beta2"
     endpoint = "kustomizations"
     kind = "Kustomization"
 
