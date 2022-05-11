@@ -4,6 +4,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+## [0.7.0]
+
+- changed:
+  - all the changes from beta releases below
+  - fixed docs issues
+
 ## [0.7.0-beta.2]
 
 - changed:
