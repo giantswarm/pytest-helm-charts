@@ -22,4 +22,4 @@ nav:
     - Giant Swarm App Platform: 'examples/giantswarm.md'
   - About:
     - 'License': 'license.md'
-    - 'Changelog': 'changelog.md'
+    - 'Changelog': 'CHANGELOG.md'

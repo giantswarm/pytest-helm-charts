@@ -200,6 +200,7 @@ def wait_for_helm_releases_to_be_ready(
     timeout_sec: int,
     missing_ok: bool = False,
 ) -> List[HelmReleaseCR]:
+    """Block until all Helm Release objects in `helm_release_names` have status 'Ready'."""
     objects = wait_for_objects_condition(
         kube_client,
         HelmReleaseCR,

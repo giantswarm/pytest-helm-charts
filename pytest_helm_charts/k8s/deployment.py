@@ -34,8 +34,8 @@ def wait_for_deployments_to_run(
         deployments_namespace: namespace where all the Deployments are created (single namespace for all resources)
         timeout_sec: timeout for the call
         missing_ok: when `True`, the function ignores that some of the objects listed in the `deployment_names`
-            don't exist in k8s API and waits for them to show up; when `False`, an
-            [ObjectNotFound](pykube.exceptions.ObjectDoesNotExist) exception is raised.
+            don't exist in k8s API and waits for them to show up; when `False`, a
+            `pykube.exceptions.ObjectDoesNotExist` exception is raised.
 
     Returns:
         The list of Deployment resources with all the objects listed in `deployment_names` included.

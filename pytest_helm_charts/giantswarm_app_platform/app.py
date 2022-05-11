@@ -71,11 +71,11 @@ def app_factory_func(
              app_name: name of the app in the app catalog
              app_version: version of the app to use from the app catalog
              catalog_name: a name of the catalog used for the
-                [CatalogCR](pytest_helm_charts.giantswarm_app_platform.custom_resources.CatalogCR);
+                [CatalogCR](pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR);
                 new catalog is created only when one with the same name doesn't already exist
              catalog_namespace: namespace where the catalog catalog_name is defined
              catalog_url: URL of the catalog to install the application from; this is used only if a catalog
-                with the same name doesn't already exists (then a new catalog with the given name and URL is created
+                with the same name doesn't already exist (then a new catalog with the given name and URL is created
                 in the k8s API)
              namespace: namespace where the App CR will be created
              deployment_namespace: namespace where the app will be deployed (can be different from `namespace`)
@@ -86,7 +86,7 @@ def app_factory_func(
              timeout_sec: timeout in seconds for the create operation
 
         Returns:
-            The [ConfiguredApp](.entities.ConfiguredApp) object that includes both AppCR and ConfigMap created to
+            The [ConfiguredApp](ConfiguredApp) object that includes both AppCR and ConfigMap created to
             deploy the app.
 
         Raises:
@@ -253,10 +253,10 @@ def make_app_object(
         app_name: name of the app in the app catalog
         app_version: version of the app to use from the app catalog
         catalog_name: a name of the catalog used for the
-            [CatalogCR](pytest_helm_charts.giantswarm_app_platform.custom_resources.CatalogCR);
+            [CatalogCR](pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR);
             must already exist
         catalog_namespace: a namespace of the
-            [CatalogCR](pytest_helm_charts.giantswarm_app_platform.custom_resources.CatalogCR)
+            [CatalogCR](pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR)
         namespace: namespace where the App CR will be created
         deployment_namespace: namespace where the app will be deployed (can be different than `namespace`)
         config_values: any values that should be used to configure the app (same as `values.yaml` used for
@@ -265,7 +265,7 @@ def make_app_object(
         extra_spec: optional dict that will be merged with the 'spec:' section of the object
 
     Returns:
-        The [ConfiguredApp](.entities.ConfiguredApp) object that includes both AppCR and ConfigMap.
+        The [ConfiguredApp](ConfiguredApp) object that includes both AppCR and ConfigMap.
     """
     if config_values is None:
         config_values = {}

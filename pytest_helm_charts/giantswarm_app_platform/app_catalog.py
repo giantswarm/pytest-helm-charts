@@ -71,7 +71,11 @@ def app_catalog_factory_func(
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
     ) -> AppCatalogCR:
-        """A factory function used to create catalogs in the k8s API using AppCatalog CR.
+        """
+        [Obsolete] Please use
+        [_catalog_factory](pytest_helm_charts.giantswarm_app_platform.catalog._catalog_factory) instead.
+
+        A factory function used to create catalogs in the k8s API using AppCatalog CR.
 
         Args:
             catalog_name: name of the created AppCatalog CR. If the name already exists and the URL is

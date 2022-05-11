@@ -144,6 +144,7 @@ def wait_for_git_repositories_to_be_ready(
     timeout_sec: int,
     missing_ok: bool = False,
 ) -> List[GitRepositoryCR]:
+    """Block until all Git Repository objects in `git_repo_names` have status 'Ready'."""
     objects = wait_for_objects_condition(
         kube_client,
         GitRepositoryCR,

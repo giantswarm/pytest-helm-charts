@@ -147,6 +147,7 @@ def wait_for_helm_repositories_to_be_ready(
     timeout_sec: int,
     missing_ok: bool = False,
 ) -> List[HelmRepositoryCR]:
+    """Block until all Helm Repository objects in `helm_repo_names` have status 'Ready'."""
     objects = wait_for_objects_condition(
         kube_client,
         HelmRepositoryCR,
