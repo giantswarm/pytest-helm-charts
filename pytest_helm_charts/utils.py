@@ -123,6 +123,21 @@ def delete_and_wait_for_objects(
     objects_to_del: Iterable[T],
     timeout_sec: int = DEFAULT_DELETE_TIMEOUT_SEC,
 ) -> None:
+    """
+    For each object in `objects_to_delete`, make an API call to delete it, then wait until the object is gone
+    from k8s API server.
+
+    Args:
+        kube_client: client to use to connect to the k8s cluster
+        obj_type: type of the objects to check; they should be derived from
+            [APIObject](pykube.objects.APIObject)
+        objects_to_del: iterable of [APIObject](pykube.objects.APIObject) to delete. All objects must be of the same
+            specific type.
+        timeout_sec: timeout for all the objects in the list to be gone from API server.
+
+    Returns: None
+
+    """
     for kube_object in objects_to_del:
         kube_object.delete()
         obj_name = f"{kube_object.namespace}/{kube_object.name}" if kube_object.namespace else kube_object.name

@@ -26,6 +26,16 @@ FLUX_DEPLOYMENTS_READY_TIMEOUT: int = 180
 
 @pytest.fixture(scope="module")
 def flux_deployments(kube_cluster: Cluster) -> List[pykube.Deployment]:
+    """
+    Waits (blocks) until all the Deployments used to deploy Flux itself run
+    (a.k.a. "wait for Flux to be ready for use").
+
+    Args:
+        kube_cluster: Cluster to use to connect to the k8s cluster
+
+    Returns: A List of `pykube.Deployment` objects used by Flux itself.
+
+    """
     deployments = wait_for_deployments_to_run(
         kube_cluster.kube_client,
         [
@@ -46,6 +56,8 @@ def flux_deployments(kube_cluster: Cluster) -> List[pykube.Deployment]:
 def kustomization_factory_function_scope(
     kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
 ) -> Iterable[KustomizationFactoryFunc]:
+    """Returns function-scoped [Kustomization](https://fluxcd.io/docs/components/kustomize/kustomization/)
+    factory."""
     yield from _kustomization_factory_impl(kube_cluster, namespace_factory)
 
 
@@ -53,6 +65,8 @@ def kustomization_factory_function_scope(
 def kustomization_factory(
     kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
 ) -> Iterable[KustomizationFactoryFunc]:
+    """Returns module-scoped [Kustomization](https://fluxcd.io/docs/components/kustomize/kustomization/)
+    factory."""
     yield from _kustomization_factory_impl(kube_cluster, namespace_factory)
 
 
@@ -70,6 +84,7 @@ def _kustomization_factory_impl(
 def git_repository_factory_function_scope(
     kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
 ) -> Iterable[GitRepositoryFactoryFunc]:
+    """Returns function-scoped [Git Repository](https://fluxcd.io/docs/components/source/gitrepositories/) factory."""
     yield from _git_repository_factory_impl(kube_cluster, namespace_factory)
 
 
@@ -77,6 +92,7 @@ def git_repository_factory_function_scope(
 def git_repository_factory(
     kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
 ) -> Iterable[GitRepositoryFactoryFunc]:
+    """Returns module-scoped [Git Repository](https://fluxcd.io/docs/components/source/gitrepositories/) factory."""
     yield from _git_repository_factory_impl(kube_cluster, namespace_factory)
 
 
@@ -94,6 +110,7 @@ def _git_repository_factory_impl(
 def helm_repository_factory_function_scope(
     kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
 ) -> Iterable[HelmRepositoryFactoryFunc]:
+    """Returns function-scoped [Helm Repository](https://fluxcd.io/docs/components/source/helmrepositories/) factory."""
     yield from _helm_repository_factory_impl(kube_cluster, namespace_factory)
 
 
@@ -101,6 +118,7 @@ def helm_repository_factory_function_scope(
 def helm_repository_factory(
     kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
 ) -> Iterable[HelmRepositoryFactoryFunc]:
+    """Returns module-scoped [Helm Repository](https://fluxcd.io/docs/components/source/helmrepositories/) factory."""
     yield from _helm_repository_factory_impl(kube_cluster, namespace_factory)
 
 
@@ -118,6 +136,7 @@ def _helm_repository_factory_impl(
 def helm_release_factory_function_scope(
     kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
 ) -> Iterable[HelmReleaseFactoryFunc]:
+    """Returns function-scoped [Helm Release](https://fluxcd.io/docs/components/helm/helmreleases/) factory."""
     yield from _helm_release_factory_impl(kube_cluster, namespace_factory)
 
 
@@ -125,6 +144,7 @@ def helm_release_factory_function_scope(
 def helm_release_factory(
     kube_cluster: Cluster, namespace_factory: NamespaceFactoryFunc
 ) -> Iterable[HelmReleaseFactoryFunc]:
+    """Returns module-scoped [Helm Release](https://fluxcd.io/docs/components/helm/helmreleases/) factory."""
     yield from _helm_release_factory_impl(kube_cluster, namespace_factory)
 
 

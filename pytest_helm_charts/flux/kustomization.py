@@ -143,6 +143,7 @@ def wait_for_kustomizations_to_be_ready(
     timeout_sec: int,
     missing_ok: bool = False,
 ) -> List[KustomizationCR]:
+    """Block until all Kustomization objects in `kustomization_names` have status 'Ready'."""
     objects = wait_for_objects_condition(
         kube_client,
         KustomizationCR,

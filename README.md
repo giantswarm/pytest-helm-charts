@@ -25,17 +25,15 @@ Most important features:
 
 - provides [pykube-ng](http://pykube.readthedocs.io/) interface to access Kubernetes clusters
 - provides [command line options](#usage) to configure the target cluster to run on
-- supports custom resource for the Giant Swarm App Platform:
-  - [App](https://docs.giantswarm.io/reference/cp-k8s-api/apps.application.giantswarm.io/)
-  - [Catalog](https://docs.giantswarm.io/ui-api/management-api/crd/catalogs.application.giantswarm.io/)
-  - (deprecated)[AppCatalog](https://docs.giantswarm.io/reference/cp-k8s-api/appcatalogs.application.giantswarm.io/)
+- provides fixtures to work with some standard Kubernetes resources as well as some custom ones:
+  - [Kubernetes objects](pytest_helm_charts.k8s)
+  - [Giant Swarm App Platform objects](pytest_helm_charts.giantswarm_app_platform)
+  - [Flux CD objects](pytest_helm_charts.flux)
 - provides set of fixtures to easily work with Helm charts
 
 ## Requirements
 
-- python 3.8+
-- pytest 5.4.2+
-- pykube-ng = 20.7.0+
+Please check `[tool.poetry.dependencies]` list in the [`pyproject.toml`](pyproject.toml) file.
 
 ## Installation
 
@@ -61,8 +59,8 @@ option. For creating development time clusters, we recommend using
 
 If you use this project to test Helm charts against Giant Swarm App Platform, the `existing`
 cluster must already have the platform components installed. Please refer to and use
-the [`kube-app-testing`](https://github.com/giantswarm/kube-app-testing) tool to easily
-create KinD based clusters with all the components already installed.
+the [`app-test-suite`](https://github.com/giantswarm/app-test-suite) tool to easily
+create `KinD` based clusters with all the components already installed.
 
 ### Writing tests
 

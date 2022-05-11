@@ -31,8 +31,14 @@ logger = logging.getLogger(__name__)
 @deprecated(version="0.5.3", reason="Please use `catalog_factory` fixture instead.")
 @pytest.fixture(scope="module")
 def app_catalog_factory(kube_cluster: Cluster) -> Iterable[AppCatalogFactoryFunc]:
-    """Return a factory object, that can be used to configure new AppCatalog CRs
-    for the 'app-operator' running in the cluster. Fixture's scope is 'module'."""
+    """
+    [Obsolete]
+    Please use
+    [_catalog_factory](pytest_helm_charts.giantswarm_app_platform.catalog._catalog_factory) instead.
+
+    Return a factory object, that can be used to configure new AppCatalog CRs
+    for the 'app-operator' running in the cluster. Fixture's scope is 'module'.
+    """
     yield from object_factory_helper(kube_cluster, app_catalog_factory_func, AppCatalogCR)
 
 
