@@ -4,6 +4,11 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+## [0.7.1]
+
+- fixed:
+  - 'repositories' attribute of Catalog CR is now handled
+
 ## [0.7.0]
 
 - changed:
