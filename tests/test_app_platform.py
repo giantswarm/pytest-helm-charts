@@ -145,6 +145,12 @@ def test_catalog_factory_working(catalog_factory: CatalogFactoryFunc, mocker: Mo
             "storage": {"URL": CATALOG_URL, "type": "helm"},
             "title": CATALOG_NAME,
             "logoURL": "https://my-org.github.com/logo.png",
+            "repositories": [
+                {
+                    "URL": CATALOG_URL,
+                    "type": "helm",
+                }
+            ],
         },
     }
     assert catalog.obj == expected_catalog_obj
