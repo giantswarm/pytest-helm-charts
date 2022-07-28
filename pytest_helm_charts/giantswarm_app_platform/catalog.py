@@ -1,5 +1,5 @@
 import logging
-from typing import List, Optional, Protocol
+from typing import List, Optional, Protocol, Dict
 
 from pykube import HTTPClient
 from pykube.objects import NamespacedAPIObject
@@ -22,6 +22,7 @@ class CatalogFactoryFunc(Protocol):
         catalog_name: str,
         catalog_namespace: str,
         catalog_url: Optional[str],
+        repositories_urls: Optional[List[str]] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
     ) -> CatalogCR:
@@ -33,9 +34,16 @@ def make_catalog_obj(
     catalog_name: str,
     catalog_namespace: str,
     catalog_url: str,
+    repositories_urls: Optional[List[str]] = None,
     extra_metadata: Optional[dict] = None,
     extra_spec: Optional[dict] = None,
 ) -> CatalogCR:
+    repositories: List[Dict[str, str]] = []
+    if repositories_urls:
+        repositories = [{"URL": r, "type": "helm"} for r in repositories_urls]
+    else:
+        repositories = [{"URL": catalog_url, "type": "helm"}]
+
     catalog_obj = inject_extra(
         {
             "apiVersion": "application.giantswarm.io/v1alpha1",
@@ -47,6 +55,7 @@ def make_catalog_obj(
             "spec": {
                 "description": "Catalog for testing.",
                 "storage": {"URL": catalog_url, "type": "helm"},
+                "repositories": repositories,
                 "title": catalog_name,
                 "logoURL": "https://my-org.github.com/logo.png",
             },
@@ -67,6 +76,7 @@ def catalog_factory_func(
         catalog_name: str,
         catalog_namespace: str = "default",
         catalog_url: Optional[str] = None,
+        repositories_urls: Optional[List[str]] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
     ) -> CatalogCR:
@@ -78,6 +88,10 @@ def catalog_factory_func(
                 are the same, nothing is done.
             catalog_namespace: namespace to create the Catalog CR in.
             catalog_url: URL of the catalog.
+            repositories_urls: A list of additional repositories hosting the same catalog. If left at 'None',
+                a single entry including `catalog_url` will be created.
+            extra_metadata: any additional fields to be included in the 'metadata' section.
+            extra_spec: any additional fields to be included in the 'Spec' section.
 
         Returns:
             CatalogCR created or found in the k8s API.
@@ -101,7 +115,7 @@ def catalog_factory_func(
                 )
 
         catalog = make_catalog_obj(
-            kube_client, catalog_name, catalog_namespace, catalog_url, extra_metadata, extra_spec
+            kube_client, catalog_name, catalog_namespace, catalog_url, repositories_urls, extra_metadata, extra_spec
         )
         objects.append(catalog)
         catalog.create()
