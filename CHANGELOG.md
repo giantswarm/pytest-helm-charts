@@ -4,6 +4,9 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+- updated:
+  - `pytest` upgraded from 6.x series to 7.x
+
 ## [0.7.1]
 
 - fixed:
