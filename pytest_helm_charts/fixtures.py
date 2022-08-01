@@ -1,5 +1,6 @@
 """This module defines fixtures for testing Helm Charts."""
 import logging
+import os
 import sys
 from typing import Iterable, Dict, Protocol
 
@@ -9,17 +10,62 @@ from pytest_helm_charts.clusters import ExistingCluster, Cluster
 
 logger = logging.getLogger(__name__)
 
+CHART_PATH = "ATS_CHART_PATH"
+CHART_VERSION = "ATS_CHART_VERSION"
+
+CLUSTER_TYPE = "ATS_CLUSTER_TYPE"
+CLUSTER_VERSION = "ATS_CLUSTER_VERSION"
+KUBE_CONFIG = "ATS_KUBE_CONFIG_PATH"
+TEST_TYPE = "ATS_TEST_TYPE"
+TEST_DIR = "ATS_TEST_DIR"
+APP_CONFIG_PATH = "ATS_APP_CONFIG_FILE_PATH"
+
+
+def _load_mandatory_from_environ(var_name: str) -> str:
+    if var_name in os.environ and len(os.environ[var_name]):
+        return os.environ[var_name]
+    raise Exception(f"Environment variable '{var_name}' needed by a fixture, but not set.")
+
 
 @pytest.fixture(scope="module")
-def chart_path(pytestconfig: Config) -> str:
+def chart_path() -> str:
     """Return a path to the chart under test (from command line argument)."""
-    return pytestconfig.getoption("chart_path")
+    return _load_mandatory_from_environ(CHART_PATH)
 
 
 @pytest.fixture(scope="module")
-def chart_version(pytestconfig: Config) -> str:
+def chart_version() -> str:
     """Return a value that needs to be used as chart version override (from command line argument)."""
-    return pytestconfig.getoption("chart_version")
+    return _load_mandatory_from_environ(CHART_VERSION)
+
+
+@pytest.fixture(scope="module")
+def cluster_type() -> str:
+    """Return a type of cluster used for testing (from command line argument)."""
+    return _load_mandatory_from_environ(CLUSTER_TYPE)
+
+
+@pytest.fixture(scope="module")
+def cluster_version() -> str:
+    """Return a type of cluster used for testing (from command line argument)."""
+    return _load_mandatory_from_environ(CLUSTER_VERSION)
+
+
+@pytest.fixture(scope="module")
+def values_file_path() -> str:
+    """Return a path to the yaml file that needs to be used to configure chart under test
+    (from command line argument).
+    """
+    return os.environ[APP_CONFIG_PATH] if APP_CONFIG_PATH in os.environ else ""
+
+
+@pytest.fixture(scope="module")
+def kube_config() -> str:
+    """Return a path to the kube.config file that points to a running cluster with app
+    catalog platform tools already installed. Used only if --cluster-type=existing (from command line argument)."""
+    return _load_mandatory_from_environ(KUBE_CONFIG)
+
+
 
 
 def _parse_extra_info(info: str) -> Dict[str, str]:
@@ -45,49 +91,19 @@ def test_extra_info(pytestconfig: Config) -> Dict[str, str]:
     return _parse_extra_info(arg)
 
 
-@pytest.fixture(scope="module")
-def values_file_path(pytestconfig: Config) -> str:
-    """Return a path to the yaml file that needs to be used to configure chart under test
-    (from command line argument).
-    """
-    return pytestconfig.getoption("values_file")
-
-
-@pytest.fixture(scope="module")
-def kube_config(pytestconfig: Config) -> str:
-    """Return a path to the kube.config file that points to a running cluster with app
-    catalog platform tools already installed. Used only if --cluster-type=existing (from command line argument)."""
-    return pytestconfig.getoption("kube_config")
-
-
-@pytest.fixture(scope="module")
-def cluster_type(pytestconfig: Config) -> str:
-    """Return a type of cluster used for testing (from command line argument)."""
-    return pytestconfig.getoption("cluster_type")
-
-
 class ConfigFactoryFunction(Protocol):
     def __call__(self) -> Cluster:
         pass
 
 
 @pytest.fixture(scope="module")
-def _existing_cluster_factory(kube_config: str) -> ConfigFactoryFunction:
-    def _fun() -> Cluster:
-        return ExistingCluster(kube_config)
-
-    return _fun
-
-
-@pytest.fixture(scope="module")
 def kube_cluster(
-    _existing_cluster_factory: ConfigFactoryFunction,
+    kube_config: str,
 ) -> Iterable[Cluster]:
     """Return a ready Cluster object, which can already be used in test to connect
     to the cluster. Specific implementation used to provide the cluster depends
     on the '--cluster-type' command line option."""
-    cluster: Cluster
-    cluster = _existing_cluster_factory()
+    cluster = ExistingCluster(kube_config)
 
     cluster.create()
     logger.debug("Cluster connection configured")
