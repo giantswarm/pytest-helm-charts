@@ -1,12 +1,13 @@
 from typing import Any
 
-from _pytest.pytester import Testdir, RunResult
+from _pytest.pytester import RunResult
+from pytest import Pytester
 from pytest_mock import MockFixture
 
 
-def run_pytest(testdir: Testdir, mocker: MockFixture, *args: Any) -> RunResult:
+def run_pytest(pytester: Pytester, mocker: MockFixture, *args: Any) -> RunResult:
     mocker.patch("pytest_helm_charts.fixtures.ExistingCluster", autospec=True)
-    result = testdir.runpytest(
+    result = pytester.runpytest(
         "--cluster-type",
         "existing",
         "--log-cli-level",
