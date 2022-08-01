@@ -12,7 +12,7 @@ class NamespacedFluxCR(NamespacedAPIObject, abc.ABC):
     pass
 
 
-def _flux_cr_ready(flux_obj: NamespacedFluxCR) -> bool:
+def flux_cr_ready(flux_obj: NamespacedFluxCR) -> bool:
     has_conditions = "status" in flux_obj.obj and "conditions" in flux_obj.obj["status"]
     if not has_conditions:
         return False
