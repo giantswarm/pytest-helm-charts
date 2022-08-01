@@ -4,6 +4,9 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+- changed:
+  - `_flux_cr_ready` made public by renaming to `flux_cr_ready`
+
 ## [0.7.1]
 
 - fixed:
