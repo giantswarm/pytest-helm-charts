@@ -6,8 +6,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 - changed:
   - `_flux_cr_ready` made public by renaming to `flux_cr_ready`
-  - breaking change: test information data is now not being input by the (partially mandatory) command line parameters,
-    but by environment variables; the following env vars are recognised and used in fixtures (when requested):
+  - Breaking change: test information data is now not being input by the (partially mandatory) command line parameters,
+    but by environment variables. This allows `pytest-helm-charts` to be easily used without the `app-test-suite`
+    project, which was enforcing the cmd line parameters before. The following env vars are recognised and used in
+    fixtures (when requested):
     - "KUBECONFIG" - (mandatory) a path to kube config file used to connect to a k8s cluster
     - "ATS_CHART_PATH" - path to a chart being tested (if a chart is tested)
     - "ATS_CHART_VERSION" - version of the chart being tested (if a chart is tested)
