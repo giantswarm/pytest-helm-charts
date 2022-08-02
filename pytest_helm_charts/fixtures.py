@@ -34,25 +34,25 @@ def _load_optional_from_environ(var_name: str) -> str:
 @pytest.fixture(scope="module")
 def chart_path() -> str:
     """Return a path to the chart under test (from command line argument)."""
-    return _load_mandatory_from_environ(CHART_PATH)
+    return _load_optional_from_environ(CHART_PATH)
 
 
 @pytest.fixture(scope="module")
 def chart_version() -> str:
     """Return a value that needs to be used as chart version override (from command line argument)."""
-    return _load_mandatory_from_environ(CHART_VERSION)
+    return _load_optional_from_environ(CHART_VERSION)
 
 
 @pytest.fixture(scope="module")
 def cluster_type() -> str:
     """Return a type of cluster used for testing (from command line argument)."""
-    return _load_mandatory_from_environ(CLUSTER_TYPE)
+    return _load_optional_from_environ(CLUSTER_TYPE)
 
 
 @pytest.fixture(scope="module")
 def cluster_version() -> str:
     """Return a type of cluster used for testing (from command line argument)."""
-    return _load_mandatory_from_environ(CLUSTER_VERSION)
+    return _load_optional_from_environ(CLUSTER_VERSION)
 
 
 @pytest.fixture(scope="module")
