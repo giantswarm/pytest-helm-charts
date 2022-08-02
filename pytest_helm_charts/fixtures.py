@@ -92,19 +92,19 @@ def _parse_extra_info(info: str) -> Dict[str, str]:
 
 
 def _filter_extra_info_from_mapping(extra: Mapping[str, str]) -> Dict[str, str]:
-    return {k[len(ATS_EXTRA_PREFIX):].lower(): v for k, v in extra.items() if k.startswith(ATS_EXTRA_PREFIX)}
+    return {k[len(ATS_EXTRA_PREFIX) :].lower(): v for k, v in extra.items() if k.startswith(ATS_EXTRA_PREFIX)}
 
 
 @pytest.fixture(scope="module")
 def test_extra_info() -> Dict[str, str]:
     """Return an optional dict of variable names and values passed to the test using env vars prefixed with
-     'ATS_EXTRA_' env var."""
+    'ATS_EXTRA_' env var."""
     return _filter_extra_info_from_mapping(os.environ)
 
 
 @pytest.fixture(scope="module")
 def kube_cluster(
-        kube_config: str,
+    kube_config: str,
 ) -> Iterable[Cluster]:
     """Return a ready Cluster object, which can already be used in test to connect
     to the cluster. Specific implementation used to provide the cluster depends
