@@ -2,29 +2,33 @@
 import logging
 import os
 import sys
-from typing import Iterable, Dict, Protocol
+from typing import Iterable, Dict, Mapping
 
 import pytest
-from _pytest.config import Config
+
 from pytest_helm_charts.clusters import ExistingCluster, Cluster
 
 logger = logging.getLogger(__name__)
 
 CHART_PATH = "ATS_CHART_PATH"
 CHART_VERSION = "ATS_CHART_VERSION"
-
 CLUSTER_TYPE = "ATS_CLUSTER_TYPE"
 CLUSTER_VERSION = "ATS_CLUSTER_VERSION"
-KUBE_CONFIG = "ATS_KUBE_CONFIG_PATH"
 TEST_TYPE = "ATS_TEST_TYPE"
 TEST_DIR = "ATS_TEST_DIR"
 APP_CONFIG_PATH = "ATS_APP_CONFIG_FILE_PATH"
+KUBE_CONFIG = "KUBECONFIG"
+ATS_EXTRA_PREFIX = "ATS_EXTRA_"
 
 
 def _load_mandatory_from_environ(var_name: str) -> str:
-    if var_name in os.environ and len(os.environ[var_name]):
+    if var_name in os.environ and len(os.environ[var_name]) > 0:
         return os.environ[var_name]
     raise Exception(f"Environment variable '{var_name}' needed by a fixture, but not set.")
+
+
+def _load_optional_from_environ(var_name: str) -> str:
+    return os.environ[var_name] if var_name in os.environ else ""
 
 
 @pytest.fixture(scope="module")
@@ -52,20 +56,30 @@ def cluster_version() -> str:
 
 
 @pytest.fixture(scope="module")
+def test_type() -> str:
+    """Return a type of the test requested in the current run."""
+    return _load_optional_from_environ(TEST_TYPE)
+
+
+@pytest.fixture(scope="module")
+def test_dir() -> str:
+    """Return a type of the test requested in the current run."""
+    return _load_optional_from_environ(TEST_TYPE)
+
+
+@pytest.fixture(scope="module")
 def values_file_path() -> str:
     """Return a path to the yaml file that needs to be used to configure chart under test
     (from command line argument).
     """
-    return os.environ[APP_CONFIG_PATH] if APP_CONFIG_PATH in os.environ else ""
+    return _load_optional_from_environ(APP_CONFIG_PATH)
 
 
 @pytest.fixture(scope="module")
 def kube_config() -> str:
     """Return a path to the kube.config file that points to a running cluster with app
-    catalog platform tools already installed. Used only if --cluster-type=existing (from command line argument)."""
+    catalog platform tools already installed."""
     return _load_mandatory_from_environ(KUBE_CONFIG)
-
-
 
 
 def _parse_extra_info(info: str) -> Dict[str, str]:
@@ -77,28 +91,20 @@ def _parse_extra_info(info: str) -> Dict[str, str]:
     return res_dict
 
 
-@pytest.fixture(scope="module")
-def chart_extra_info(pytestconfig: Config) -> Dict[str, str]:
-    """Return an optional dict of keywords and values passed to the test using '--chart-extra-info' config option."""
-    arg = pytestconfig.getoption("chart_extra_info")
-    return _parse_extra_info(arg)
+def _filter_extra_info_from_mapping(extra: Mapping[str, str]) -> Dict[str, str]:
+    return {k[len(ATS_EXTRA_PREFIX):].lower(): v for k, v in extra.items() if k.startswith(ATS_EXTRA_PREFIX)}
 
 
 @pytest.fixture(scope="module")
-def test_extra_info(pytestconfig: Config) -> Dict[str, str]:
-    """Return an optional dict of keywords and values passed to the test using '--test-extra-info' config option."""
-    arg = pytestconfig.getoption("test_extra_info")
-    return _parse_extra_info(arg)
-
-
-class ConfigFactoryFunction(Protocol):
-    def __call__(self) -> Cluster:
-        pass
+def test_extra_info() -> Dict[str, str]:
+    """Return an optional dict of variable names and values passed to the test using env vars prefixed with
+     'ATS_EXTRA_' env var."""
+    return _filter_extra_info_from_mapping(os.environ)
 
 
 @pytest.fixture(scope="module")
 def kube_cluster(
-    kube_config: str,
+        kube_config: str,
 ) -> Iterable[Cluster]:
     """Return a ready Cluster object, which can already be used in test to connect
     to the cluster. Specific implementation used to provide the cluster depends

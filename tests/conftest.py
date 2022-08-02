@@ -3,7 +3,6 @@ from pykube import HTTPClient
 from pytest_mock import MockFixture
 
 from pytest_helm_charts.clusters import Cluster
-from pytest_helm_charts.fixtures import ConfigFactoryFunction
 
 pytest_plugins = ["pytester"]
 
@@ -30,7 +29,6 @@ class MockCluster(Cluster):
 def kube_cluster(
     cluster_type: str,
     session_mocker: MockFixture,
-    _existing_cluster_factory: ConfigFactoryFunction,
 ) -> Cluster:
     cluster = MockCluster(session_mocker)
     cluster.create()
