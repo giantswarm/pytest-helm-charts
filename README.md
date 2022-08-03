@@ -1,6 +1,6 @@
 # pytest-helm-charts
 
-[![build](https://github.com/giantswarm/pytest-helm-charts/workflows/build/badge.svg)](https://github.com/giantswarm/pytest-helm-charts/workflows/build/badge.svg)
+[![build](https://github.com/giantswarm/pytest-helm-charts/actions/workflows/main.yml/badge.svg)](https://github.com/giantswarm/pytest-helm-charts/actions/workflows/main.yml/badge.svg)
 [![codecov](https://codecov.io/gh/giantswarm/pytest-helm-charts/branch/master/graph/badge.svg)](https://codecov.io/gh/giantswarm/pytest-helm-charts)
 [![Documentation Status](https://readthedocs.org/projects/pytest-helm-charts/badge/?version=latest)](https://pytest-helm-charts.readthedocs.io/en/latest/?badge=latest)
 [![PyPI Version](https://img.shields.io/pypi/v/pytest-helm-charts.svg)](https://pypi.org/project/pytest-helm-charts/)
