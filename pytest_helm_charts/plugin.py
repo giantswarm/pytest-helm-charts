@@ -52,7 +52,7 @@ from pytest_helm_charts.k8s.fixtures import (  # noqa: F401
 
 def _get_cmd_line_option_full_name(env_var_name: str) -> str:
     cmd_name = get_cmd_line_option_name_from_env_var(env_var_name)
-    cmd_name.replace("_", "-")
+    cmd_name = cmd_name.replace("_", "-")
     return "--" + cmd_name
 
 
@@ -88,7 +88,7 @@ def pytest_addoption(parser: Parser) -> None:
         help="Path to the values file used for testing the chart.",
     )
     group.addoption(
-        CMD_VAR_TEST_EXTRA_INFO,
+        "--" + CMD_VAR_TEST_EXTRA_INFO,
         action="store",
         default="",
         help="Pass any additional info about the test in the 'key1=val1,key2=val2' format",
