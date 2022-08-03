@@ -48,16 +48,15 @@ pip install pytest-helm-charts
 ### Running your tests
 
 When you want to run your tests, you invoke `pytest` as usual, just configuring
-cluster and chart information using environment variables. The following options
-are available:
+cluster and chart information using environment variables or command line options.
+The following options are available as environment variables (start `pytest` with `-h`
+to check corresponding command line options):
 
 - "KUBECONFIG" - (mandatory) a path to kube config file used to connect to a k8s cluster
 - "ATS_CHART_PATH" - path to a chart being tested (if a chart is tested)
 - "ATS_CHART_VERSION" - version of the chart being tested (if a chart is tested)
 - "ATS_CLUSTER_TYPE" - type of the cluster used for testing
 - "ATS_CLUSTER_VERSION" - k8s version of the cluster used for testing
-- "ATS_TEST_TYPE" - test type being requested
-- "ATS_TEST_DIR" - directory from which tests are run
 - "ATS_APP_CONFIG_FILE_PATH" - optional path to a `values.yaml` file used to configure a chart under test
 (if a chart is tested)
 - "ATS_EXTRA_*" - any such arbitrary variable value will be extracted and included in the `test_extra_info` fixture
