@@ -4,6 +4,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+## [0.7.1] - 2022.08.03
+
 - changed:
   - `_flux_cr_ready` made public by renaming to `flux_cr_ready`
   - Test information data is now primarily being input by (partially mandatory) environment variables.
