@@ -24,7 +24,7 @@ It can be also used to test Helm charts deployed using the Open Source
 Most important features:
 
 - provides [pykube-ng](http://pykube.readthedocs.io/) interface to access Kubernetes clusters
-- provides [command line options](#usage) to configure the target cluster to run on
+- provides [environment variables based options](#usage) to configure the target cluster to run on
 - provides fixtures to work with some standard Kubernetes resources as well as some custom ones:
   - [Kubernetes objects](pytest_helm_charts.k8s)
   - [Giant Swarm App Platform objects](pytest_helm_charts.giantswarm_app_platform)
@@ -47,13 +47,23 @@ pip install pytest-helm-charts
 
 ### Running your tests
 
-When you want to run your tests, you invoke `pytest` as usual, just passing additional
-flags on the command line. You can inspect them directly by running `pytest -h` and
-checking the "helm-charts" section.
+When you want to run your tests, you invoke `pytest` as usual, just configuring
+cluster and chart information using environment variables or command line options.
+The following options are available as environment variables (start `pytest` with `-h`
+to check corresponding command line options):
+
+- "KUBECONFIG" - (mandatory) a path to kube config file used to connect to a k8s cluster
+- "ATS_CHART_PATH" - path to a chart being tested (if a chart is tested)
+- "ATS_CHART_VERSION" - version of the chart being tested (if a chart is tested)
+- "ATS_CLUSTER_TYPE" - type of the cluster used for testing
+- "ATS_CLUSTER_VERSION" - k8s version of the cluster used for testing
+- "ATS_APP_CONFIG_FILE_PATH" - optional path to a `values.yaml` file used to configure a chart under test
+(if a chart is tested)
+- "ATS_EXTRA_*" - any such arbitrary variable value will be extracted and included in the `test_extra_info` fixture
 
 Currently, the only supported cluster type is `external`, which means the cluster is not
 managed by the test suite. You just point the test suite to a `kube.config` file,
-which can be used to connect to the Kubernetes API with `--kube-config` command line
+which can be used to connect to the Kubernetes API with `KUBECONFIG` env variable
 option. For creating development time clusters, we recommend using
 [KinD](https://kind.sigs.k8s.io/).
 
