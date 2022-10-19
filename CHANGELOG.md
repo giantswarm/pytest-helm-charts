@@ -4,7 +4,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
-## [0.7.1] - 2022.08.03
+## [1.0.2] - 2022.10.19
+
+- fixed:
+  - remove defaults for cmd line options - they were breaking env variable options loading
+
+## [1.0.1] - 2022.08.03
 
 - changed:
   - `_flux_cr_ready` made public by renaming to `flux_cr_ready`
