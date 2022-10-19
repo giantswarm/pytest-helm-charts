@@ -1,6 +1,3 @@
-import os
-from pathlib import Path
-
 from _pytest.config.argparsing import Parser
 
 from pytest_helm_charts.fixtures import (  # noqa: F401
@@ -79,7 +76,6 @@ def pytest_addoption(parser: Parser) -> None:
     group.addoption(
         _get_cmd_line_option_full_name(ENV_VAR_KUBE_CONFIG),
         action="store",
-        default=os.path.join(str(Path.home()), ".kube", "config"),
         help="The path to 'kube config' file.",
     )
     group.addoption(
@@ -90,6 +86,5 @@ def pytest_addoption(parser: Parser) -> None:
     group.addoption(
         "--" + CMD_VAR_TEST_EXTRA_INFO,
         action="store",
-        default="",
         help="Pass any additional info about the test in the 'key1=val1,key2=val2' format",
     )
