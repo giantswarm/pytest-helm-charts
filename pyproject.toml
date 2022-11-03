@@ -40,7 +40,7 @@ mkapi = {version = "^1.0.14", optional = true}
 Deprecated = "^1.2.13"
 
 [tool.poetry.dev-dependencies]
-autopep8 = "^1.5.2"
+autopep8 = "^2.0.0"
 tox = "^3.24.1"
 tox-pyenv = "^1.1.0"
 pytest-mock = "^3.6.1"
