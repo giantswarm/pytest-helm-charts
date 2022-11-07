@@ -14,7 +14,7 @@ tests-no-zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy 
 
 [[package]]
 name = "autopep8"
-version = "1.7.0"
+version = "2.0.0"
 description = "A tool that automatically formats Python code to conform to the PEP 8 style guide"
 category = "dev"
 optional = false
@@ -22,7 +22,7 @@ python-versions = "*"
 
 [package.dependencies]
 pycodestyle = ">=2.9.1"
-toml = "*"
+tomli = "*"
 
 [[package]]
 name = "bandit"
@@ -761,7 +761,7 @@ docs = ["mkdocs", "mkapi"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "39ec0c965711e0e97ab8268e9c5e36a4664e630cfab6611fac080551a7d3a7da"
+content-hash = "ccf28f02879343a1097f81b68fd2b9eb19868ecf34e5460a75f46e76a9dc56be"
 
 [metadata.files]
 attrs = [
@@ -769,8 +769,8 @@ attrs = [
     {file = "attrs-22.1.0.tar.gz", hash = "sha256:29adc2665447e5191d0e7c568fde78b21f9672d344281d0c6e1ab085429b22b6"},
 ]
 autopep8 = [
-    {file = "autopep8-1.7.0-py2.py3-none-any.whl", hash = "sha256:6f09e90a2be784317e84dc1add17ebfc7abe3924239957a37e5040e27d812087"},
-    {file = "autopep8-1.7.0.tar.gz", hash = "sha256:ca9b1a83e53a7fad65d731dc7a2a2d50aa48f43850407c59f6a1a306c4201142"},
+    {file = "autopep8-2.0.0-py2.py3-none-any.whl", hash = "sha256:ad924b42c2e27a1ac58e432166cc4588f5b80747de02d0d35b1ecbd3e7d57207"},
+    {file = "autopep8-2.0.0.tar.gz", hash = "sha256:8b1659c7f003e693199f52caffdc06585bb0716900bbc6a7442fd931d658c077"},
 ]
 bandit = [
     {file = "bandit-1.7.4-py3-none-any.whl", hash = "sha256:412d3f259dab4077d0e7f0c11f50f650cc7d10db905d98f6520a95a18049658a"},
