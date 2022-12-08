@@ -41,15 +41,15 @@ Deprecated = "^1.2.13"
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^2.0.0"
-tox = "^3.24.1"
+tox = "^4.0.0"
 tox-pyenv = "^1.1.0"
 pytest-mock = "^3.6.1"
 flake8 = "^5.0.0"
 mypy = "^0.991"
 pytest-cov = "^4.0.0"
-bandit = "^1.7.0"
-black = "^21.7b0"
-pre-commit = "^2.12.1"
+bandit = "^1.7.4"
+black = "^22.10.0"
+pre-commit = "^2.20.0"
 
 [tool.poetry.extras]
 docs = ["mkdocs", "mkapi"]
