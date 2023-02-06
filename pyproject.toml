@@ -48,7 +48,7 @@ flake8 = "^5.0.0"
 mypy = "^0.991"
 pytest-cov = "^4.0.0"
 bandit = "^1.7.4"
-black = "^22.10.0"
+black = "^23.0.0"
 pre-commit = "^3.0.0"
 
 [tool.poetry.extras]
