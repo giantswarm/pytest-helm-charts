@@ -42,10 +42,33 @@ class Cluster(ABC):
         return self._kube_client
 
     def kubectl(  # noqa: C901
-        self, subcmd_string: str, std_input: str = "", output_format: str = "json", **kwargs: str
+        self,
+        subcmd_string: str,
+        std_input: str = "",
+        output_format: str = "json",
+        use_shell: bool = False,
+        **kwargs: str,
     ) -> Any:
-        """If your cluster delivers the kube.config file, run a kubectl command against the cluster
-        and return the output. Otherwise, exception is raised."""
+        """Execute command by running 'kubectl' binary.
+
+        If your cluster delivers the kube.config file, run a kubectl command against the cluster
+        and return the output. Otherwise, exception is raised.
+
+        Args:
+            subcmd_string (str): Command to run, like "delete pod abc"
+            std_input (str): Use this to pass a manifest file directly as a string (results in 'kubectl [cmd] -f -')
+            output_format (str): Option "--output" as passed to 'kubectl'. Default is 'json', make sure to change to ""
+                for commands that don't return JSON.
+            use_shell: Whether the 'kubectl' command should be invoked directly (when 'False') or wrapped in system
+                shell ('True'). 'False' by default.
+            kwargs: arbitrary dictionary of options and values that will be passed directly to 'kubectl'
+
+        Returns:
+            str: The output printed by 'kubectl', if the command succeeded (exit code was 0)
+
+        Raises:
+            subprocess.CalledProcessError: If the command exited with non-zero exit code
+        """
         if not self.kube_config_path:
             raise ValueError("'kube_config_path' can't be empty to use 'kubectl'")
         bin_name = "kubectl"
@@ -61,13 +84,20 @@ class Cluster(ABC):
             kwargs["filename"] = "-"
         if output_format:
             kwargs["output"] = output_format
-        if subcmds[0].lower() == "delete" and "output" in kwargs:
+        if subcmds[0].lower() in ["delete", "patch", "label", "annotate"] and "output" in kwargs:
             del kwargs["output"]
 
         options = {f"--{option}={value}" for option, value in kwargs.items()}
 
         try:
-            result = subprocess.check_output([bin_name, *subcmds, *options], encoding="utf-8", input=std_input)  # nosec
+            cmd = (
+                bin_name + " " + subcmd_string + " " + " ".join(options)
+                if use_shell
+                else [bin_name, *subcmds, *options]
+            )
+            result = subprocess.check_output(
+                cmd, stderr=subprocess.PIPE, encoding="utf-8", input=std_input, shell=use_shell  # nosec
+            )
         except subprocess.CalledProcessError as e:
             logger.error(
                 f"'kubectl' call returned an error. Exit code: '{e.returncode}', stdout: '{e.stdout}',"
@@ -79,7 +109,7 @@ class Cluster(ABC):
         # - as parsed json by default, extracting objects list to list
         # - as plain text otherwise
 
-        if output_format == "json":
+        if "output" in kwargs and kwargs["output"] == "json":
             output_json = json.loads(result)
             if "items" in output_json:
                 return output_json["items"]

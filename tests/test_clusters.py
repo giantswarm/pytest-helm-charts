@@ -5,7 +5,7 @@ from typing import cast, List
 
 import pytest
 from _pytest.fixtures import FixtureRequest
-from pytest_mock import MockFixture
+from pytest_mock import MockFixture, MockerFixture
 
 from pytest_helm_charts.clusters import ExistingCluster
 
@@ -81,3 +81,47 @@ def test_kubectl_in_existing(cmd: List[str], file_name: str, expected_pods: List
     else:
         pod_names = [res["metadata"]["name"]]
     assert set(pod_names) == set(expected_pods)
+
+
+@pytest.mark.parametrize(
+    "cmd,expected_string,expected_exit_code,use_shell",
+    [
+        # test correctly annotate pod
+        ("annotate pod testpod a=b", "pod/testpod labeled", 0, False),
+        # test annotate non-existing pod
+        ("annotate pod testpod a=b", 'Error from server (NotFound): pods "testpod" not found', 1, False),
+        # test delete pod
+        ("delete pod testpod", 'pod "testpod" deleted', 0, True),
+        # test delete non-existing pod
+        ("delete pod testpod", 'Error from server (NotFound): pods "testpod" not found', 1, True),
+    ],
+)
+def test_non_json_kubectl_in_existing(
+    cmd: str, expected_string: str, expected_exit_code: int, use_shell: bool, request: FixtureRequest
+) -> None:
+    kube_config_path = "/fake/path/kube.config"
+    mocker: MockerFixture = request.getfixturevalue("mocker")
+    patch_for_construction(mocker)
+    mocker.patch("shutil.which")
+    mocker.patch("subprocess.check_output")
+    if expected_exit_code == 0:
+        cast(unittest.mock.Mock, subprocess.check_output).return_value = expected_string
+    else:
+        cast(unittest.mock.Mock, subprocess.check_output).side_effect = subprocess.CalledProcessError(
+            expected_exit_code, cmd, "", expected_string
+        )
+
+    cluster = ExistingCluster(kube_config_path)
+    cluster.create()
+    if expected_exit_code == 0:
+        res = cluster.kubectl(cmd, output="", use_shell=use_shell)
+        assert res == expected_string
+    else:
+        with pytest.raises(subprocess.CalledProcessError) as err_info:
+            cluster.kubectl(cmd, output="", use_shell=use_shell)
+        assert err_info.value.returncode == expected_exit_code
+        assert err_info.value.stderr == expected_string
+
+    cast(unittest.mock.Mock, shutil.which).called_once_with("kubectl")
+    expected_args = ["kubectl", cmd, f"--kubeconfig={kube_config_path}"]
+    cast(unittest.mock.Mock, subprocess.check_output).called_once_with(expected_args)
