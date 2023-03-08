@@ -2,7 +2,7 @@
 
 Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.1] - 2023.03.08
 
 - fixed:
   - the `kubectl()` method was not capturing standard error stream
