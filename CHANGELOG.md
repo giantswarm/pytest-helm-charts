@@ -4,6 +4,11 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+- fixed:
+  - the `kubectl()` method was not capturing standard error stream
+- changed:
+  - the `kubectl()` method allows now to be executed within a shell (parameter `use_shell`, False by default)
+
 ## [1.0.2] - 2022.10.19
 
 - fixed:
