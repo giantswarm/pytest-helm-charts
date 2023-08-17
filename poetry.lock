@@ -908,14 +908,14 @@ plugins = ["importlib-metadata"]
 
 [[package]]
 name = "pykube-ng"
-version = "22.9.0"
+version = "23.6.0"
 description = "Python client library for Kubernetes"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4"
 files = [
-    {file = "pykube-ng-22.9.0.tar.gz", hash = "sha256:1cd761ed9c7768958fdb92a404b53a5b2b26f71314bbd1c5d1fcf4f45896e2c0"},
-    {file = "pykube_ng-22.9.0-py3-none-any.whl", hash = "sha256:6f414281d4ec64800aaa9603c0eeeff5d591072efddf8c5faaa483f7dbc828d8"},
+    {file = "pykube-ng-23.6.0.tar.gz", hash = "sha256:46de8e17ed87c1a1014667d60e7d94a1f3fa2b8037b41e67d32c28b5869af35d"},
+    {file = "pykube_ng-23.6.0-py3-none-any.whl", hash = "sha256:63f20f634bfcd83966edec32f892286f75dffb817a2c097434ecc039e558ec8f"},
 ]
 
 [package.dependencies]
@@ -1438,4 +1438,4 @@ docs = ["mkapi", "mkdocs"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "53751bfe4e43ed1fce67febe0c03d1c5896efedf77b728133aefe90c8e22a037"
+content-hash = "3505efda44304e80d7ecd6c3a3f60c76a94a62166da0b1078a690df1c72463d5"
