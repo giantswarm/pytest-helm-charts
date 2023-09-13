@@ -39,11 +39,11 @@ pykube-ng = ">=23.6,<24"
 mkdocs = {version = "^1.2.3", optional = true }
 mkapi = {version = "^1.0.14", optional = true}
 Deprecated = "^1.2.13"
+virtualenv-pyenv = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^2.0.0"
-tox = "<5"
-tox-pyenv = "^1.1.0"
+tox = ">=4"
 pytest-mock = "^3.6.1"
 flake8 = "^5.0.0"
 mypy = "^1.0"
