@@ -95,13 +95,20 @@ Contributions are very welcome.
   [the coverage](https://codecov.io/gh/giantswarm/pytest-helm-charts/)
   at least stays the same before you submit a pull request.
 
+### Creating a new release
+
+- merge your changes to `master` branch
+- edit `pyproject.toml` and update the project version; edit `CHANGELOG.md`; commit
+- create a new tag with the same version in git, i.e. `git tag v1.1.1`
+- push your changes to GitHub to trigger a release `git push; git push origin v1.1.1`
+
 ## License
 
 See [LICENSE](LICENSE).
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md).
+See [CHANGELOG.md](./CHANGELOG.md).
 
 ## Issues
 
