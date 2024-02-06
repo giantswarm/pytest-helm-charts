@@ -30,15 +30,13 @@ class HelmRepositoryFactoryFunc(Protocol):
         pass_credentials: bool = False,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
+        wait_timeout_sec: int = 30
     ) -> HelmRepositoryCR:
         ...
 
 
 def helm_repository_factory_func(
-    kube_client: HTTPClient,
-    namespace_factory: NamespaceFactoryFunc,
-    created_helm_repositories: List[HelmRepositoryCR],
-    wait_timeout_sec: int = 30,
+    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_helm_repositories: List[HelmRepositoryCR],
 ) -> HelmRepositoryFactoryFunc:
     """Return a factory object, that can be used to create a new HelmRepository CRs"""
 
@@ -53,6 +51,7 @@ def helm_repository_factory_func(
         pass_credentials: bool = False,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
+        wait_timeout_sec: int = 30,
     ) -> HelmRepositoryCR:
         """A factory function used to create Flux HelmRepository.
         Args:
@@ -71,6 +70,7 @@ def helm_repository_factory_func(
                 part of the object
             extra_spec: a dictionary of any additional attributes to put directly into "spec"
                 part of the object
+            wait_timeout_sec: How long to wait for the HelmRelease to be ready.
         Returns:
             HelmRepository created or found in the k8s API.
         Raises:

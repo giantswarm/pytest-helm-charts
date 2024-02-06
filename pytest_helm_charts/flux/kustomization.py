@@ -30,15 +30,13 @@ class KustomizationFactoryFunc(Protocol):
         service_account_name: Optional[str] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
+        wait_timeout_sec: int = 30,
     ) -> KustomizationCR:
         ...
 
 
 def kustomization_factory_func(
-    kube_client: HTTPClient,
-    namespace_factory: NamespaceFactoryFunc,
-    created_kustomizations: List[KustomizationCR],
-    wait_timeout_sec: int = 30,
+    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_kustomizations: List[KustomizationCR],
 ) -> KustomizationFactoryFunc:
     """Return a factory object, that can be used to create a new Kustomization CRs"""
 
@@ -53,6 +51,7 @@ def kustomization_factory_func(
         service_account_name: Optional[str] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
+        wait_timeout_sec: int = 30,
     ) -> KustomizationCR:
         """A factory function used to create Flux Kustomizations.
         Args:
@@ -69,6 +68,7 @@ def kustomization_factory_func(
                 part of the object
             extra_spec: a dictionary of any additional attributes to put directly into "spec"
                 part of the object
+            wait_timeout_sec: How long to wait for the HelmRelease to be ready.
         Returns:
             KustomizationCR created or found in the k8s API.
         Raises:

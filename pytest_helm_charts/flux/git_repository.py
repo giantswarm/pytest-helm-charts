@@ -29,15 +29,13 @@ class GitRepositoryFactoryFunc(Protocol):
         ignore_pattern: Optional[str] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
+        wait_timeout_sec: int = 30,
     ) -> GitRepositoryCR:
         ...
 
 
 def git_repository_factory_func(
-    kube_client: HTTPClient,
-    namespace_factory: NamespaceFactoryFunc,
-    created_git_repositories: List[GitRepositoryCR],
-    wait_timeout_sec: int = 30,
+    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_git_repositories: List[GitRepositoryCR],
 ) -> GitRepositoryFactoryFunc:
     """Return a factory object, that can be used to create a new GitRepository CRs"""
 
@@ -51,6 +49,7 @@ def git_repository_factory_func(
         ignore_pattern: Optional[str] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
+        wait_timeout_sec: int = 30,
     ) -> GitRepositoryCR:
         """A factory function used to create Flux GitRepository.
         Args:
@@ -69,6 +68,7 @@ def git_repository_factory_func(
                 part of the object
             extra_spec: a dictionary of any additional attributes to put directly into "spec"
                 part of the object
+            wait_timeout_sec: How long to wait for the HelmRelease to be ready.
         Returns:
             GitRepositoryCR created or found in the k8s API.
         Raises:

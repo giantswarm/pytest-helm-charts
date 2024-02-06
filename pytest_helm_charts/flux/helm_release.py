@@ -55,20 +55,18 @@ class HelmReleaseFactoryFunc(Protocol):
         target_namespace: Optional[str] = None,
         depends_on: Optional[List[CrossNamespaceObjectReference]] = None,
         timeout: Optional[str] = None,
-        wait_timeout_sec: int = 30,
         values_from: Optional[List[ValuesReference]] = None,
         values: Optional[dict] = None,
         service_account_name: Optional[str] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
+        wait_timeout_sec: int = 30,
     ) -> HelmReleaseCR:
         ...
 
 
 def helm_release_factory_func(
-    kube_client: HTTPClient,
-    namespace_factory: NamespaceFactoryFunc,
-    created_helm_releases: List[HelmReleaseCR],
+    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_helm_releases: List[HelmReleaseCR],
 ) -> HelmReleaseFactoryFunc:
     """Return a factory object, that can be used to create a new HelmRelease CRs"""
 
@@ -82,12 +80,12 @@ def helm_release_factory_func(
         target_namespace: Optional[str] = None,
         depends_on: Optional[List[CrossNamespaceObjectReference]] = None,
         timeout: Optional[str] = None,
-        wait_timeout_sec: int = 30,
         values_from: Optional[List[ValuesReference]] = None,
         values: Optional[dict] = None,
         service_account_name: Optional[str] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
+        wait_timeout_sec: int = 30,
     ) -> HelmReleaseCR:
         """A factory function used to create Flux HelmRepository.
         Args:
@@ -111,6 +109,7 @@ def helm_release_factory_func(
                 part of the object
             extra_spec: a dictionary of any additional attributes to put directly into "spec"
                 part of the object
+            wait_timeout_sec: How long to wait for the HelmRelease to be ready.
         Returns:
             HelmRelease created or found in the k8s API.
         Raises:
