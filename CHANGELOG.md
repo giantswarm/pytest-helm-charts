@@ -2,6 +2,9 @@
 
 Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+- added:
+  - make flux resource ready state check timeouts configurable, still default to 30s
+
 ## [1.1.2] - 2023.09.13
 
 - changed:
