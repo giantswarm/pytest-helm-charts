@@ -35,10 +35,10 @@ class HelmRepositoryFactoryFunc(Protocol):
 
 
 def helm_repository_factory_func(
-        kube_client: HTTPClient,
-        namespace_factory: NamespaceFactoryFunc,
-        created_helm_repositories: List[HelmRepositoryCR],
-        wait_timeout_sec: int = 30
+    kube_client: HTTPClient,
+    namespace_factory: NamespaceFactoryFunc,
+    created_helm_repositories: List[HelmRepositoryCR],
+    wait_timeout_sec: int = 30,
 ) -> HelmRepositoryFactoryFunc:
     """Return a factory object, that can be used to create a new HelmRepository CRs"""
 
@@ -97,9 +97,7 @@ def helm_repository_factory_func(
         created_helm_repositories.append(helm_repository)
         helm_repository.create()
         logger.debug(f"Created Flux HelmRepository '{helm_repository.namespace}/{helm_repository.name}'.")
-        wait_for_helm_repositories_to_be_ready(
-            kube_client, [name], namespace, wait_timeout_sec, missing_ok=True
-        )
+        wait_for_helm_repositories_to_be_ready(kube_client, [name], namespace, wait_timeout_sec, missing_ok=True)
         return helm_repository
 
     return _helm_repository_factory

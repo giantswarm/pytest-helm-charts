@@ -65,10 +65,10 @@ class HelmReleaseFactoryFunc(Protocol):
 
 
 def helm_release_factory_func(
-        kube_client: HTTPClient,
-        namespace_factory: NamespaceFactoryFunc,
-        created_helm_releases: List[HelmReleaseCR],
-        wait_timeout_sec: int = 30
+    kube_client: HTTPClient,
+    namespace_factory: NamespaceFactoryFunc,
+    created_helm_releases: List[HelmReleaseCR],
+    wait_timeout_sec: int = 30,
 ) -> HelmReleaseFactoryFunc:
     """Return a factory object, that can be used to create a new HelmRelease CRs"""
 
