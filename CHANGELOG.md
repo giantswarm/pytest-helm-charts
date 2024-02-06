@@ -210,3 +210,18 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 ## [0.1.0] 2020-05-03
 
 - Initial commit
+
+[Unreleased]: https://github.com/giantswarm/kyverno-policies-dx/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/giantswarm/kyverno-policies-dx/compare/v1.1.1...v1.1.2
+# ...
+[0.1.10]: https://github.com/giantswarm/kyverno-policies-dx/compare/v0.1.9...v0.1.10
+[0.1.9]: https://github.com/giantswarm/kyverno-policies-dx/compare/v0.1.8...v0.1.9
+[0.1.8]: https://github.com/giantswarm/kyverno-policies-dx/compare/v0.1.7...v0.1.8
+[0.1.7]: https://github.com/giantswarm/kyverno-policies-dx/compare/v0.1.6...v0.1.7
+[0.1.6]: https://github.com/giantswarm/kyverno-policies-dx/compare/v0.1.5...v0.1.6
+[0.1.5]: https://github.com/giantswarm/kyverno-policies-dx/compare/v0.1.4...v0.1.5
+[0.1.4]: https://github.com/giantswarm/kyverno-policies-dx/compare/v0.1.3...v0.1.4
+[0.1.3]: https://github.com/giantswarm/kyverno-policies-dx/compare/v0.1.2...v0.1.3
+[0.1.2]: https://github.com/giantswarm/kyverno-policies-dx/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/giantswarm/kyverno-policies-dx/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/giantswarm/kyverno-policies-dx/releases/tag/v0.1.0
