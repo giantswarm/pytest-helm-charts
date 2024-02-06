@@ -5,7 +5,7 @@ from typing import Protocol, Optional, List, Any, Dict
 from pykube import HTTPClient
 
 from pytest_helm_charts.k8s.fixtures import NamespaceFactoryFunc
-from pytest_helm_charts.flux.utils import NamespacedFluxCR, FLUX_CR_READY_TIMEOUT_SEC, flux_cr_ready
+from pytest_helm_charts.flux.utils import NamespacedFluxCR, flux_cr_ready
 from pytest_helm_charts.utils import wait_for_objects_condition, inject_extra
 
 
@@ -60,12 +60,15 @@ class HelmReleaseFactoryFunc(Protocol):
         service_account_name: Optional[str] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
+        wait_timeout_sec: int = 30,
     ) -> HelmReleaseCR:
         ...
 
 
 def helm_release_factory_func(
-    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_helm_releases: List[HelmReleaseCR]
+    kube_client: HTTPClient,
+    namespace_factory: NamespaceFactoryFunc,
+    created_helm_releases: List[HelmReleaseCR],
 ) -> HelmReleaseFactoryFunc:
     """Return a factory object, that can be used to create a new HelmRelease CRs"""
 
@@ -84,6 +87,7 @@ def helm_release_factory_func(
         service_account_name: Optional[str] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
+        wait_timeout_sec: int = 30,
     ) -> HelmReleaseCR:
         """A factory function used to create Flux HelmRepository.
         Args:
@@ -97,6 +101,7 @@ def helm_release_factory_func(
             depends_on: a list of CrossNamespaceObjectReference with
                 references to HelmRelease resources that must be ready before this HelmRelease.
             timeout: The timeout of index downloading, defaults to 60s.
+            wait_timeout_sec: How long to wait for the HelmRelease to be ready.
             values_from: References to resources containing Helm values for this HelmRelease,
                 and information about how they should be merged.
             values: Holds the values for this Helm release.
@@ -106,6 +111,7 @@ def helm_release_factory_func(
                 part of the object
             extra_spec: a dictionary of any additional attributes to put directly into "spec"
                 part of the object
+            wait_timeout_sec: How long to wait for the HelmRelease to be ready.
         Returns:
             HelmRelease created or found in the k8s API.
         Raises:
@@ -138,7 +144,7 @@ def helm_release_factory_func(
         created_helm_releases.append(helm_release)
         helm_release.create()
         logger.debug(f"Created Flux HelmRelease '{helm_release.namespace}/{helm_release.name}'.")
-        wait_for_helm_releases_to_be_ready(kube_client, [name], namespace, FLUX_CR_READY_TIMEOUT_SEC, missing_ok=True)
+        wait_for_helm_releases_to_be_ready(kube_client, [name], namespace, wait_timeout_sec, missing_ok=True)
         return helm_release
 
     return _helm_release_factory

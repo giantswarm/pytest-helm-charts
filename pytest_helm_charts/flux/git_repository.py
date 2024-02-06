@@ -4,7 +4,7 @@ from typing import Protocol, Optional, Any, List, Dict
 from pykube import HTTPClient
 
 from pytest_helm_charts.k8s.fixtures import NamespaceFactoryFunc
-from pytest_helm_charts.flux.utils import NamespacedFluxCR, FLUX_CR_READY_TIMEOUT_SEC, flux_cr_ready
+from pytest_helm_charts.flux.utils import NamespacedFluxCR, flux_cr_ready
 from pytest_helm_charts.utils import wait_for_objects_condition, inject_extra
 
 
@@ -29,12 +29,15 @@ class GitRepositoryFactoryFunc(Protocol):
         ignore_pattern: Optional[str] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
+        wait_timeout_sec: int = 30,
     ) -> GitRepositoryCR:
         ...
 
 
 def git_repository_factory_func(
-    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_git_repositories: List[GitRepositoryCR]
+    kube_client: HTTPClient,
+    namespace_factory: NamespaceFactoryFunc,
+    created_git_repositories: List[GitRepositoryCR],
 ) -> GitRepositoryFactoryFunc:
     """Return a factory object, that can be used to create a new GitRepository CRs"""
 
@@ -48,6 +51,7 @@ def git_repository_factory_func(
         ignore_pattern: Optional[str] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
+        wait_timeout_sec: int = 30,
     ) -> GitRepositoryCR:
         """A factory function used to create Flux GitRepository.
         Args:
@@ -66,6 +70,7 @@ def git_repository_factory_func(
                 part of the object
             extra_spec: a dictionary of any additional attributes to put directly into "spec"
                 part of the object
+            wait_timeout_sec: How long to wait for the HelmRelease to be ready.
         Returns:
             GitRepositoryCR created or found in the k8s API.
         Raises:
@@ -91,9 +96,7 @@ def git_repository_factory_func(
         created_git_repositories.append(git_repository)
         git_repository.create()
         logger.debug(f"Created Flux GitRepository '{git_repository.namespace}/{git_repository.name}'.")
-        wait_for_git_repositories_to_be_ready(
-            kube_client, [name], namespace, FLUX_CR_READY_TIMEOUT_SEC, missing_ok=True
-        )
+        wait_for_git_repositories_to_be_ready(kube_client, [name], namespace, wait_timeout_sec, missing_ok=True)
         return git_repository
 
     return _git_repository_factory

@@ -4,7 +4,7 @@ from typing import Protocol, Optional, Any, List, Dict
 from pykube import HTTPClient
 
 from pytest_helm_charts.k8s.fixtures import NamespaceFactoryFunc
-from pytest_helm_charts.flux.utils import NamespacedFluxCR, FLUX_CR_READY_TIMEOUT_SEC, flux_cr_ready
+from pytest_helm_charts.flux.utils import NamespacedFluxCR, flux_cr_ready
 from pytest_helm_charts.utils import wait_for_objects_condition, inject_extra
 
 
@@ -30,12 +30,15 @@ class HelmRepositoryFactoryFunc(Protocol):
         pass_credentials: bool = False,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
+        wait_timeout_sec: int = 30,
     ) -> HelmRepositoryCR:
         ...
 
 
 def helm_repository_factory_func(
-    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_helm_repositories: List[HelmRepositoryCR]
+    kube_client: HTTPClient,
+    namespace_factory: NamespaceFactoryFunc,
+    created_helm_repositories: List[HelmRepositoryCR],
 ) -> HelmRepositoryFactoryFunc:
     """Return a factory object, that can be used to create a new HelmRepository CRs"""
 
@@ -50,6 +53,7 @@ def helm_repository_factory_func(
         pass_credentials: bool = False,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
+        wait_timeout_sec: int = 30,
     ) -> HelmRepositoryCR:
         """A factory function used to create Flux HelmRepository.
         Args:
@@ -68,6 +72,7 @@ def helm_repository_factory_func(
                 part of the object
             extra_spec: a dictionary of any additional attributes to put directly into "spec"
                 part of the object
+            wait_timeout_sec: How long to wait for the HelmRelease to be ready.
         Returns:
             HelmRepository created or found in the k8s API.
         Raises:
@@ -94,9 +99,7 @@ def helm_repository_factory_func(
         created_helm_repositories.append(helm_repository)
         helm_repository.create()
         logger.debug(f"Created Flux HelmRepository '{helm_repository.namespace}/{helm_repository.name}'.")
-        wait_for_helm_repositories_to_be_ready(
-            kube_client, [name], namespace, FLUX_CR_READY_TIMEOUT_SEC, missing_ok=True
-        )
+        wait_for_helm_repositories_to_be_ready(kube_client, [name], namespace, wait_timeout_sec, missing_ok=True)
         return helm_repository
 
     return _helm_repository_factory
