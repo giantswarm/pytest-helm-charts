@@ -36,7 +36,9 @@ class KustomizationFactoryFunc(Protocol):
 
 
 def kustomization_factory_func(
-    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_kustomizations: List[KustomizationCR],
+    kube_client: HTTPClient,
+    namespace_factory: NamespaceFactoryFunc,
+    created_kustomizations: List[KustomizationCR],
 ) -> KustomizationFactoryFunc:
     """Return a factory object, that can be used to create a new Kustomization CRs"""
 

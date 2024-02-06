@@ -30,13 +30,15 @@ class HelmRepositoryFactoryFunc(Protocol):
         pass_credentials: bool = False,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
-        wait_timeout_sec: int = 30
+        wait_timeout_sec: int = 30,
     ) -> HelmRepositoryCR:
         ...
 
 
 def helm_repository_factory_func(
-    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_helm_repositories: List[HelmRepositoryCR],
+    kube_client: HTTPClient,
+    namespace_factory: NamespaceFactoryFunc,
+    created_helm_repositories: List[HelmRepositoryCR],
 ) -> HelmRepositoryFactoryFunc:
     """Return a factory object, that can be used to create a new HelmRepository CRs"""
 

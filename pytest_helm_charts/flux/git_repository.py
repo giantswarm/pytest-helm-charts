@@ -35,7 +35,9 @@ class GitRepositoryFactoryFunc(Protocol):
 
 
 def git_repository_factory_func(
-    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_git_repositories: List[GitRepositoryCR],
+    kube_client: HTTPClient,
+    namespace_factory: NamespaceFactoryFunc,
+    created_git_repositories: List[GitRepositoryCR],
 ) -> GitRepositoryFactoryFunc:
     """Return a factory object, that can be used to create a new GitRepository CRs"""
 

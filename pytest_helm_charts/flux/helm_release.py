@@ -66,7 +66,9 @@ class HelmReleaseFactoryFunc(Protocol):
 
 
 def helm_release_factory_func(
-    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_helm_releases: List[HelmReleaseCR],
+    kube_client: HTTPClient,
+    namespace_factory: NamespaceFactoryFunc,
+    created_helm_releases: List[HelmReleaseCR],
 ) -> HelmReleaseFactoryFunc:
     """Return a factory object, that can be used to create a new HelmRelease CRs"""
 
