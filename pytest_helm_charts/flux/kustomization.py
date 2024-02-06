@@ -35,7 +35,10 @@ class KustomizationFactoryFunc(Protocol):
 
 
 def kustomization_factory_func(
-    kube_client: HTTPClient, namespace_factory: NamespaceFactoryFunc, created_kustomizations: List[KustomizationCR]
+        kube_client: HTTPClient,
+        namespace_factory: NamespaceFactoryFunc,
+        created_kustomizations: List[KustomizationCR],
+        wait_timeout_sec: int = 30
 ) -> KustomizationFactoryFunc:
     """Return a factory object, that can be used to create a new Kustomization CRs"""
 
@@ -92,7 +95,7 @@ def kustomization_factory_func(
         created_kustomizations.append(kustomization)
         kustomization.create()
         logger.debug(f"Created Flux Kustomization '{kustomization.namespace}/{kustomization.name}'.")
-        wait_for_kustomizations_to_be_ready(kube_client, [name], namespace, FLUX_CR_READY_TIMEOUT_SEC, missing_ok=True)
+        wait_for_kustomizations_to_be_ready(kube_client, [name], namespace, wait_timeout_sec, missing_ok=True)
         return kustomization
 
     return _kustomization_factory
