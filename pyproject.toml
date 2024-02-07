@@ -1,30 +1,28 @@
 [tool.poetry]
 name = "pytest-helm-charts"
-version = "1.1.2"
+version = "1.2.0"
 description = "A plugin to provide different types and configs of Kubernetes clusters that can be used for testing."
 authors = ["Łukasz Piątkowski <lukasz@giantswarm.io>"]
-license="Apache-2.0"
-repository="https://github.com/giantswarm/pytest-helm-charts"
-readme="README.md"
-keywords=["kubernetes","helm","chart"]
-include = ["CHANGELOG.md","DCO"]
-packages = [
-    { include = "pytest_helm_charts/**/*.py" },
-]
-classifiers=[
-    'Development Status :: 4 - Beta',
-    'Framework :: Pytest',
-    'Intended Audience :: Developers',
-    'Topic :: Software Development :: Testing',
-    'Programming Language :: Python',
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.8',
-    'Programming Language :: Python :: 3.9',
-    'Programming Language :: Python :: 3.10',
-    'Programming Language :: Python :: 3.11',
-    'Programming Language :: Python :: Implementation :: CPython',
-    'Operating System :: POSIX :: Linux',
-    'License :: OSI Approved :: Apache Software License',
+license = "Apache-2.0"
+repository = "https://github.com/giantswarm/pytest-helm-charts"
+readme = "README.md"
+keywords = ["kubernetes", "helm", "chart"]
+include = ["CHANGELOG.md", "DCO"]
+packages = [{ include = "pytest_helm_charts/**/*.py" }]
+classifiers = [
+  'Development Status :: 4 - Beta',
+  'Framework :: Pytest',
+  'Intended Audience :: Developers',
+  'Topic :: Software Development :: Testing',
+  'Programming Language :: Python',
+  'Programming Language :: Python :: 3',
+  'Programming Language :: Python :: 3.8',
+  'Programming Language :: Python :: 3.9',
+  'Programming Language :: Python :: 3.10',
+  'Programming Language :: Python :: 3.11',
+  'Programming Language :: Python :: Implementation :: CPython',
+  'Operating System :: POSIX :: Linux',
+  'License :: OSI Approved :: Apache Software License',
 ]
 
 [tool.poetry.plugins] # Optional super table
@@ -36,8 +34,8 @@ classifiers=[
 python = "^3.8.1"
 pytest = "^8.0.0"
 pykube-ng = ">=23.6,<24"
-mkdocs = {version = "^1.2.3", optional = true }
-mkapi = {version = "^1.0.14", optional = true}
+mkdocs = { version = "^1.2.3", optional = true }
+mkapi = { version = "^1.0.14", optional = true }
 Deprecated = "^1.2.13"
 
 [tool.poetry.dev-dependencies]
