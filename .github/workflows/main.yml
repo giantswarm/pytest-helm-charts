@@ -5,10 +5,10 @@ on:
     types: [checks_requested]
   pull_request:
     branches:
-      - master
+      - main
   push:
     branches:
-      - master
+      - main
   create:
     tags:
       - "*"
