@@ -71,7 +71,7 @@ jobs:
       - name: Run pytest
         run: poetry run python -m pytest --cov=pytest_helm_charts/ --cov-report=xml --log-cli-level=info tests/
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.4.1
+        uses: codecov/codecov-action@v4.5.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.xml
