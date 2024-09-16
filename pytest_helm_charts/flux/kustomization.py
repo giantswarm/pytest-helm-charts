@@ -31,8 +31,7 @@ class KustomizationFactoryFunc(Protocol):
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
         wait_timeout_sec: int = 30,
-    ) -> KustomizationCR:
-        ...
+    ) -> KustomizationCR: ...
 
 
 def kustomization_factory_func(

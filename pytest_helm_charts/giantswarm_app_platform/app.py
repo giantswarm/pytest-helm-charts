@@ -42,8 +42,7 @@ class AppFactoryFunc(Protocol):
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
         timeout_sec: int = 60,
-    ) -> ConfiguredApp:
-        ...
+    ) -> ConfiguredApp: ...
 
 
 def app_factory_func(

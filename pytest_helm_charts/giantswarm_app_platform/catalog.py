@@ -25,8 +25,7 @@ class CatalogFactoryFunc(Protocol):
         repositories_urls: Optional[List[str]] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
-    ) -> CatalogCR:
-        ...
+    ) -> CatalogCR: ...
 
 
 def make_catalog_obj(
