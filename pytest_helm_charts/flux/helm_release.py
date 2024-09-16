@@ -61,8 +61,7 @@ class HelmReleaseFactoryFunc(Protocol):
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
         wait_timeout_sec: int = 30,
-    ) -> HelmReleaseCR:
-        ...
+    ) -> HelmReleaseCR: ...
 
 
 def helm_release_factory_func(

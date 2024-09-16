@@ -1,4 +1,5 @@
 """This modules contains apps useful for testing HTTP applications."""
+
 import math
 from typing import Dict, Iterable, List, Optional, Protocol, Tuple
 
@@ -17,8 +18,7 @@ class StormforgerLoadAppFactoryFunc(Protocol):
         node_affinity_selector: Optional[Dict[str, str]] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
-    ) -> ConfiguredApp:
-        ...
+    ) -> ConfiguredApp: ...
 
 
 @pytest.fixture(scope="module")
@@ -94,8 +94,7 @@ class GatlingAppFactoryFunc(Protocol):
         node_affinity_selector: Optional[Dict[str, str]] = None,
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
-    ) -> ConfiguredApp:
-        ...
+    ) -> ConfiguredApp: ...
 
 
 @pytest.fixture(scope="module")

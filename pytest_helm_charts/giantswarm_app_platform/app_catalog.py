@@ -24,8 +24,7 @@ class AppCatalogFactoryFunc(Protocol):
         catalog_url: Optional[str],
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
-    ) -> AppCatalogCR:
-        ...
+    ) -> AppCatalogCR: ...
 
 
 @deprecated(version="0.5.3", reason="Please use `catalog.get_catalog_obj()` instead.")

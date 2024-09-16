@@ -31,8 +31,7 @@ class HelmRepositoryFactoryFunc(Protocol):
         extra_metadata: Optional[dict] = None,
         extra_spec: Optional[dict] = None,
         wait_timeout_sec: int = 30,
-    ) -> HelmRepositoryCR:
-        ...
+    ) -> HelmRepositoryCR: ...
 
 
 def helm_repository_factory_func(

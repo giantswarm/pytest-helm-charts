@@ -14,8 +14,7 @@ from pytest_helm_charts.utils import delete_and_wait_for_objects
 class NamespaceFactoryFunc(Protocol):
     def __call__(
         self, name: str, extra_metadata: Optional[dict] = None, extra_spec: Optional[dict] = None
-    ) -> pykube.Namespace:
-        ...
+    ) -> pykube.Namespace: ...
 
 
 @pytest.fixture(scope="function")
