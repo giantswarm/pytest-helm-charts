@@ -4,6 +4,9 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+- fixed
+  - the `_deployment_running` method was missing a check for `unavailableReplicas`
+
 ## [1.2.0] - 2024-02-06
 
 - added:

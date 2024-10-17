@@ -11,9 +11,11 @@ def _deployment_running(deploy: Deployment) -> bool:
         and "availableReplicas" in deploy.obj["status"]
         and "observedGeneration" in deploy.obj["status"]
         and "updatedReplicas" in deploy.obj["status"]
+        and "unavailableReplicas" in deploy.obj["status"]
         and int(deploy.obj["status"]["observedGeneration"]) >= int(deploy.obj["metadata"]["generation"])
         and deploy.replicas == int(deploy.obj["status"]["updatedReplicas"])
         and deploy.replicas == int(deploy.obj["status"]["availableReplicas"])
+        and 0 == int(deploy.obj["status"]["unavailableReplicas"])
     )
     return complete
 
