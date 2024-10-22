@@ -35,7 +35,7 @@ def test_destroy_existing(mocker: MockFixture) -> None:
     client = cluster.create()
     cluster.destroy()
 
-    assert client.session.close.called_once()
+    client.session.close.assert_called_once()
 
 
 def load_text_file(file_name: str) -> str:
@@ -72,9 +72,15 @@ def test_kubectl_in_existing(cmd: List[str], file_name: str, expected_pods: List
     cluster.create()
     res = cluster.kubectl(" ".join(cmd))
 
-    cast(unittest.mock.Mock, shutil.which).called_once_with("kubectl")
+    cast(unittest.mock.Mock, shutil.which).assert_called_once_with("kubectl")
     expected_args = ["kubectl", *cmd, f"--kubeconfig={kube_config_path}", "--output=json"]
-    cast(unittest.mock.Mock, subprocess.check_output).called_once_with(expected_args)
+    cast(unittest.mock.Mock, subprocess.check_output).assert_called_once_with(
+        expected_args,
+        encoding="utf-8",
+        input="",
+        shell=False,
+        stderr=-1,
+    )
     if isinstance(res, list):
         assert len(res) == len(expected_pods)
         pod_names = [p["metadata"]["name"] for p in res]
@@ -122,6 +128,13 @@ def test_non_json_kubectl_in_existing(
         assert err_info.value.returncode == expected_exit_code
         assert err_info.value.stderr == expected_string
 
-    cast(unittest.mock.Mock, shutil.which).called_once_with("kubectl")
-    expected_args = ["kubectl", cmd, f"--kubeconfig={kube_config_path}"]
-    cast(unittest.mock.Mock, subprocess.check_output).called_once_with(expected_args)
+    cast(unittest.mock.Mock, shutil.which).assert_called_once_with("kubectl")
+    expected_args = (
+        f"kubectl {cmd} --kubeconfig={kube_config_path}"
+        if use_shell
+        else ["kubectl"] + cmd.split() + [f"--kubeconfig={kube_config_path}"]
+    )
+
+    cast(unittest.mock.Mock, subprocess.check_output).assert_called_once_with(
+        expected_args, encoding="utf-8", input="", shell=use_shell, stderr=-1  # nosec
+    )

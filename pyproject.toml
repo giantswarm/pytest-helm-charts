@@ -1,3 +1,7 @@
+[build-system]
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
 name = "pytest-helm-charts"
 version = "1.2.0"
@@ -41,7 +45,6 @@ Deprecated = "^1.2.13"
 [tool.poetry.dev-dependencies]
 autopep8 = "^2.0.0"
 tox = "<5"
-tox-pyenv = "^1.1.0"
 pytest-mock = "^3.6.1"
 flake8 = "^7.0.0"
 mypy = "^1.0"
@@ -72,6 +75,14 @@ exclude = '''
 )/
 '''
 
-[build-system]
-requires = ["poetry_core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+#[tool.tox]
+#envlist = ["py39", "py310", "py311", "py312"]
+#
+#[tool.tox.testenv]
+#commands =
+#    poetry install -v
+#poetry run pre-commit run --all-files
+#poetry run pytest {posargs}
+#
+#whitelist_externals = "poetry"
+#deps = "pytest>=7.1.2"
