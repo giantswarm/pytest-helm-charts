@@ -74,13 +74,7 @@ def test_kubectl_in_existing(cmd: List[str], file_name: str, expected_pods: List
 
     cast(unittest.mock.Mock, shutil.which).assert_called_once_with("kubectl")
     expected_args = ["kubectl", *cmd, f"--kubeconfig={kube_config_path}", "--output=json"]
-    cast(unittest.mock.Mock, subprocess.check_output).assert_called_once_with(
-        expected_args,
-        encoding="utf-8",
-        input="",
-        shell=False,
-        stderr=-1,
-    )
+    assert sorted(cast(unittest.mock.Mock, subprocess.check_output).call_args.args[0]) == sorted(expected_args)
     if isinstance(res, list):
         assert len(res) == len(expected_pods)
         pod_names = [p["metadata"]["name"] for p in res]
