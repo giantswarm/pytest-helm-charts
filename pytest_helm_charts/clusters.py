@@ -88,7 +88,7 @@ class Cluster(ABC):
         if subcmds[0].lower() in ["delete", "patch", "label", "annotate"] and "output" in kwargs:
             del kwargs["output"]
 
-        options = {f"--{option}={value}" for option, value in kwargs.items()}
+        options = {f"--{option}={value}" for option, value in sorted(kwargs.items())}
 
         try:
             cmd = (

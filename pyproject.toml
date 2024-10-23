@@ -1,3 +1,7 @@
+[build-system]
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
 name = "pytest-helm-charts"
 version = "1.2.0"
@@ -16,10 +20,10 @@ classifiers = [
   'Topic :: Software Development :: Testing',
   'Programming Language :: Python',
   'Programming Language :: Python :: 3',
-  'Programming Language :: Python :: 3.9',
   'Programming Language :: Python :: 3.10',
   'Programming Language :: Python :: 3.11',
   'Programming Language :: Python :: 3.12',
+  'Programming Language :: Python :: 3.13',
   'Programming Language :: Python :: Implementation :: CPython',
   'Operating System :: POSIX :: Linux',
   'License :: OSI Approved :: Apache Software License',
@@ -41,7 +45,6 @@ Deprecated = "^1.2.13"
 [tool.poetry.dev-dependencies]
 autopep8 = "^2.0.0"
 tox = "<5"
-tox-pyenv = "^1.1.0"
 pytest-mock = "^3.6.1"
 flake8 = "^7.0.0"
 mypy = "^1.0"
@@ -55,7 +58,7 @@ docs = ["mkdocs", "mkapi"]
 
 [tool.black]
 line-length = 120
-target-version = ['py39', 'py310', 'py311', 'py312']
+target-version = ['py310', 'py311', 'py312', 'py313']
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -71,7 +74,3 @@ exclude = '''
   | dist
 )/
 '''
-
-[build-system]
-requires = ["poetry_core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"

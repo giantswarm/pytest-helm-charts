@@ -4,6 +4,11 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+- changed
+
+  - remove support for Python 3.8 and 3.9
+  - add support for Python 3.12 and 3.13
+
 - fixed
   - the `_deployment_running` method was missing a check for `unavailableReplicas`
 
@@ -32,6 +37,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 ## [1.0.1] - 2022.08.03
 
 - changed:
+
   - `_flux_cr_ready` made public by renaming to `flux_cr_ready`
   - Test information data is now primarily being input by (partially mandatory) environment variables.
     Majority of old command line parameters should still work, but environment variables usage is encouraged.
@@ -45,7 +51,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
     - "ATS_CLUSTER_VERSION" - (informative only) k8s version of the cluster used for testing
     - "ATS_APP_CONFIG_FILE_PATH" - optional path to a `values.yaml` file used to configure a chart under test
       (if a chart is tested)
-    - "ATS_EXTRA_*" - any such arbitrary variable value will be extracted and included in the `test_extra_info` fixture
+    - "ATS_EXTRA\_\*" - any such arbitrary variable value will be extracted and included in the `test_extra_info` fixture
   - `chart_extra_info` fixture was removed, as the more general `test_extra_info` is available
 
 - updated:
