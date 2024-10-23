@@ -4,6 +4,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+## 1.3.1 - 2024-10-23
+
 - changed
 
   - remove support for Python 3.8 and 3.9
