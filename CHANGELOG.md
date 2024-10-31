@@ -4,6 +4,9 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+- fixed
+  - `_deployment_running` which currently fails for deployments without `unavailableReplicas` set if they run without issues.
+
 ## 1.3.1 - 2024-10-23
 
 - changed
