@@ -4,6 +4,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [Unreleased]
 
+## [1.3.3] - 2025-11-18
+
+- Dependency updates
+
 ## 1.3.2 - 2024-10-31
 
 - fixed
@@ -229,7 +233,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 - Initial commit
 
-[Unreleased]: https://github.com/giantswarm/pytest-helm-charts/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/giantswarm/pytest-helm-charts/compare/v1.3.3...HEAD
+[1.3.3]: https://github.com/giantswarm/pytest-helm-charts/compare/v1.2.0...v1.3.3
 [1.2.0]: https://github.com/giantswarm/pytest-helm-charts/compare/v1.1.2...v1.2.0
 [1.1.2]: https://github.com/giantswarm/kyverno-policies-dx/compare/v1.1.1...v1.1.2
 [0.1.10]: https://github.com/giantswarm/kyverno-policies-dx/compare/v0.1.9...v0.1.10
