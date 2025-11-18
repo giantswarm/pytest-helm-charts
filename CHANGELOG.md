@@ -6,6 +6,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [1.3.3] - 2025-11-18
 
+- Dependency updates
+
 ## 1.3.2 - 2024-10-31
 
 - fixed
