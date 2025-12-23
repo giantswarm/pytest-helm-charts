@@ -5,9 +5,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following
 
 ## [Unreleased]
 
+## [1.3.4] - 2025-12-23
+
 - changed
   - switch form poetry to uv
   - add support for python 3.14
+  - Dependency updates
 
 ## [1.3.3] - 2025-11-18
 

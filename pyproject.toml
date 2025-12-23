@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pytest-helm-charts"
-version = "1.3.2"
+version = "1.3.4"
 description = "A plugin to provide different types and configs of Kubernetes clusters that can be used for testing."
 authors = [{ name = "Łukasz Piątkowski", email = "lukasz@giantswarm.io" }]
 requires-python = ">=3.10, <4"
@@ -12,25 +12,25 @@ readme = "README.md"
 license = "Apache-2.0"
 keywords = ["kubernetes", "helm", "chart"]
 classifiers = [
-  "Development Status :: 4 - Beta",
-  "Framework :: Pytest",
-  "Intended Audience :: Developers",
-  "Topic :: Software Development :: Testing",
-  "Programming Language :: Python",
-  "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: 3.13",
-  "Programming Language :: Python :: 3.14",
-  "Programming Language :: Python :: Implementation :: CPython",
-  "Operating System :: POSIX :: Linux",
-  "License :: OSI Approved :: Apache Software License",
+    "Development Status :: 4 - Beta",
+    "Framework :: Pytest",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Testing",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Operating System :: POSIX :: Linux",
+    "License :: OSI Approved :: Apache Software License",
 ]
 dependencies = [
-  "pytest>=8.0.0,<9",
-  "pykube-ng>=23.6,<24",
-  "Deprecated>=1.2.13,<2",
+    "pytest>=8.0.0,<9",
+    "pykube-ng>=23.6,<24",
+    "Deprecated>=1.2.13,<2",
 ]
 
 [project.optional-dependencies]
@@ -44,12 +44,12 @@ Repository = "https://github.com/giantswarm/pytest-helm-charts"
 
 [dependency-groups]
 dev = [
-  "mypy",
-  "pre-commit",
-  "pytest",
-  "pytest-cov",
-  "pytest-mock",
-  "tox>=4.0.0,<5",
+    "mypy",
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "tox>=4.0.0,<5",
 ]
 
 [tool.hatch.build.targets.sdist]
@@ -61,32 +61,32 @@ include = ["pytest_helm_charts/**/*.py", "CHANGELOG.md", "DCO"]
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
 exclude = [
-  ".bzr",
-  ".direnv",
-  ".eggs",
-  ".git",
-  ".git-rewrite",
-  ".hg",
-  ".ipynb_checkpoints",
-  ".mypy_cache",
-  ".nox",
-  ".pants.d",
-  ".pyenv",
-  ".pytest_cache",
-  ".pytype",
-  ".ruff_cache",
-  ".svn",
-  ".tox",
-  ".venv",
-  ".vscode",
-  "__pypackages__",
-  "_build",
-  "buck-out",
-  "build",
-  "dist",
-  "node_modules",
-  "site-packages",
-  "venv",
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
 ]
 # Same as Black.
 line-length = 120
