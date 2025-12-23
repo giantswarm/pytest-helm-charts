@@ -157,7 +157,8 @@ def test_catalog_factory_working(catalog_factory: CatalogFactoryFunc, mocker: Mo
     # catalog should be created at most once (might have been already requested in another test)
     assert (
         cast(
-            unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create  # type: ignore
+            unittest.mock.Mock,
+            pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create,  # type: ignore
         ).call_count
         <= 1
     )
@@ -172,7 +173,8 @@ def test_double_create_the_same_catalog(catalog_factory: CatalogFactoryFunc, moc
     # catalog should be created at most once (might have been already requested in another test)
     assert (
         cast(
-            unittest.mock.Mock, pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create  # type: ignore
+            unittest.mock.Mock,
+            pytest_helm_charts.giantswarm_app_platform.catalog.CatalogCR.create,  # type: ignore
         ).call_count
         <= 1
     )

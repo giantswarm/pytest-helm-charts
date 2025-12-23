@@ -7,4 +7,4 @@ Full source code available in
 
 ## Accessing your cluster under test with [kube_cluster](pytest_helm_charts.fixtures.kube_cluster) fixture
 
-![mkapi](examples.test_basic_cluster.test_api_working)
+[mkapi](::: examples.test_basic_cluster.test_api_working)

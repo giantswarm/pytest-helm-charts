@@ -1,8 +1,13 @@
 # Changelog
 
-Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+- changed
+  - switch form poetry to uv
+  - add support for python 3.14
 
 ## [1.3.3] - 2025-11-18
 
@@ -11,12 +16,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 ## 1.3.2 - 2024-10-31
 
 - fixed
-  - `_deployment_running` which currently fails for deployments without `unavailableReplicas` set if they run without issues.
+  - `_deployment_running` which currently fails for deployments without `unavailableReplicas` set if they run
+    without issues.
 
 ## 1.3.1 - 2024-10-23
 
 - changed
-
   - remove support for Python 3.8 and 3.9
   - add support for Python 3.12 and 3.13
 
@@ -48,13 +53,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 ## [1.0.1] - 2022.08.03
 
 - changed:
-
   - `_flux_cr_ready` made public by renaming to `flux_cr_ready`
   - Test information data is now primarily being input by (partially mandatory) environment variables.
     Majority of old command line parameters should still work, but environment variables usage is encouraged.
-    This allows `pytest-helm-charts` to be easily used without the `app-test-suite`
-    project, which was enforcing the cmd line parameters before. The following env vars are recognised and used in
-    fixtures (when requested):
+    This allows `pytest-helm-charts` to be easily used without the `app-test-suite` project, which was
+    enforcing the cmd line parameters before. The following env vars are recognised and used in fixtures (when
+    requested):
     - "KUBECONFIG" - (mandatory) a path to kube config file used to connect to a k8s cluster
     - "ATS_CHART_PATH" - path to a chart being tested (if a chart is tested)
     - "ATS_CHART_VERSION" - version of the chart being tested (if a chart is tested)
@@ -62,7 +66,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
     - "ATS_CLUSTER_VERSION" - (informative only) k8s version of the cluster used for testing
     - "ATS_APP_CONFIG_FILE_PATH" - optional path to a `values.yaml` file used to configure a chart under test
       (if a chart is tested)
-    - "ATS_EXTRA\_\*" - any such arbitrary variable value will be extracted and included in the `test_extra_info` fixture
+    - "ATS_EXTRA\_\*" - any such arbitrary variable value will be extracted and included in the
+      `test_extra_info` fixture
   - `chart_extra_info` fixture was removed, as the more general `test_extra_info` is available
 
 - updated:
@@ -86,45 +91,47 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
   - update Kustomization to v1beta2
 - fixed:
   - in HelmRelease, ensure 'targetNamespace' if it doesn't exist
-  - logging level adjusted (debug only if no errors) and added consistent log messages about creating and deleting resources
+  - logging level adjusted (debug only if no errors) and added consistent log messages about creating and
+    deleting resources
   - add missing imports in plugin.py
 
 ## [0.7.0-beta.1]
 
 - added:
-  - all kubernetes API Objects targeting fixtures have now a function scoped counterpart named `*_function_scope`
+  - all kubernetes API Objects targeting fixtures have now a function scoped counterpart named
+    `*_function_scope`
   - package `flux` was added to deal with Flux CRs
 - changed:
-  - all fixture factories that create objects and delete them after they are out of scope, now
-    actively wait for the object to be gone. Previously, only `delete()` request was sent without
-    checking if the object is gone, which was causing a bunch of race conditions between test runs.
-  - All recursively-required missing resources are now automatically created. This usually means
-    that if the `Namespace` you want to put your resource in doesn't exist, it will be created
-    automatically for you. The same applies to `App` and the required `Catalog`.
+  - all fixture factories that create objects and delete them after they are out of scope, now actively wait
+    for the object to be gone. Previously, only `delete()` request was sent without checking if the object is
+    gone, which was causing a bunch of race conditions between test runs.
+  - All recursively-required missing resources are now automatically created. This usually means that if the
+    `Namespace` you want to put your resource in doesn't exist, it will be created automatically for you. The
+    same applies to `App` and the required `Catalog`.
   - switch from `Callable` to `Protocol` for factory types (much better type hinting)
-  - all functions making API objects take now optional `extra_metadata` and `extra_spec` arguments,
-    which are merged with object definitions without any restrictions nor validation
-  - `wait_for_apps_to_run` accepts now a new parameter `fail_fast: bool = False`; when it's `True` and the App's
-    status ever reaches `failed`, the wait fails as well, without waiting for subsequent state changes.
+  - all functions making API objects take now optional `extra_metadata` and `extra_spec` arguments, which are
+    merged with object definitions without any restrictions nor validation
+  - `wait_for_apps_to_run` accepts now a new parameter `fail_fast: bool = False`; when it's `True` and the
+    App's status ever reaches `failed`, the wait fails as well, without waiting for subsequent state changes.
   - cleanups:
     - all methods creating objects, but not submitting them to k8s API, match now `make-*-object` pattern
     - `HTTPClient` connection object is always the first method parameter
-    - removed the `namespaceConfig*` arguments of `make_app_object`, as they can be now included
-      using the `extra-*` args
+    - removed the `namespaceConfig*` arguments of `make_app_object`, as they can be now included using the
+      `extra-*` args
     - multiple classes were moved across modules and packages to match the following rules:
       - every Resource / CustomResource is a single module
       - groups of API Resources (like giant swarm app platform or flux - in the future) go to packages
-    - `wait_for_namespaced_objects_condition` function is renamed to `wait_for_objects_condition` as it now supports
-      both cluster-scope and namespace-scope resources. Additionally, it allows now to pass a function for checking for
-      fail fast conditions in objects awaited.
+    - `wait_for_namespaced_objects_condition` function is renamed to `wait_for_objects_condition` as it now
+      supports both cluster-scope and namespace-scope resources. Additionally, it allows now to pass a
+      function for checking for fail fast conditions in objects awaited.
 - fixed:
-  - namespaces requested from `namespace_factory*` fixtures are now deleted only if they were created by the fixture
-    (and not already existing in the cluster)
+  - namespaces requested from `namespace_factory*` fixtures are now deleted only if they were created by the
+    fixture (and not already existing in the cluster)
 
 ## [0.6.0]
 
-- breaking change: all App CR related functions and fixtures that require information about the Catalog
-  the App references need now also a new `catalog_namespace` parameter
+- breaking change: all App CR related functions and fixtures that require information about the Catalog the
+  App references need now also a new `catalog_namespace` parameter
 
 ## [0.5.3]
 
@@ -148,9 +155,9 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 - fix: `wait_for_deployments_to_run` needs to check for `availablePods` as well
 - added: `namespace_factory` fixture you can use to create test time only namespaces
-- change: `app_factory` takes now one more kwarg `deployment_namespace`, which configures
-  the target deployment namespace for the created App CR; in other words, the `namespace` where the App
-  CR is created can be now different than the `deployment_namespace` where app's components are deployed
+- change: `app_factory` takes now one more kwarg `deployment_namespace`, which configures the target
+  deployment namespace for the created App CR; in other words, the `namespace` where the App CR is created can
+  be now different than the `deployment_namespace` where app's components are deployed
 - change: if the namespace passed as `namespace` argument to `app_factory` doesn't exist, it is automatically
   created using the new `namespace_factory` fixture
 
@@ -160,8 +167,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following [Se
 
 ## [0.4.0]
 
-- change: `app_factory_func` now checks if the passed App deploys successfully. This is configured using
-  the `timeout_sec` argument, which by default is equal 60. Use value 0 to disable checking if App deploys OK.
+- change: `app_factory_func` now checks if the passed App deploys successfully. This is configured using the
+  `timeout_sec` argument, which by default is equal 60. Use value 0 to disable checking if App deploys OK.
 - added:
   - `wait_for_apps_to_run` helper method
   - `wait_for_daemon_sets_to_run` helper method

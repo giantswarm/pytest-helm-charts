@@ -97,7 +97,11 @@ class Cluster(ABC):
                 else [bin_name, *subcmds, *options]
             )
             result = subprocess.check_output(
-                cmd, stderr=subprocess.PIPE, encoding="utf-8", input=std_input, shell=use_shell  # nosec
+                cmd,
+                stderr=subprocess.PIPE,
+                encoding="utf-8",
+                input=std_input,
+                shell=use_shell,  # nosec
             )
         except subprocess.CalledProcessError as e:
             logger.error(
