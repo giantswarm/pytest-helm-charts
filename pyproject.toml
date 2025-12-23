@@ -28,7 +28,7 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
 ]
 dependencies = [
-    "pytest>=8.0.0,<9",
+    "pytest>=9.0.2,<10",
     "pykube-ng>=23.6,<24",
     "Deprecated>=1.2.13,<2",
 ]
