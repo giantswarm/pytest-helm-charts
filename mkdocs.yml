@@ -6,20 +6,19 @@ theme:
 
 plugins:
   - search
-  - mkapi:
-      src_dirs: [pytest_helm_charts,examples]
+  - mkapi
 
 markdown_extensions:
   - admonition
 
 nav:
   - Home:
-    - Main: index.md
-    - Fixtures: fixtures.md
-  - API: mkapi/k8s/pytest_helm_charts|upper|strict
+      - Main: index.md
+      - Fixtures: fixtures.md
+  - API: $api/pytest_helm_charts.***
   - Examples:
-    - Basic: 'examples/basic.md'
-    - Giant Swarm App Platform: 'examples/giantswarm.md'
+      - Basic: "examples/basic.md"
+      - Giant Swarm App Platform: "examples/giantswarm.md"
   - About:
-    - 'License': 'license.md'
-    - 'Changelog': 'CHANGELOG.md'
+      - "License": "license.md"
+      - "Changelog": "CHANGELOG.md"

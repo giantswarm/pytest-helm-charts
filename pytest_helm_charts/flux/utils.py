@@ -21,8 +21,7 @@ def flux_cr_ready(flux_obj: NamespacedFluxCR) -> bool:
         return False
     if conditions_count > 1:
         logging.warning(
-            f"Found '{conditions_count}' status conditions when expecting just 1. Using only"
-            f" the first one on the list."
+            f"Found '{conditions_count}' status conditions when expecting just 1. Using only the first one on the list."
         )
     condition = flux_obj.obj["status"]["conditions"][0]
     return condition["type"] == "Ready" and condition["status"] == "True"

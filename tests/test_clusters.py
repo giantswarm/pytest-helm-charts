@@ -130,5 +130,9 @@ def test_non_json_kubectl_in_existing(
     )
 
     cast(unittest.mock.Mock, subprocess.check_output).assert_called_once_with(
-        expected_args, encoding="utf-8", input="", shell=use_shell, stderr=-1  # nosec
+        expected_args,
+        encoding="utf-8",
+        input="",
+        shell=use_shell,
+        stderr=-1,  # nosec
     )
