@@ -5,6 +5,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following
 
 ## [Unreleased]
 
+### Changed
+
+- Regenerate workflow files via devctl to drop the Node-20 `mindsers/changelog-reader-action` dependency.
+
 ## [1.3.4] - 2025-12-23
 
 - changed
