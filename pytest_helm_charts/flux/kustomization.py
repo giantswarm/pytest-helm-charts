@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class KustomizationCR(NamespacedFluxCR):
-    version = "kustomize.toolkit.fluxcd.io/v1beta2"
+    version = "kustomize.toolkit.fluxcd.io/v1"
     endpoint = "kustomizations"
     kind = "Kustomization"
 

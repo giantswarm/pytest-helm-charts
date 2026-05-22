@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class HelmRepositoryCR(NamespacedFluxCR):
-    version = "source.toolkit.fluxcd.io/v1beta1"
+    version = "source.toolkit.fluxcd.io/v1"
     endpoint = "helmrepositories"
     kind = "HelmRepository"
 
