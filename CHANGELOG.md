@@ -7,6 +7,9 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following
 
 ## [1.3.5] - 2026-05-22
 
+- changed
+  - upgrade Flux API versions to what is considered latest in Flux 2.6
+
 ## [1.3.4] - 2025-12-23
 
 - changed
