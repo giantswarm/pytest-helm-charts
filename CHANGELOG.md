@@ -5,6 +5,11 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following
 
 ## [Unreleased]
 
+- fixed
+  - the PyPI publish job runs on tag pushes from the automated release flow (`on: push: tags`
+    instead of `on: create`), can be re-run for an existing tag via `workflow_dispatch`, and takes
+    the published version from the tag, so 1.3.5 no longer silently stays off PyPI
+
 ## [1.3.5] - 2026-05-22
 
 - changed
