@@ -51,7 +51,7 @@ def make_job_object(
     name_prefix: str,
     namespace: str,
     command: List[str],
-    image: str = "quay.io/giantswarm/busybox:1.32.0",
+    image: str = "gsoci.azurecr.io/giantswarm/busybox:1.32.0",
     restart_policy: str = "OnFailure",
     backoff_limit: int = 6,  # 6 is the default from k8s
     extra_metadata: Optional[dict] = None,

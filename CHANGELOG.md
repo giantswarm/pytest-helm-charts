@@ -9,6 +9,9 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), following
   - the PyPI publish job runs on tag pushes from the automated release flow (`on: push: tags`
     instead of `on: create`), can be re-run for an existing tag via `workflow_dispatch`, and takes
     the published version from the tag, so 1.3.5 no longer silently stays off PyPI
+  - `make_job_object` defaults to `gsoci.azurecr.io/giantswarm/busybox:1.32.0`; the old
+    `quay.io/giantswarm/busybox:1.32.0` default no longer pulls since the quay.io org was removed;
+    pass `image=` to pull from a mirror instead
 
 ## [1.3.5] - 2026-05-22
 

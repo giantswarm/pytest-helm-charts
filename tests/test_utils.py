@@ -85,7 +85,7 @@ def test_make_job_object() -> None:
     name_prefix = "test_name_prefix"
     namespace = "test_namespace"
     command = ["cmd1", "cmd2"]
-    image: str = "quay.io/giantswarm/busybox:1.32.0"
+    image: str = "gsoci.azurecr.io/giantswarm/busybox:1.32.0"
     restart_policy: str = "OnFailure"
     backoff_limit: int = 6
 
