@@ -30,7 +30,7 @@ classifiers = [
 dependencies = [
     "pytest>=9.0.2,<10",
     "pykube-ng>=23.6,<24",
-    "Deprecated>=1.2.13,<2",
+    "Deprecated>=3,<4",
 ]
 
 [project.optional-dependencies]
